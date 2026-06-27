@@ -58,34 +58,20 @@ export default function AgendaPage() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: shopData } = await supabase
-        .from('shops')
-        .select('id, slug')
-        .eq('owner_id', user.id)
-        .maybeSingle()
-
-      if (!shopData) return
+      const shopRes = await fetch('/api/dashboard/shop')
+      if (!shopRes.ok) { setLoading(false); return }
+      const shopData = await shopRes.json()
+      if (!shopData?.id) { setLoading(false); return }
       setShop(shopData)
 
-      const { data: barberData } = await supabase
-        .from('barbers')
-        .select('id, display_name, is_active')
-        .eq('shop_id', shopData.id)
-        .eq('is_active', true)
+      const barbersRes = await fetch('/api/dashboard/barbers')
+      const barberData: Barber[] = barbersRes.ok ? await barbersRes.json() : []
 
-      if (barberData && barberData.length > 0) {
-        setBarbers(barberData)
-        // default: pick barber matching current user
-        const { data: myBarber } = await supabase
-          .from('barbers')
-          .select('id')
-          .eq('shop_id', shopData.id)
-          .eq('user_id', user.id)
-          .maybeSingle()
-        setSelectedBarberId(myBarber?.id ?? barberData[0].id)
+      if (barberData.length > 0) {
+        const active = barberData.filter((b) => b.is_active)
+        setBarbers(active)
+        const mine = barberData.find((b: Barber & { user_id?: string }) => b.user_id === shopData.owner_id)
+        setSelectedBarberId(mine?.id ?? active[0]?.id ?? barberData[0].id)
       }
       setLoading(false)
     }

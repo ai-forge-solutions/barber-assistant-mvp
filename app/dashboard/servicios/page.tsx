@@ -7,7 +7,7 @@ interface Service {
   id: string
   name: string
   duration_min: number
-  price_eur: number
+  price: number
   is_active: boolean
 }
 
@@ -21,19 +21,20 @@ export default function ServiciosPage() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', duration_min: 30, price_eur: 0 })
+  const [form, setForm] = useState({ name: '', duration_min: 30, price: 0 })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).maybeSingle()
-      if (!shop) return
+      const shopRes = await fetch('/api/dashboard/shop')
+      if (!shopRes.ok) { setLoading(false); return }
+      const shop = await shopRes.json()
+      if (!shop?.id) { setLoading(false); return }
       setShopId(shop.id)
-      const { data } = await supabase.from('services').select('*').eq('shop_id', shop.id).eq('is_active', true).order('name')
-      setServices(data ?? [])
+      const servicesRes = await fetch('/api/dashboard/services')
+      const data = servicesRes.ok ? await servicesRes.json() : []
+      setServices(data)
       setLoading(false)
     }
     init()
@@ -41,14 +42,14 @@ export default function ServiciosPage() {
 
   function openAdd() {
     setEditingId(null)
-    setForm({ name: '', duration_min: 30, price_eur: 0 })
+    setForm({ name: '', duration_min: 30, price: 0 })
     setError('')
     setShowModal(true)
   }
 
   function openEdit(s: Service) {
     setEditingId(s.id)
-    setForm({ name: s.name, duration_min: s.duration_min, price_eur: s.price_eur })
+    setForm({ name: s.name, duration_min: s.duration_min, price: s.price })
     setError('')
     setShowModal(true)
   }
@@ -74,8 +75,8 @@ export default function ServiciosPage() {
         if (!res.ok) throw new Error()
       }
       // Refresh
-      const { data } = await supabase.from('services').select('*').eq('shop_id', shopId).eq('is_active', true).order('name')
-      setServices(data ?? [])
+      const res2 = await fetch('/api/dashboard/services')
+      setServices(res2.ok ? await res2.json() : [])
       setShowModal(false)
     } catch {
       setError('No hemos podido guardar. Inténtalo de nuevo.')
@@ -124,7 +125,7 @@ export default function ServiciosPage() {
             <li key={s.id} className="flex items-center justify-between border border-[#E5E5E5] rounded-sm px-4 py-4 bg-white">
               <div>
                 <p className="font-['Oswald'] font-semibold text-[16px] text-[#111111]">{s.name}</p>
-                <p className="font-['DM_Sans'] text-[13px] text-[#999999] mt-0.5">{s.duration_min} min · {s.price_eur}€</p>
+                <p className="font-['DM_Sans'] text-[13px] text-[#999999] mt-0.5">{s.duration_min} min · {s.price}€</p>
               </div>
               <div className="flex gap-1">
                 <button
@@ -181,8 +182,8 @@ export default function ServiciosPage() {
                   <label className="block font-['Oswald'] font-semibold text-[12px] tracking-[0.08em] uppercase text-[#111111] mb-1.5">Precio (€)</label>
                   <input
                     type="number" min="0" step="0.5"
-                    value={form.price_eur || ''}
-                    onChange={(e) => setForm({ ...form, price_eur: Number(e.target.value) })}
+                    value={form.price || ''}
+                    onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
                     placeholder="15"
                     className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none min-h-[44px]"
                   />

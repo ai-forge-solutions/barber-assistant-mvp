@@ -24,13 +24,14 @@ export default function BarberosPage() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).maybeSingle()
-      if (!shop) return
+      const shopRes = await fetch('/api/dashboard/shop')
+      if (!shopRes.ok) { setLoading(false); return }
+      const shop = await shopRes.json()
+      if (!shop?.id) { setLoading(false); return }
       setShopId(shop.id)
-      const { data } = await supabase.from('barbers').select('id, display_name, notification_email, is_active').eq('shop_id', shop.id).order('display_name')
-      setBarbers(data ?? [])
+      const barbersRes = await fetch('/api/dashboard/barbers')
+      const data = barbersRes.ok ? await barbersRes.json() : []
+      setBarbers(data)
       setLoading(false)
     }
     init()
@@ -47,8 +48,8 @@ export default function BarberosPage() {
         body: JSON.stringify({ email: form.email, displayName: form.displayName }),
       })
       if (!res.ok) throw new Error()
-      const { data } = await supabase.from('barbers').select('id, display_name, notification_email, is_active').eq('shop_id', shopId).order('display_name')
-      setBarbers(data ?? [])
+      const res2 = await fetch('/api/dashboard/barbers')
+      setBarbers(res2.ok ? await res2.json() : [])
       setShowModal(false)
       setForm({ email: '', displayName: '' })
     } catch {
@@ -59,7 +60,11 @@ export default function BarberosPage() {
   }
 
   async function toggleActive(b: Barber) {
-    await supabase.from('barbers').update({ is_active: !b.is_active }).eq('id', b.id)
+    await fetch(`/api/dashboard/barbers/${b.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_active: !b.is_active }),
+    })
     setBarbers((prev) => prev.map((x) => x.id === b.id ? { ...x, is_active: !x.is_active } : x))
   }
 

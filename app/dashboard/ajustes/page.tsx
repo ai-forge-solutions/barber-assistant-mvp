@@ -19,11 +19,11 @@ export default function AjustesPage() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      setUserId(user.id)
-      const { data } = await supabase.from('shops').select('id, name, slug, logo_url').eq('owner_id', user.id).maybeSingle()
-      if (!data) return
+      const shopRes = await fetch('/api/dashboard/shop')
+      if (!shopRes.ok) { setLoading(false); return }
+      const data = await shopRes.json()
+      if (!data?.id) { setLoading(false); return }
+      setUserId(data.owner_id ?? '')
       setShop(data)
       const url = `${appUrl}/${data.slug}`
       setPublicUrl(url)
