@@ -210,13 +210,16 @@ export default function OnboardingPage() {
         const res = await fetch(`/api/shops/${shopId}/services`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(s),
+          body: JSON.stringify({ name: s.name, duration_min: s.duration_min, price: s.price_eur }),
         })
-        if (!res.ok) throw new Error()
+        if (!res.ok) {
+          const msg = await res.json().catch(() => ({ error: '' }))
+          throw new Error(msg.error || 'Failed to create service')
+        }
       }
       setStep(3)
-    } catch {
-      setError('No hemos podido guardar los servicios. Inténtalo de nuevo.')
+    } catch (e) {
+      setError(`No hemos podido guardar los servicios: ${e instanceof Error ? e.message : 'error desconocido'}`)
     } finally {
       setLoading(false)
     }

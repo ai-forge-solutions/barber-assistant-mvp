@@ -45,7 +45,8 @@ export async function POST(
     .single()
 
   if (error) {
-    return Response.json({ error: 'Failed to create service' }, { status: 500 })
+    console.error('[POST /api/shops/[id]/services] insert error:', error)
+    return Response.json({ error: error.message ?? 'Failed to create service' }, { status: 500 })
   }
 
   return Response.json(data, { status: 201 })
