@@ -92,19 +92,42 @@ export async function GET(request: NextRequest) {
   const clientId = searchParams.get('clientId')
   const date = searchParams.get('date')
 
+  let effectiveClientId = clientId
+  if (!barberId && !shopId && !effectiveClientId) {
+    effectiveClientId = user.id
+  }
+
   // Verify the requester is authorized for the requested scope
-  if (clientId && clientId !== user.id) {
+  if (effectiveClientId && effectiveClientId !== user.id) {
     return Response.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   if (barberId) {
     const { data: barberRow } = await supabaseAdmin
       .from('barbers')
-      .select('id')
+      .select('id, user_id, shop_id')
       .eq('id', barberId)
-      .eq('user_id', user.id)
       .maybeSingle()
+
     if (!barberRow) return Response.json({ error: 'Forbidden' }, { status: 403 })
+
+    const isBarber = barberRow.user_id === user.id
+    let isOwner = false
+
+    if (!isBarber && barberRow.shop_id) {
+      const { data: shopRow } = await supabaseAdmin
+        .from('shops')
+        .select('id')
+        .eq('id', barberRow.shop_id)
+        .eq('owner_id', user.id)
+        .maybeSingle()
+
+      isOwner = !!shopRow
+    }
+
+    if (!isBarber && !isOwner) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 })
+    }
   }
 
   if (shopId) {
@@ -121,13 +144,12 @@ export async function GET(request: NextRequest) {
     .from('appointments')
     .select(`
       *,
-      client:client_id ( id, email, raw_user_meta_data ),
-      service:service_id ( id, name, duration_min, price ),
-      barber:barber_id ( id, user_id )
+      service:service_id ( id, name, duration_min, price, shop_id ),
+      barber:barber_id ( id, display_name, user_id )
     `)
 
   if (barberId) query = query.eq('barber_id', barberId)
-  if (clientId) query = query.eq('client_id', clientId)
+  if (effectiveClientId) query = query.eq('client_id', effectiveClientId)
   if (date) {
     query = query
       .gte('starts_at', `${date}T00:00:00`)
