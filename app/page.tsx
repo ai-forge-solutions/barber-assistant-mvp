@@ -17,8 +17,8 @@ export default function Home() {
           </p>
 
           {/* H1 */}
-          <h1 className="font-['Oswald'] font-bold text-[48px] leading-[1.05] text-[#111111] uppercase tracking-[0.02em] mb-6 sm:text-[64px]">
-            Tu agenda,<br />sin caos.
+          <h1 className="font-['Rye'] font-bold uppercase text-[34px] leading-[1.1] text-[#111111] tracking-[0.02em] mb-6 sm:text-[46px]">
+            TU AGENDA,<br />SIN CAOS.
           </h1>
 
           {/* Subtext */}
