@@ -12,10 +12,11 @@ export default function BookingButton({ slug }: { slug: string }) {
     if (user) {
       router.push(`/${slug}/reservar`)
     } else {
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/${slug}/reservar`,
+          redirectTo: `${appUrl}/auth/callback?next=/${slug}/reservar`,
         },
       })
     }

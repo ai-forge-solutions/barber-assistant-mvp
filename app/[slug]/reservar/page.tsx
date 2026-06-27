@@ -95,9 +95,10 @@ export default function ReservarPage() {
       // Auth check
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
+        const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
         await supabase.auth.signInWithOAuth({
           provider: 'google',
-          options: { redirectTo: `${window.location.origin}/auth/callback?next=/${slug}/reservar` },
+          options: { redirectTo: `${appUrl}/auth/callback?next=/${slug}/reservar` },
         })
         return
       }

@@ -12,10 +12,12 @@ export default function LoginButton({ next, label = 'Continuar con Google', vari
   const supabase = createClient()
 
   const handleLogin = async () => {
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${next ?? '/dashboard'}`,
+        redirectTo: `${appUrl}/auth/callback?next=${next ?? '/dashboard'}`,
       },
     })
   }
