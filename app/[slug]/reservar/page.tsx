@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface Barber { id: string; display_name: string; photo_url?: string }
-interface Service { id: string; name: string; duration_min: number; price_eur: number }
+interface Service { id: string; name: string; duration_min: number; price: number }
 
 interface BookingState {
   barberId: string
@@ -103,17 +103,21 @@ export default function ReservarPage() {
       }
 
       // Load shop
-      const { data: shop } = await supabase.from('shops').select('id, name, address').eq('slug', slug).maybeSingle()
-      if (!shop) { router.replace('/'); return }
+      const shopRes = await fetch(`/api/shops?slug=${encodeURIComponent(slug)}`)
+      if (!shopRes.ok) { router.replace('/'); return }
+      const shop = await shopRes.json()
+      if (!shop?.id) { router.replace('/'); return }
       setShopId(shop.id)
       setShopName(shop.name)
-      setShopAddress(shop.address)
+      setShopAddress(shop.address ?? '')
 
       // Load barbers and services in parallel
-      const [{ data: b }, { data: s }] = await Promise.all([
-        supabase.from('barbers').select('id, display_name, photo_url').eq('shop_id', shop.id).eq('is_active', true).order('display_name'),
-        supabase.from('services').select('id, name, duration_min, price_eur').eq('shop_id', shop.id).eq('is_active', true).order('name'),
+      const [barbersRes, servicesRes] = await Promise.all([
+        fetch(`/api/shops/${shop.id}/barbers`),
+        fetch(`/api/shops/${shop.id}/services`),
       ])
+      const b = barbersRes.ok ? await barbersRes.json() : []
+      const s = servicesRes.ok ? await servicesRes.json() : []
       setBarbers(b ?? [])
       setServices(s ?? [])
 
@@ -319,7 +323,7 @@ export default function ReservarPage() {
                 <button
                   key={s.id}
                   onClick={() => {
-                    persist({ serviceId: s.id, serviceName: s.name, serviceDuration: s.duration_min, servicePrice: s.price_eur })
+                    persist({ serviceId: s.id, serviceName: s.name, serviceDuration: s.duration_min, servicePrice: s.price })
                     setStep(2)
                   }}
                   className={`flex items-center justify-between border-2 rounded-sm px-4 py-4 transition-colors min-h-[60px] ${booking.serviceId === s.id ? 'border-[#111111] bg-[#F5F5F5]' : 'border-[#E5E5E5] hover:border-[#111111]'}`}
@@ -328,7 +332,7 @@ export default function ReservarPage() {
                     <p className="font-['Oswald'] font-semibold text-[16px] text-[#111111]">{s.name}</p>
                     <p className="font-['DM_Sans'] text-[12px] text-[#999999]">{s.duration_min} min</p>
                   </div>
-                  <span className="font-['Oswald'] font-bold text-[20px] text-[#111111]">{s.price_eur}€</span>
+                  <span className="font-['Oswald'] font-bold text-[20px] text-[#111111]">{s.price}€</span>
                 </button>
               ))}
             </div>

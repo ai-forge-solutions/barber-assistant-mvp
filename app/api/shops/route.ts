@@ -2,6 +2,22 @@ import type { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+// GET /api/shops?slug=xxx  — public, no auth required
+export async function GET(request: NextRequest) {
+  const slug = new URL(request.url).searchParams.get('slug')
+  if (!slug) return Response.json({ error: 'slug required' }, { status: 400 })
+
+  const { data, error } = await supabaseAdmin
+    .from('shops')
+    .select('id, name, address, slug')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  if (!data) return Response.json({ error: 'Not found' }, { status: 404 })
+  return Response.json(data)
+}
+
 // POST /api/shops
 // Body: { name, slug, address? }
 export async function POST(request: NextRequest) {

@@ -13,7 +13,7 @@ interface Appointment {
   starts_at: string
   ends_at: string
   status: AppointmentStatus
-  service: { name: string; duration_min: number; price_eur: number }
+  service: { name: string; duration_min: number; price: number }
   barber: { display_name: string }
   shop: { name: string; slug: string }
 }

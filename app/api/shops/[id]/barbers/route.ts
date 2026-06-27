@@ -80,3 +80,19 @@ export async function POST(
 
   return Response.json(barber, { status: 201 })
 }
+
+// GET /api/shops/[id]/barbers — public
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id: shopId } = await params
+  const { data, error } = await supabaseAdmin
+    .from('barbers')
+    .select('id, display_name, photo_url')
+    .eq('shop_id', shopId)
+    .eq('is_active', true)
+    .order('display_name')
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json(data ?? [])
+}

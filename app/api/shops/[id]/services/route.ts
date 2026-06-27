@@ -99,6 +99,22 @@ export async function PATCH(
   return Response.json(data)
 }
 
+// GET /api/shops/[id]/services — public
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id: shopId } = await params
+  const { data, error } = await supabaseAdmin
+    .from('services')
+    .select('id, name, duration_min, price')
+    .eq('shop_id', shopId)
+    .eq('is_active', true)
+    .order('name')
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json(data ?? [])
+}
+
 // DELETE /api/shops/[id]/services
 // Body: { serviceId }
 export async function DELETE(

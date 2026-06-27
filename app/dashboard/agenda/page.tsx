@@ -17,7 +17,7 @@ interface Appointment {
   ends_at: string
   status: AppointmentStatus
   client_id: string
-  service: { name: string; duration_min: number; price_eur: number }
+  service: { name: string; duration_min: number; price: number }
   profiles?: { full_name?: string; email?: string }
 }
 
@@ -284,7 +284,7 @@ export default function AgendaPage() {
               {activeAppt.profiles?.full_name ?? activeAppt.profiles?.email ?? 'Cliente'}
             </p>
             <p className="font-['DM_Sans'] text-[14px] text-[#555555] mb-4">
-              {activeAppt.service?.name} · {activeAppt.service?.duration_min} min · {activeAppt.service?.price_eur}€
+              {activeAppt.service?.name} · {activeAppt.service?.duration_min} min · {activeAppt.service?.price}€
             </p>
             <p className="font-['DM_Sans'] text-[13px] text-[#999999] mb-6">
               {timeLabel(activeAppt.starts_at)} → {timeLabel(activeAppt.ends_at)}

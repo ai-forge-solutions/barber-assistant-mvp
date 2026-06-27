@@ -43,7 +43,7 @@ export default async function ShopPage({ params }: PageProps) {
   if (!shop) notFound()
 
   const [{ data: services }, { data: barbers }, { data: schedules }] = await Promise.all([
-    supabase.from('services').select('id, name, duration_min, price_eur').eq('shop_id', shop.id).eq('is_active', true).order('name'),
+    supabase.from('services').select('id, name, duration_min, price').eq('shop_id', shop.id).eq('is_active', true).order('name'),
     supabase.from('barbers').select('id, display_name, photo_url').eq('shop_id', shop.id).eq('is_active', true).order('display_name'),
     supabase.from('schedules').select('day_of_week, start_time, end_time').eq('shop_id', shop.id),
   ])
@@ -109,13 +109,13 @@ export default async function ShopPage({ params }: PageProps) {
           <section>
             <h2 className="font-['Oswald'] font-bold text-[18px] text-[#111111] uppercase tracking-[0.04em] mb-3">Servicios</h2>
             <ul className="flex flex-col gap-2">
-              {services.map((s: { id: string; name: string; duration_min: number; price_eur: number }) => (
+              {services.map((s: { id: string; name: string; duration_min: number; price: number }) => (
                 <li key={s.id} className="flex items-center justify-between border border-[#E5E5E5] rounded-sm px-4 py-3">
                   <div>
                     <p className="font-['Oswald'] font-semibold text-[15px] text-[#111111]">{s.name}</p>
                     <p className="font-['DM_Sans'] text-[12px] text-[#999999]">{s.duration_min} min</p>
                   </div>
-                  <span className="font-['Oswald'] font-bold text-[18px] text-[#111111]">{s.price_eur}€</span>
+                  <span className="font-['Oswald'] font-bold text-[18px] text-[#111111]">{s.price}€</span>
                 </li>
               ))}
             </ul>
