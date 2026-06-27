@@ -27,16 +27,18 @@ export async function GET(request: NextRequest) {
   const dayOfWeek = dateObj.getUTCDay()
 
   // 1. Fetch barber schedule for that day
-  const { data: schedule, error: scheduleError } = await supabaseAdmin
+  const { data: scheduleRows, error: scheduleError } = await supabaseAdmin
     .from('schedules')
     .select('start_time, end_time, break_start, break_end')
     .eq('barber_id', barberId)
     .eq('day_of_week', dayOfWeek)
-    .maybeSingle()
+    .limit(1)
 
   if (scheduleError) {
     return Response.json({ error: 'Failed to fetch schedule' }, { status: 500 })
   }
+
+  const schedule = scheduleRows?.[0] ?? null
 
   // Barber has no schedule for this day
   if (!schedule) {
@@ -72,15 +74,16 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: 'Failed to fetch appointments' }, { status: 500 })
   }
 
-  // 4. Fetch blocked slots that day
-  const { data: blockedSlots, error: blockedError } = await supabaseAdmin
+  // 4. Fetch blocked slots that day (optional; ignore if the table is unavailable)
+  let blockedSlots: Array<{ start_time: string; end_time: string }> = []
+  const { data: blockedRows, error: blockedError } = await supabaseAdmin
     .from('blocked_slots')
     .select('start_time, end_time')
     .eq('barber_id', barberId)
     .eq('date', date)
 
-  if (blockedError) {
-    return Response.json({ error: 'Failed to fetch blocked slots' }, { status: 500 })
+  if (!blockedError && blockedRows) {
+    blockedSlots = blockedRows as Array<{ start_time: string; end_time: string }>
   }
 
   // 5. Build occupied ranges (all in minutes from midnight)

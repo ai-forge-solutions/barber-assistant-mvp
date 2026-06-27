@@ -89,3 +89,17 @@ export async function PUT(
 
   return Response.json(data)
 }
+
+// GET /api/barbers/[id]/schedule
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id: barberId } = await params
+  const { data, error } = await supabaseAdmin
+    .from('schedules')
+    .select('*')
+    .eq('barber_id', barberId)
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json(data ?? [])
+}

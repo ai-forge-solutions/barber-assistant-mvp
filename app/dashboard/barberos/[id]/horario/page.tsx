@@ -47,17 +47,15 @@ export default function HorarioPage() {
 
   useEffect(() => {
     async function init() {
-      const { data: barber } = await supabase
-        .from('barbers')
-        .select('display_name')
-        .eq('id', barberId)
-        .maybeSingle()
-      if (barber) setBarberName(barber.display_name)
+      const barbersRes = await fetch('/api/dashboard/barbers')
+      if (barbersRes.ok) {
+        const barbers = await barbersRes.json()
+        const barber = barbers.find((b: { id: string; display_name: string }) => b.id === barberId)
+        if (barber) setBarberName(barber.display_name)
+      }
 
-      const { data: existing } = await supabase
-        .from('schedules')
-        .select('*')
-        .eq('barber_id', barberId)
+      const schedRes = await fetch(`/api/barbers/${barberId}/schedule`)
+      const existing = schedRes.ok ? await schedRes.json() : []
 
       if (existing && existing.length > 0) {
         setSchedule(DAYS.map(({ key }) => {
@@ -88,17 +86,17 @@ export default function HorarioPage() {
       const payload = schedule
         .filter((d) => d.enabled)
         .map((d) => ({
-          dayOfWeek: d.dayOfWeek,
-          startTime: d.startTime,
-          endTime: d.endTime,
-          breakStart: d.breakStart || undefined,
-          breakEnd: d.breakEnd || undefined,
+          day_of_week: d.dayOfWeek,
+          start_time: d.startTime,
+          end_time: d.endTime,
+          break_start: d.breakStart || null,
+          break_end: d.breakEnd || null,
         }))
 
       const res = await fetch(`/api/barbers/${barberId}/schedule`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ schedule: payload }),
       })
       if (!res.ok) throw new Error()
       setSaved(true)
