@@ -35,14 +35,18 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'slug is already taken' }, { status: 409 })
   }
 
+  const insertData: Record<string, unknown> = { name, slug, address: address ?? null, owner_id: user.id }
+  if (timezone) insertData.timezone = timezone
+
   const { data: shop, error } = await supabaseAdmin
     .from('shops')
-    .insert({ name, slug, address: address ?? null, timezone: timezone ?? 'Europe/Madrid', owner_id: user.id })
+    .insert(insertData)
     .select()
     .single()
 
   if (error) {
-    return Response.json({ error: 'Failed to create shop' }, { status: 500 })
+    console.error('[POST /api/shops] insert error:', error)
+    return Response.json({ error: error.message ?? 'Failed to create shop' }, { status: 500 })
   }
 
   return Response.json(shop, { status: 201 })

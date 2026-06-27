@@ -153,7 +153,7 @@ export default function OnboardingPage() {
         if (msg.error === 'slug is already taken') {
           setError('Ese enlace ya está en uso. Prueba otro.')
         } else {
-          setError('No hemos podido crear el local. Inténtalo de nuevo.')
+          setError(`No hemos podido crear el local: ${msg.error ?? 'error desconocido'}`)
         }
         return
       }
