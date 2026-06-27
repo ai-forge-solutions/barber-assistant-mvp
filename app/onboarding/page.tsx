@@ -8,7 +8,17 @@ import ColorStripe from '@/components/brand/ColorStripe'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-interface ShopData { name: string; address: string; timezone: string }
+interface ShopData { name: string; slug: string; address: string; timezone: string }
+
+function toSlug(name: string) {
+  return name
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
 interface ServiceRow { name: string; duration_min: number; price_eur: number }
 
 const TIMEZONES = [
@@ -99,7 +109,7 @@ export default function OnboardingPage() {
   const [userEmail, setUserEmail] = useState('')
 
   // Step 1
-  const [shopData, setShopData] = useState<ShopData>({ name: '', address: '', timezone: 'Europe/Madrid' })
+  const [shopData, setShopData] = useState<ShopData>({ name: '', slug: '', address: '', timezone: 'Europe/Madrid' })
 
   // Step 2
   const [logoFile, setLogoFile] = useState<File | null>(null)
@@ -122,8 +132,12 @@ export default function OnboardingPage() {
   // ── Step handlers ──────────────────────────────────────────────────────────
 
   async function handleStep1() {
-    if (!shopData.name.trim() || !shopData.address.trim()) {
-      setError('Rellena el nombre y la dirección.')
+    if (!shopData.name.trim() || !shopData.address.trim() || !shopData.slug.trim()) {
+      setError('Rellena el nombre, el slug y la dirección.')
+      return
+    }
+    if (!/^[a-z0-9-]+$/.test(shopData.slug)) {
+      setError('El slug solo puede tener letras minúsculas, números y guiones.')
       return
     }
     setError('')
@@ -134,7 +148,15 @@ export default function OnboardingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(shopData),
       })
-      if (!res.ok) throw new Error(await res.text())
+      if (!res.ok) {
+        const msg = await res.json().catch(() => ({ error: '' }))
+        if (msg.error === 'slug is already taken') {
+          setError('Ese enlace ya está en uso. Prueba otro.')
+        } else {
+          setError('No hemos podido crear el local. Inténtalo de nuevo.')
+        }
+        return
+      }
       const data = await res.json()
       setShopId(data.id)
       setStep(1)
@@ -210,7 +232,13 @@ export default function OnboardingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, displayName: barberName }),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const msg = await res.json().catch(() => ({ error: '' }))
+        setError(msg.error === 'No account found with that email. The barber must sign up first.'
+          ? 'No se ha encontrado una cuenta con ese email. Inicia sesión primero.'
+          : 'No hemos podido guardar tus datos. Inténtalo de nuevo.')
+        return
+      }
       router.replace('/dashboard/agenda')
     } catch {
       setError('No hemos podido guardar tus datos. Inténtalo de nuevo.')
@@ -242,8 +270,31 @@ export default function OnboardingPage() {
               <Input
                 placeholder="Ej. Barbería El Maestro"
                 value={shopData.name}
-                onChange={(e) => setShopData({ ...shopData, name: e.target.value })}
+                onChange={(e) => {
+                  const name = e.target.value
+                  setShopData((prev) => ({
+                    ...prev,
+                    name,
+                    // Auto-generate slug only if user hasn't manually edited it
+                    slug: prev.slug === toSlug(prev.name) ? toSlug(name) : prev.slug,
+                  }))
+                }}
               />
+            </div>
+            <div>
+              <Label>Enlace público</Label>
+              <div className="flex items-center border border-[#E5E5E5] focus-within:border-[#111111] rounded-sm overflow-hidden transition-colors">
+                <span className="px-3 py-3 font-['DM_Sans'] text-[13px] text-[#999999] bg-[#F5F5F5] border-r border-[#E5E5E5] whitespace-nowrap select-none">
+                  turno.app/
+                </span>
+                <input
+                  className="flex-1 px-3 py-3 font-['DM_Sans'] text-[14px] text-[#111111] outline-none bg-white min-h-[44px]"
+                  placeholder="mi-barberia"
+                  value={shopData.slug}
+                  onChange={(e) => setShopData({ ...shopData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                />
+              </div>
+              <p className="font-['DM_Sans'] text-[11px] text-[#999999] mt-1">Solo letras minúsculas, números y guiones.</p>
             </div>
             <div>
               <Label>Dirección</Label>

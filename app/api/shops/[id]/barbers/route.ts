@@ -29,7 +29,7 @@ export async function POST(
   }
 
   const body = await request.json()
-  const { email } = body
+  const { email, displayName } = body
 
   if (!email) {
     return Response.json({ error: 'email is required' }, { status: 400 })
@@ -65,7 +65,12 @@ export async function POST(
 
   const { data: barber, error: insertError } = await supabaseAdmin
     .from('barbers')
-    .insert({ shop_id: shopId, user_id: invitedUser.id, notification_email: true })
+    .insert({
+      shop_id: shopId,
+      user_id: invitedUser.id,
+      notification_email: true,
+      ...(displayName ? { display_name: displayName } : {}),
+    })
     .select()
     .single()
 

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
-  const { name, slug, address } = body
+  const { name, slug, address, timezone } = body
 
   if (!name || !slug) {
     return Response.json({ error: 'name and slug are required' }, { status: 400 })
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
   const { data: shop, error } = await supabaseAdmin
     .from('shops')
-    .insert({ name, slug, address: address ?? null, owner_id: user.id })
+    .insert({ name, slug, address: address ?? null, timezone: timezone ?? 'Europe/Madrid', owner_id: user.id })
     .select()
     .single()
 
