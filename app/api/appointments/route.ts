@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { toMinutes } from '@/lib/utils/time'
 import { signCancelToken } from '@/lib/utils/jwt'
 import { Resend } from 'resend'
 import { confirmationEmailHtml } from '@/lib/emails/confirmation'
@@ -186,7 +185,7 @@ async function triggerEmails(
   const [barberResult, shopResult, clientResult] = await Promise.all([
     supabaseAdmin
       .from('barbers')
-      .select('user_id, notification_email')
+      .select('user_id, display_name, notification_email')
       .eq('id', appointment.barber_id)
       .maybeSingle(),
     supabaseAdmin
@@ -210,7 +209,8 @@ async function triggerEmails(
   const clientEmail = clientUser.email
   const customer = await getCustomer(clientUser)
   const clientName = customer?.full_name || clientUser.user_metadata?.full_name || clientUser.email || 'Cliente'
-  const barberName = barberUser?.user_metadata?.full_name ?? barberUser?.email ?? 'Barbero'
+  const clientPhone = customer?.phone || clientUser.user_metadata?.phone || ''
+  const barberName = barber.display_name || barberUser?.user_metadata?.full_name || barberUser?.email || 'Barbero'
 
   const cancelToken = await signCancelToken(appointment.id)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -238,17 +238,22 @@ async function triggerEmails(
     )
   }
 
-  // Notification to barber (if notifications enabled)
-  if (barber.notification_email && barberUser?.email) {
+  // Notification to the corresponding barber (if notifications enabled)
+  const barberEmail = barber.notification_email ? barberUser?.email : null
+  if (barberEmail) {
     emailPromises.push(
       resend.emails.send({
-        from: `Barber Assistant <noreply@${process.env.RESEND_DOMAIN ?? 'resend.dev'}>`,
-        to: barberUser.email,
-        subject: `Nueva cita: ${clientName}`,
+        from: `${shop.name} <noreply@${process.env.RESEND_DOMAIN ?? 'resend.dev'}>`,
+        to: barberEmail,
+        subject: `Nueva cita — ${clientName}`,
         html: newAppointmentEmailHtml({
           barberName,
           clientName,
+          clientEmail: clientEmail ?? '',
+          clientPhone,
+          shopName: shop.name,
           serviceName: service.name,
+          servicePrice: service.price,
           startsAt: appointment.starts_at,
         }),
       })
