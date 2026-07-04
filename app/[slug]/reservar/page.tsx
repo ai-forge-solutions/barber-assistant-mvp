@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isBefore, isToday, isSameDay } from 'date-fns'
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isBefore, isToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase/client'
+import { hasRequiredClientProfile } from '@/lib/auth/client-profile'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -69,7 +71,6 @@ export default function ReservarPage() {
 
   const [step, setStep] = useState(0)
   const [booking, setBooking] = useState<BookingState>(EMPTY)
-  const [shopId, setShopId] = useState('')
   const [shopName, setShopName] = useState('')
   const [shopAddress, setShopAddress] = useState('')
 
@@ -95,11 +96,11 @@ export default function ReservarPage() {
       // Auth check
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
-        await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: `${appUrl}/auth/callback?next=/${slug}/reservar` },
-        })
+        router.replace(`/auth/client?next=${encodeURIComponent(`/${slug}/reservar`)}`)
+        return
+      }
+      if (!hasRequiredClientProfile(user)) {
+        router.replace(`/auth/client/profile?next=${encodeURIComponent(`/${slug}/reservar`)}`)
         return
       }
 
@@ -108,7 +109,6 @@ export default function ReservarPage() {
       if (!shopRes.ok) { router.replace('/'); return }
       const shop = await shopRes.json()
       if (!shop?.id) { router.replace('/'); return }
-      setShopId(shop.id)
       setShopName(shop.name)
       setShopAddress(shop.address ?? '')
 
@@ -253,12 +253,12 @@ export default function ReservarPage() {
           >
             Añadir al calendario
           </button>
-          <a
+          <Link
             href="/cuenta/citas"
             className="bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#A50D24] min-h-[44px] flex items-center justify-center"
           >
             Ver mis citas
-          </a>
+          </Link>
         </div>
       </div>
     )
