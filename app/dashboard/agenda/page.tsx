@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { format, addDays, subDays } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { createClient } from '@/lib/supabase/client'
 import AppointmentCard, { AppointmentCardData } from '@/components/ui/AppointmentCard'
 import StatusBadge, { AppointmentStatus } from '@/components/ui/StatusBadge'
 
@@ -34,8 +34,6 @@ function timeLabel(iso: string) {
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 export default function AgendaPage() {
-  const supabase = createClient()
-
   const [shop, setShop] = useState<Shop | null>(null)
   const [barbers, setBarbers] = useState<Barber[]>([])
   const [selectedBarberId, setSelectedBarberId] = useState('')
@@ -76,28 +74,48 @@ export default function AgendaPage() {
       setLoading(false)
     }
     init()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Load appointments ─────────────────────────────────────────────────────
-
-  const fetchAppointments = useCallback(async () => {
+  useEffect(() => {
     if (!selectedBarberId) return
-    setLoadingAppt(true)
-    try {
-      const res = await fetch(
-        `/api/appointments?barberId=${selectedBarberId}&date=${dateKey(selectedDate)}`
-      )
-      if (!res.ok) throw new Error()
-      const data: Appointment[] = await res.json()
-      setAppointments(data.sort((a, b) => a.starts_at.localeCompare(b.starts_at)))
-    } catch {
-      setAppointments([])
-    } finally {
-      setLoadingAppt(false)
+
+    let cancelled = false
+
+    async function loadAppointments() {
+      setLoadingAppt(true)
+      try {
+        const res = await fetch(
+          `/api/appointments?barberId=${selectedBarberId}&date=${dateKey(selectedDate)}`
+        )
+        if (!res.ok) throw new Error()
+        const data: Appointment[] = await res.json()
+        if (!cancelled) {
+          setAppointments(data.sort((a, b) => a.starts_at.localeCompare(b.starts_at)))
+        }
+      } catch {
+        if (!cancelled) setAppointments([])
+      } finally {
+        if (!cancelled) setLoadingAppt(false)
+      }
+    }
+
+    void loadAppointments()
+
+    return () => {
+      cancelled = true
     }
   }, [selectedBarberId, selectedDate])
 
-  useEffect(() => { fetchAppointments() }, [fetchAppointments])
+  async function refreshAppointments() {
+    if (!selectedBarberId) return
+    const res = await fetch(
+      `/api/appointments?barberId=${selectedBarberId}&date=${dateKey(selectedDate)}`
+    )
+    if (!res.ok) throw new Error()
+    const data: Appointment[] = await res.json()
+    setAppointments(data.sort((a, b) => a.starts_at.localeCompare(b.starts_at)))
+  }
 
   // ── Patch status ──────────────────────────────────────────────────────────
 
@@ -111,7 +129,7 @@ export default function AgendaPage() {
       })
       if (!res.ok) throw new Error()
       setActiveAppt(null)
-      await fetchAppointments()
+      await refreshAppointments()
     } catch {
       // no-op — user stays in drawer
     } finally {
@@ -234,7 +252,7 @@ export default function AgendaPage() {
           {shop && (
             <p className="font-['DM_Sans'] text-[14px] text-[#555555] text-center">
               Comparte tu{' '}
-              <a href="/dashboard/ajustes" className="text-[#1A3A6B] underline">link de reservas</a>{' '}
+              <Link href="/dashboard/ajustes" className="text-[#1A3A6B] underline">link de reservas</Link>{' '}
               y empieza a recibir citas.
             </p>
           )}

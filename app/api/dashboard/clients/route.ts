@@ -94,7 +94,8 @@ export async function GET() {
       const metadata = (client?.user_metadata ?? {}) as ClientMetadata
       const fullName = metadataString(metadata, ['full_name', 'name']) || client?.email || 'Cliente'
       const email = client?.email ?? ''
-      const phone = client?.phone ?? metadataString(metadata, ['phone', 'phone_number', 'mobile'])
+      const metadataPhone = metadataString(metadata, ['phone', 'phone_number', 'mobile'])
+      const phone = metadataPhone || client?.phone || ''
 
       return {
         id: clientId,
