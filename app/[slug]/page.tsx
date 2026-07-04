@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { hasRequiredClientProfile } from '@/lib/auth/client-profile'
+import { getClientProfile, hasRequiredProfile } from '@/lib/auth/profiles'
 import PublicNav from '@/components/nav/PublicNav'
 import ColorStripe from '@/components/brand/ColorStripe'
 import BookingButton from './BookingButton'
@@ -38,7 +38,8 @@ export default async function ShopPage({ params }: PageProps) {
   const { data: { user } } = await supabase.auth.getUser()
   const next = `/${slug}`
   if (!user) redirect(`/auth/client?next=${encodeURIComponent(next)}`)
-  if (!hasRequiredClientProfile(user)) {
+  const profile = await getClientProfile(user)
+  if (!hasRequiredProfile(profile)) {
     redirect(`/auth/client/profile?next=${encodeURIComponent(next)}`)
   }
 

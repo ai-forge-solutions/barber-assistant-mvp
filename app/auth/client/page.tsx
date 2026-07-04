@@ -161,6 +161,16 @@ function ClientAuthContent() {
 
         if (signUpError) throw signUpError
         if (data.session) {
+          await fetch('/api/client-profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fullName: cleanFullName,
+              phone: cleanPhone,
+              phoneCountryCode: selectedCountry.code,
+              phoneDialCode: selectedCountry.dialCode,
+            }),
+          })
           router.replace(next)
           return
         }

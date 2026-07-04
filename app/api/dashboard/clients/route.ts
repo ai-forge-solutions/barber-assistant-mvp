@@ -16,6 +16,12 @@ type AppointmentRow = {
   status: string
 }
 
+type ProfileRow = {
+  id: string
+  full_name: string | null
+  phone: string | null
+}
+
 type ClientSummary = {
   id: string
   fullName: string
@@ -87,15 +93,33 @@ export async function GET() {
     }
   }
 
+  const clientIds = Array.from(byClient.keys())
+  const { data: profileRows, error: profileError } = await supabaseAdmin
+    .from('profiles')
+    .select('id, full_name, phone')
+    .in('id', clientIds)
+
+  if (profileError && profileError.code !== 'PGRST205') {
+    return Response.json({ error: profileError.message }, { status: 500 })
+  }
+
+  const profilesById = new Map(
+    ((profileRows ?? []) as ProfileRow[]).map((profile) => [profile.id, profile])
+  )
+
   const clients = await Promise.all(
     Array.from(byClient.entries()).map(async ([clientId, stats]): Promise<ClientSummary> => {
       const { data } = await supabaseAdmin.auth.admin.getUserById(clientId)
       const client = data?.user
       const metadata = (client?.user_metadata ?? {}) as ClientMetadata
-      const fullName = metadataString(metadata, ['full_name', 'name']) || client?.email || 'Cliente'
+      const profile = profilesById.get(clientId)
+      const fullName = profile?.full_name?.trim()
+        || metadataString(metadata, ['full_name', 'name'])
+        || client?.email
+        || 'Cliente'
       const email = client?.email ?? ''
       const metadataPhone = metadataString(metadata, ['phone', 'phone_number', 'mobile'])
-      const phone = metadataPhone || client?.phone || ''
+      const phone = profile?.phone?.trim() || metadataPhone || client?.phone || ''
 
       return {
         id: clientId,

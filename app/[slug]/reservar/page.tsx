@@ -6,7 +6,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isBefore, isToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase/client'
-import { hasRequiredClientProfile } from '@/lib/auth/client-profile'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -99,7 +98,9 @@ export default function ReservarPage() {
         router.replace(`/auth/client?next=${encodeURIComponent(`/${slug}/reservar`)}`)
         return
       }
-      if (!hasRequiredClientProfile(user)) {
+      const profileRes = await fetch('/api/client-profile')
+      const profileData = profileRes.ok ? await profileRes.json() : { complete: false }
+      if (!profileData.complete) {
         router.replace(`/auth/client/profile?next=${encodeURIComponent(`/${slug}/reservar`)}`)
         return
       }

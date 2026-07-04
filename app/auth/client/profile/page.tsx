@@ -6,7 +6,7 @@ import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
 import { createClient } from '@/lib/supabase/client'
 import { COUNTRY_DIAL_CODES, DEFAULT_COUNTRY_DIAL_CODE } from '@/lib/auth/countries'
-import { clientFullName, clientPhone, hasRequiredClientProfile, normalizePhone } from '@/lib/auth/client-profile'
+import { clientFullName, clientPhone, normalizePhone } from '@/lib/auth/client-profile'
 
 function safeNext(value: string | null) {
   if (!value || !value.startsWith('/')) return '/cuenta/citas'
@@ -40,16 +40,26 @@ function ClientProfileContent() {
         return
       }
 
-      if (hasRequiredClientProfile(user)) {
+      const profileRes = await fetch('/api/client-profile')
+      const profileData = profileRes.ok ? await profileRes.json() : { complete: false, profile: null }
+      if (profileData.complete) {
         router.replace(next)
         return
       }
 
+      const profile = profileData.profile
       const metadata = user.user_metadata ?? {}
-      const country = findCountryByDialCode(typeof metadata.phone_dial_code === 'string' ? metadata.phone_dial_code : undefined)
-      setFullName(clientFullName(user) || '')
+      const dialCode = typeof profile?.phone_dial_code === 'string'
+        ? profile.phone_dial_code
+        : typeof metadata.phone_dial_code === 'string'
+          ? metadata.phone_dial_code
+          : undefined
+      const country = findCountryByDialCode(dialCode)
+      const profileFullName = typeof profile?.full_name === 'string' ? profile.full_name : ''
+      const profilePhone = typeof profile?.phone === 'string' ? profile.phone : ''
+      setFullName(profileFullName || clientFullName(user) || '')
       setCountryCode(country.code)
-      setPhone(clientPhone(user).replace(country.dialCode, ''))
+      setPhone((profilePhone || clientPhone(user)).replace(country.dialCode, ''))
       setLoading(false)
     }
 
@@ -70,15 +80,17 @@ function ClientProfileContent() {
 
     setSaving(true)
     try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          full_name: cleanFullName,
+      const res = await fetch('/api/client-profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: cleanFullName,
           phone: cleanPhone,
-          phone_country_code: selectedCountry.code,
-          phone_dial_code: selectedCountry.dialCode,
-        },
+          phoneCountryCode: selectedCountry.code,
+          phoneDialCode: selectedCountry.dialCode,
+        }),
       })
-      if (updateError) throw updateError
+      if (!res.ok) throw new Error()
       router.replace(next)
     } catch {
       setError('No hemos podido guardar tus datos. Inténtalo de nuevo.')
