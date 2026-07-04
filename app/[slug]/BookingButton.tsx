@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { hasRequiredClientProfile } from '@/lib/auth/client-profile'
 
 export default function BookingButton({ slug }: { slug: string }) {
   const router = useRouter()
@@ -16,7 +15,9 @@ export default function BookingButton({ slug }: { slug: string }) {
       return
     }
 
-    if (!hasRequiredClientProfile(user)) {
+    const customerRes = await fetch('/api/customer-profile')
+    const customerData = customerRes.ok ? await customerRes.json() : { complete: false }
+    if (!customerData.complete) {
       router.push(`/auth/client/profile?next=${encodeURIComponent(next)}`)
       return
     }

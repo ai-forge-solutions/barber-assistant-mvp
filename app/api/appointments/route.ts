@@ -6,6 +6,7 @@ import { signCancelToken } from '@/lib/utils/jwt'
 import { Resend } from 'resend'
 import { confirmationEmailHtml } from '@/lib/emails/confirmation'
 import { newAppointmentEmailHtml } from '@/lib/emails/new-appointment'
+import { getCustomer } from '@/lib/auth/customers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -207,7 +208,8 @@ async function triggerEmails(
   const barberUser = barberUserResult.data?.user
 
   const clientEmail = clientUser.email
-  const clientName = clientUser.user_metadata?.full_name ?? clientUser.email ?? 'Cliente'
+  const customer = await getCustomer(clientUser)
+  const clientName = customer?.full_name || clientUser.user_metadata?.full_name || clientUser.email || 'Cliente'
   const barberName = barberUser?.user_metadata?.full_name ?? barberUser?.email ?? 'Barbero'
 
   const cancelToken = await signCancelToken(appointment.id)

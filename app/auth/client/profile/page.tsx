@@ -6,7 +6,7 @@ import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
 import { createClient } from '@/lib/supabase/client'
 import { COUNTRY_DIAL_CODES, DEFAULT_COUNTRY_DIAL_CODE } from '@/lib/auth/countries'
-import { clientFullName, clientPhone, hasRequiredClientProfile, normalizePhone } from '@/lib/auth/client-profile'
+import { clientFullName, clientPhone, normalizePhone } from '@/lib/auth/client-profile'
 
 function safeNext(value: string | null) {
   if (!value || !value.startsWith('/')) return '/cuenta/citas'
@@ -17,7 +17,7 @@ function findCountryByDialCode(dialCode?: string) {
   return COUNTRY_DIAL_CODES.find((country) => country.dialCode === dialCode) ?? DEFAULT_COUNTRY_DIAL_CODE
 }
 
-function ClientProfileContent() {
+function CustomerContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -40,16 +40,26 @@ function ClientProfileContent() {
         return
       }
 
-      if (hasRequiredClientProfile(user)) {
+      const customerRes = await fetch('/api/customer-profile')
+      const customerData = customerRes.ok ? await customerRes.json() : { complete: false, customer: null }
+      if (customerData.complete) {
         router.replace(next)
         return
       }
 
+      const customer = customerData.customer
       const metadata = user.user_metadata ?? {}
-      const country = findCountryByDialCode(typeof metadata.phone_dial_code === 'string' ? metadata.phone_dial_code : undefined)
-      setFullName(clientFullName(user) || '')
+      const dialCode = typeof customer?.phone_dial_code === 'string'
+        ? customer.phone_dial_code
+        : typeof metadata.phone_dial_code === 'string'
+          ? metadata.phone_dial_code
+          : undefined
+      const country = findCountryByDialCode(dialCode)
+      const customerFullName = typeof customer?.full_name === 'string' ? customer.full_name : ''
+      const customerPhone = typeof customer?.phone === 'string' ? customer.phone : ''
+      setFullName(customerFullName || clientFullName(user) || '')
       setCountryCode(country.code)
-      setPhone(clientPhone(user).replace(country.dialCode, ''))
+      setPhone((customerPhone || clientPhone(user)).replace(country.dialCode, ''))
       setLoading(false)
     }
 
@@ -70,15 +80,17 @@ function ClientProfileContent() {
 
     setSaving(true)
     try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          full_name: cleanFullName,
+      const res = await fetch('/api/customer-profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: cleanFullName,
           phone: cleanPhone,
-          phone_country_code: selectedCountry.code,
-          phone_dial_code: selectedCountry.dialCode,
-        },
+          phoneCountryCode: selectedCountry.code,
+          phoneDialCode: selectedCountry.dialCode,
+        }),
       })
-      if (updateError) throw updateError
+      if (!res.ok) throw new Error()
       router.replace(next)
     } catch {
       setError('No hemos podido guardar tus datos. Inténtalo de nuevo.')
@@ -163,14 +175,14 @@ function ClientProfileContent() {
   )
 }
 
-export default function ClientProfilePage() {
+export default function CustomerPage() {
   return (
     <Suspense fallback={(
       <div className="min-h-screen flex items-center justify-center bg-white">
         <span className="font-['DM_Sans'] text-[14px] text-[#999999]">Cargando…</span>
       </div>
     )}>
-      <ClientProfileContent />
+      <CustomerContent />
     </Suspense>
   )
 }
