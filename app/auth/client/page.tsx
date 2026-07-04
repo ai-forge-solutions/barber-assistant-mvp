@@ -27,22 +27,31 @@ function ClientAuthContent() {
   const [password, setPassword] = useState('')
   const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_DIAL_CODE.code)
   const [phone, setPhone] = useState('')
+  const [verificationCode, setVerificationCode] = useState('')
+  const [awaitingEmailCode, setAwaitingEmailCode] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
   const selectedCountry = COUNTRY_DIAL_CODES.find((country) => country.code === countryCode) ?? DEFAULT_COUNTRY_DIAL_CODE
 
+  function resetMode(nextMode: Mode) {
+    setMode(nextMode)
+    setError('')
+    setNotice('')
+    setVerificationCode('')
+    setAwaitingEmailCode(false)
+  }
+
   async function continueWithGoogle() {
     setLoading(true)
     setError('')
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
-    const profileNext = `/auth/client/profile?next=${encodeURIComponent(next)}`
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(profileNext)}`,
+        redirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     })
 
@@ -50,6 +59,29 @@ function ClientAuthContent() {
       setError('No hemos podido iniciar sesión con Google. Inténtalo de nuevo.')
       setLoading(false)
     }
+  }
+
+  async function verifyEmailCode(cleanEmail: string, cleanPassword: string) {
+    const cleanCode = verificationCode.trim()
+    if (!cleanCode) {
+      setError('Introduce el código que te hemos enviado por email.')
+      return
+    }
+
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      email: cleanEmail,
+      token: cleanCode,
+      type: 'signup',
+    })
+
+    if (verifyError) throw verifyError
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      await supabase.auth.signInWithPassword({ email: cleanEmail, password: cleanPassword })
+    }
+
+    router.replace(next)
   }
 
   async function submitEmailAuth(event: React.FormEvent<HTMLFormElement>) {
@@ -67,26 +99,35 @@ function ClientAuthContent() {
       return
     }
 
-    if (mode === 'signup' && (!cleanFullName || !cleanPhone)) {
-      setError('Indica tu nombre completo y móvil para crear la cuenta.')
+    if (cleanPassword.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.')
       return
     }
 
-    if (cleanPassword.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres.')
+    if (mode === 'signup' && awaitingEmailCode) {
+      setLoading(true)
+      try {
+        await verifyEmailCode(cleanEmail, cleanPassword)
+      } catch {
+        setError('El código no es válido o ha caducado. Revisa el email e inténtalo de nuevo.')
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
+
+    if (mode === 'signup' && (!cleanFullName || !cleanPhone)) {
+      setError('Indica tu nombre completo y móvil para crear la cuenta.')
       return
     }
 
     setLoading(true)
     try {
       if (mode === 'signup') {
-        const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
-        const profileNext = `/auth/client/profile?next=${encodeURIComponent(next)}`
         const { data, error: signUpError } = await supabase.auth.signUp({
           email: cleanEmail,
           password: cleanPassword,
           options: {
-            emailRedirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(profileNext)}`,
             data: {
               full_name: cleanFullName,
               phone: cleanPhone,
@@ -98,11 +139,12 @@ function ClientAuthContent() {
 
         if (signUpError) throw signUpError
         if (data.session) {
-          router.replace(`/auth/client/profile?next=${encodeURIComponent(next)}`)
+          router.replace(next)
           return
         }
 
-        setNotice('Te hemos enviado un correo para verificar la cuenta. Ábrelo para terminar el registro.')
+        setAwaitingEmailCode(true)
+        setNotice('Te hemos enviado un código por email. Introdúcelo aquí para terminar el registro.')
         return
       }
 
@@ -111,7 +153,7 @@ function ClientAuthContent() {
         password: cleanPassword,
       })
       if (loginError) throw loginError
-      router.replace(`/auth/client/profile?next=${encodeURIComponent(next)}`)
+      router.replace(next)
     } catch {
       setError(mode === 'signup'
         ? 'No hemos podido crear la cuenta. Revisa los datos e inténtalo de nuevo.'
@@ -131,10 +173,10 @@ function ClientAuthContent() {
             Cuenta de cliente
           </p>
           <h1 className="font-['Oswald'] font-bold text-[30px] text-[#111111] uppercase mt-1">
-            Reserva sin líos
+            Entra para reservar
           </h1>
           <p className="font-['DM_Sans'] text-[14px] text-[#555555] mt-2">
-            Crea tu cuenta para gestionar tus citas y recibir confirmaciones.
+            Primero crea cuenta o entra. Después verás la barbería y podrás reservar.
           </p>
         </div>
 
@@ -143,7 +185,7 @@ function ClientAuthContent() {
           disabled={loading}
           className="w-full bg-transparent text-[#111111] border-2 border-[#111111] font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#F5F5F5] active:scale-[0.98] transition-colors duration-150 min-h-[44px] disabled:opacity-40"
         >
-          Continuar con Google
+          {mode === 'signup' ? 'Crear cuenta con Google' : 'Entrar con Google'}
         </button>
 
         <div className="flex items-center gap-3 my-6">
@@ -156,16 +198,16 @@ function ClientAuthContent() {
 
         <div className="grid grid-cols-2 gap-2 mb-4">
           <button
-            onClick={() => { setMode('signup'); setError(''); setNotice('') }}
+            onClick={() => resetMode('signup')}
             className={`font-['Oswald'] font-semibold text-[12px] tracking-[0.08em] uppercase px-4 py-3 rounded-sm border min-h-[44px] ${mode === 'signup' ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E5E5E5]'}`}
           >
-            Crear cuenta
+            Sign up
           </button>
           <button
-            onClick={() => { setMode('login'); setError(''); setNotice('') }}
+            onClick={() => resetMode('login')}
             className={`font-['Oswald'] font-semibold text-[12px] tracking-[0.08em] uppercase px-4 py-3 rounded-sm border min-h-[44px] ${mode === 'login' ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E5E5E5]'}`}
           >
-            Entrar
+            Login
           </button>
         </div>
 
@@ -178,8 +220,9 @@ function ClientAuthContent() {
               <input
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
+                disabled={awaitingEmailCode}
                 placeholder="Ej. Miguel García"
-                className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px]"
+                className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px] disabled:bg-[#F5F5F5]"
               />
             </div>
           )}
@@ -192,8 +235,9 @@ function ClientAuthContent() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              disabled={awaitingEmailCode}
               placeholder="tu@email.com"
-              className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px]"
+              className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px] disabled:bg-[#F5F5F5]"
             />
           </div>
 
@@ -206,7 +250,8 @@ function ClientAuthContent() {
                 <select
                   value={countryCode}
                   onChange={(event) => setCountryCode(event.target.value)}
-                  className="border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-3 py-3 font-['DM_Sans'] text-[14px] text-[#111111] outline-none bg-white min-h-[44px]"
+                  disabled={awaitingEmailCode}
+                  className="border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-3 py-3 font-['DM_Sans'] text-[14px] text-[#111111] outline-none bg-white min-h-[44px] disabled:bg-[#F5F5F5]"
                 >
                   {COUNTRY_DIAL_CODES.map((country) => (
                     <option key={country.code} value={country.code}>{country.dialCode} {country.code}</option>
@@ -216,8 +261,9 @@ function ClientAuthContent() {
                   type="tel"
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
+                  disabled={awaitingEmailCode}
                   placeholder="600 000 000"
-                  className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px]"
+                  className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px] disabled:bg-[#F5F5F5]"
                 />
               </div>
             </div>
@@ -231,10 +277,26 @@ function ClientAuthContent() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              disabled={awaitingEmailCode}
               placeholder="Mínimo 6 caracteres"
-              className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px]"
+              className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px] disabled:bg-[#F5F5F5]"
             />
           </div>
+
+          {mode === 'signup' && awaitingEmailCode && (
+            <div>
+              <label className="block font-['Oswald'] font-semibold text-[11px] tracking-[0.08em] uppercase text-[#111111] mb-1.5">
+                Código de confirmación
+              </label>
+              <input
+                inputMode="numeric"
+                value={verificationCode}
+                onChange={(event) => setVerificationCode(event.target.value)}
+                placeholder="Código del email"
+                className="w-full border border-[#E5E5E5] focus:border-[#111111] rounded-sm px-4 py-3 font-['DM_Sans'] text-[14px] text-[#111111] placeholder:text-[#999999] outline-none bg-white min-h-[44px]"
+              />
+            </div>
+          )}
 
           {error && <p className="font-['DM_Sans'] text-[13px] text-[#C8102E]">{error}</p>}
           {notice && <p className="font-['DM_Sans'] text-[13px] text-[#1A3A6B] border border-[#1A3A6B] rounded-sm px-4 py-3">{notice}</p>}
@@ -243,7 +305,7 @@ function ClientAuthContent() {
             disabled={loading}
             className="w-full bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#A50D24] active:scale-[0.98] transition-colors duration-150 min-h-[44px] disabled:opacity-40"
           >
-            {loading ? 'Procesando…' : mode === 'signup' ? 'Crear cuenta' : 'Entrar'}
+            {loading ? 'Procesando…' : mode === 'signup' && awaitingEmailCode ? 'Confirmar código' : mode === 'signup' ? 'Crear cuenta' : 'Entrar'}
           </button>
         </form>
       </main>
