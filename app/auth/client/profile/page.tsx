@@ -7,6 +7,7 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import { createClient } from '@/lib/supabase/client'
 import { COUNTRY_DIAL_CODES, DEFAULT_COUNTRY_DIAL_CODE } from '@/lib/auth/countries'
 import { clientFullName, clientPhone, normalizePhone } from '@/lib/auth/client-profile'
+import DataProtectionNotice from '@/components/legal/DataProtectionNotice'
 
 function safeNext(value: string | null) {
   if (!value || !value.startsWith('/')) return '/cuenta/citas'
@@ -26,6 +27,7 @@ function CustomerContent() {
   const [fullName, setFullName] = useState('')
   const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_DIAL_CODE.code)
   const [phone, setPhone] = useState('')
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -75,6 +77,11 @@ function CustomerContent() {
 
     if (!cleanFullName || !cleanPhone) {
       setError('Indica tu nombre completo y móvil para continuar.')
+      return
+    }
+
+    if (!privacyAccepted) {
+      setError('Acepta la información de protección de datos para continuar.')
       return
     }
 
@@ -160,6 +167,12 @@ function CustomerContent() {
               />
             </div>
           </div>
+
+          <DataProtectionNotice
+            required
+            accepted={privacyAccepted}
+            onAcceptedChange={setPrivacyAccepted}
+          />
 
           {error && <p className="font-['DM_Sans'] text-[13px] text-[#C8102E]">{error}</p>}
 
