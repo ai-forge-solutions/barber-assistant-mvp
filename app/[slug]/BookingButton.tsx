@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { hasRequiredClientProfile } from '@/lib/auth/client-profile'
 
 export default function BookingButton({ slug }: { slug: string }) {
   const router = useRouter()
@@ -9,17 +10,18 @@ export default function BookingButton({ slug }: { slug: string }) {
 
   async function handleClick() {
     const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      router.push(`/${slug}/reservar`)
-    } else {
-      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin || 'http://localhost:3000').replace(/\/$/, '')
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${appUrl}/auth/callback?next=/${slug}/reservar`,
-        },
-      })
+    const next = `/${slug}/reservar`
+    if (!user) {
+      router.push(`/auth/client?next=${encodeURIComponent(next)}`)
+      return
     }
+
+    if (!hasRequiredClientProfile(user)) {
+      router.push(`/auth/client/profile?next=${encodeURIComponent(next)}`)
+      return
+    }
+
+    router.push(next)
   }
 
   return (
