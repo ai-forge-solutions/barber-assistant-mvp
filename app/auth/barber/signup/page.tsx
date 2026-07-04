@@ -1,10 +1,10 @@
 import { Suspense } from 'react'
 import BarberAuthForm from '@/components/auth/BarberAuthForm'
 
-export default function BarberLoginPage() {
+export default function BarberSignupPage() {
   return (
     <Suspense fallback={null}>
-      <BarberAuthForm mode="login" />
+      <BarberAuthForm mode="signup" />
     </Suspense>
   )
 }
