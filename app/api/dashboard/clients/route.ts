@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { getDashboardAccess } from '@/lib/dashboard/access'
 
 type ClientMetadata = {
   full_name?: string
@@ -39,30 +40,26 @@ function metadataString(metadata: ClientMetadata, keys: Array<keyof ClientMetada
   return ''
 }
 
+async function getShopBarberIds(shopId: string) {
+  const { data, error } = await supabaseAdmin
+    .from('barbers')
+    .select('id')
+    .eq('shop_id', shopId)
+
+  if (error) throw error
+  return (data ?? []).map((barber: { id: string }) => barber.id)
+}
+
 export async function GET() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: shop, error: shopError } = await supabaseAdmin
-    .from('shops')
-    .select('id')
-    .eq('owner_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+  const { shop, barber } = await getDashboardAccess(user.id)
 
-  if (shopError) return Response.json({ error: shopError.message }, { status: 500 })
   if (!shop) return Response.json([])
 
-  const { data: barbers, error: barbersError } = await supabaseAdmin
-    .from('barbers')
-    .select('id')
-    .eq('shop_id', shop.id)
-
-  if (barbersError) return Response.json({ error: barbersError.message }, { status: 500 })
-
-  const barberIds = (barbers ?? []).map((barber: { id: string }) => barber.id)
+  const barberIds = barber ? [barber.id] : await getShopBarberIds(shop.id)
   if (barberIds.length === 0) return Response.json([])
 
   const { data: appointments, error: appointmentsError } = await supabaseAdmin

@@ -74,16 +74,17 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: 'Failed to fetch appointments' }, { status: 500 })
   }
 
-  // 4. Fetch blocked slots that day (optional; ignore if the table is unavailable)
-  let blockedSlots: Array<{ start_time: string; end_time: string }> = []
+  // 4. Fetch blocked ranges that overlap this day (vacations, holidays and manual blocks)
+  let blockedSlots: Array<{ starts_at: string; ends_at: string }> = []
   const { data: blockedRows, error: blockedError } = await supabaseAdmin
     .from('blocked_slots')
-    .select('start_time, end_time')
+    .select('starts_at, ends_at')
     .eq('barber_id', barberId)
-    .eq('date', date)
+    .lt('starts_at', dayEnd)
+    .gt('ends_at', dayStart)
 
   if (!blockedError && blockedRows) {
-    blockedSlots = blockedRows as Array<{ start_time: string; end_time: string }>
+    blockedSlots = blockedRows as Array<{ starts_at: string; ends_at: string }>
   }
 
   // 5. Build occupied ranges (all in minutes from midnight)
@@ -97,10 +98,16 @@ export async function GET(request: NextRequest) {
   }
 
   for (const slot of blockedSlots ?? []) {
-    occupied.push({
-      start: toMinutes(slot.start_time),
-      end: toMinutes(slot.end_time),
-    })
+    const slotStart = new Date(slot.starts_at)
+    const slotEnd = new Date(slot.ends_at)
+    const currentDayStart = new Date(`${date}T00:00:00`)
+
+    const start = Math.max(0, Math.floor((slotStart.getTime() - currentDayStart.getTime()) / 60000))
+    const end = Math.min(24 * 60, Math.ceil((slotEnd.getTime() - currentDayStart.getTime()) / 60000))
+
+    if (end > 0 && start < 24 * 60 && end > start) {
+      occupied.push({ start, end })
+    }
   }
 
   // 6. Generate available slots

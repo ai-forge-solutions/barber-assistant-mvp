@@ -122,11 +122,22 @@ export default function OnboardingPage() {
   const [barberName, setBarberName] = useState('')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    async function init() {
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.replace('/'); return }
+
+      const shopRes = await fetch('/api/dashboard/shop')
+      const shop = shopRes.ok ? await shopRes.json() : null
+      if (shop?.id) {
+        router.replace('/dashboard/agenda')
+        return
+      }
+
       setUserId(user.id)
       setUserEmail(user.email ?? '')
-    })
+    }
+
+    void init()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Step handlers ──────────────────────────────────────────────────────────
