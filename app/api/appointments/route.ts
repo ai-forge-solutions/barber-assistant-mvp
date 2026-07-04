@@ -54,6 +54,22 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'This slot is no longer available' }, { status: 409 })
   }
 
+  // Verify the requested slot does not overlap a manual block, vacation or holiday
+  const { data: blockedConflicts, error: blockedConflictError } = await supabaseAdmin
+    .from('blocked_slots')
+    .select('id')
+    .eq('barber_id', barberId)
+    .lt('starts_at', endsAt)
+    .gt('ends_at', startsAt)
+
+  if (blockedConflictError) {
+    return Response.json({ error: 'Failed to verify blocked slots' }, { status: 500 })
+  }
+
+  if (blockedConflicts && blockedConflicts.length > 0) {
+    return Response.json({ error: 'This day is blocked by the barber' }, { status: 409 })
+  }
+
   // Insert appointment
   const { data: appointment, error: insertError } = await supabaseAdmin
     .from('appointments')
