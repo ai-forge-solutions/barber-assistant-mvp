@@ -17,7 +17,7 @@ function findCountryByDialCode(dialCode?: string) {
   return COUNTRY_DIAL_CODES.find((country) => country.dialCode === dialCode) ?? DEFAULT_COUNTRY_DIAL_CODE
 }
 
-function ClientProfileContent() {
+function CustomerContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -40,26 +40,26 @@ function ClientProfileContent() {
         return
       }
 
-      const profileRes = await fetch('/api/client-profile')
-      const profileData = profileRes.ok ? await profileRes.json() : { complete: false, profile: null }
-      if (profileData.complete) {
+      const customerRes = await fetch('/api/customer-profile')
+      const customerData = customerRes.ok ? await customerRes.json() : { complete: false, customer: null }
+      if (customerData.complete) {
         router.replace(next)
         return
       }
 
-      const profile = profileData.profile
+      const customer = customerData.customer
       const metadata = user.user_metadata ?? {}
-      const dialCode = typeof profile?.phone_dial_code === 'string'
-        ? profile.phone_dial_code
+      const dialCode = typeof customer?.phone_dial_code === 'string'
+        ? customer.phone_dial_code
         : typeof metadata.phone_dial_code === 'string'
           ? metadata.phone_dial_code
           : undefined
       const country = findCountryByDialCode(dialCode)
-      const profileFullName = typeof profile?.full_name === 'string' ? profile.full_name : ''
-      const profilePhone = typeof profile?.phone === 'string' ? profile.phone : ''
-      setFullName(profileFullName || clientFullName(user) || '')
+      const customerFullName = typeof customer?.full_name === 'string' ? customer.full_name : ''
+      const customerPhone = typeof customer?.phone === 'string' ? customer.phone : ''
+      setFullName(customerFullName || clientFullName(user) || '')
       setCountryCode(country.code)
-      setPhone((profilePhone || clientPhone(user)).replace(country.dialCode, ''))
+      setPhone((customerPhone || clientPhone(user)).replace(country.dialCode, ''))
       setLoading(false)
     }
 
@@ -80,7 +80,7 @@ function ClientProfileContent() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/client-profile', {
+      const res = await fetch('/api/customer-profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -175,14 +175,14 @@ function ClientProfileContent() {
   )
 }
 
-export default function ClientProfilePage() {
+export default function CustomerPage() {
   return (
     <Suspense fallback={(
       <div className="min-h-screen flex items-center justify-center bg-white">
         <span className="font-['DM_Sans'] text-[14px] text-[#999999]">Cargando…</span>
       </div>
     )}>
-      <ClientProfileContent />
+      <CustomerContent />
     </Suspense>
   )
 }

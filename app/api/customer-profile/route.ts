@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getClientProfile, hasRequiredProfile, upsertClientProfile } from '@/lib/auth/profiles'
+import { getCustomer, hasRequiredCustomer, upsertCustomer } from '@/lib/auth/customers'
 import { normalizePhone } from '@/lib/auth/client-profile'
 
 export async function GET() {
@@ -7,8 +7,8 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const profile = await getClientProfile(user)
-  return Response.json({ profile, complete: hasRequiredProfile(profile) })
+  const customer = await getCustomer(user)
+  return Response.json({ customer, complete: hasRequiredCustomer(customer) })
 }
 
 export async function PUT(request: Request) {
@@ -27,7 +27,7 @@ export async function PUT(request: Request) {
     return Response.json({ error: 'fullName and phone are required' }, { status: 400 })
   }
 
-  const profile = await upsertClientProfile({
+  const customer = await upsertCustomer({
     id: user.id,
     full_name: fullName,
     phone,
@@ -44,5 +44,5 @@ export async function PUT(request: Request) {
     },
   })
 
-  return Response.json({ profile, complete: true })
+  return Response.json({ customer, complete: true })
 }

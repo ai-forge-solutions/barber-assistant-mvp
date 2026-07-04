@@ -1,6 +1,6 @@
 import type { User } from '@supabase/supabase-js'
 
-export type ClientProfileMetadata = {
+export type CustomerMetadata = {
   full_name?: string
   name?: string
   phone?: string
@@ -19,12 +19,12 @@ export function normalizePhone(dialCode: string, phone: string) {
 }
 
 export function clientFullName(user: User | null) {
-  const metadata = (user?.user_metadata ?? {}) as ClientProfileMetadata
+  const metadata = (user?.user_metadata ?? {}) as CustomerMetadata
   return metadata.full_name?.trim() || metadata.name?.trim() || ''
 }
 
 export function clientPhone(user: User | null) {
-  const metadata = (user?.user_metadata ?? {}) as ClientProfileMetadata
+  const metadata = (user?.user_metadata ?? {}) as CustomerMetadata
   return metadata.phone?.trim() || metadata.mobile?.trim() || metadata.phone_number?.trim() || ''
 }
 

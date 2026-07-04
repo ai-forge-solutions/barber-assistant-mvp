@@ -98,9 +98,9 @@ export default function ReservarPage() {
         router.replace(`/auth/client?next=${encodeURIComponent(`/${slug}/reservar`)}`)
         return
       }
-      const profileRes = await fetch('/api/client-profile')
-      const profileData = profileRes.ok ? await profileRes.json() : { complete: false }
-      if (!profileData.complete) {
+      const customerRes = await fetch('/api/customer-profile')
+      const customerData = customerRes.ok ? await customerRes.json() : { complete: false }
+      if (!customerData.complete) {
         router.replace(`/auth/client/profile?next=${encodeURIComponent(`/${slug}/reservar`)}`)
         return
       }

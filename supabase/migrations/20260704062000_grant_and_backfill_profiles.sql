@@ -32,6 +32,18 @@ where
     nullif(users.raw_user_meta_data->>'mobile', ''),
     nullif(users.raw_user_meta_data->>'phone_number', '')
   ) is not null
+  and (
+    not exists (
+      select 1
+      from public.barbers barber
+      where barber.user_id = users.id
+    )
+    or exists (
+      select 1
+      from public.appointments appointment
+      where appointment.client_id = users.id
+    )
+  )
 on conflict (id) do update set
   full_name = case
     when public.profiles.full_name = '' then excluded.full_name

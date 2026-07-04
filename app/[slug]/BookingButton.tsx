@@ -15,9 +15,9 @@ export default function BookingButton({ slug }: { slug: string }) {
       return
     }
 
-    const profileRes = await fetch('/api/client-profile')
-    const profileData = profileRes.ok ? await profileRes.json() : { complete: false }
-    if (!profileData.complete) {
+    const customerRes = await fetch('/api/customer-profile')
+    const customerData = customerRes.ok ? await customerRes.json() : { complete: false }
+    if (!customerData.complete) {
       router.push(`/auth/client/profile?next=${encodeURIComponent(next)}`)
       return
     }
