@@ -1,18 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { getDashboardAccess } from '@/lib/dashboard/access'
 
 export async function GET() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: shop } = await supabaseAdmin
-    .from('shops')
-    .select('id')
-    .eq('owner_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+  const { shop } = await getDashboardAccess(user.id)
 
   if (!shop) return Response.json([])
 
