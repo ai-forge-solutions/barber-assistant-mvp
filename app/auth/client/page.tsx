@@ -7,6 +7,7 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import { createClient } from '@/lib/supabase/client'
 import { COUNTRY_DIAL_CODES, DEFAULT_COUNTRY_DIAL_CODE } from '@/lib/auth/countries'
 import { normalizePhone } from '@/lib/auth/client-profile'
+import DataProtectionNotice from '@/components/legal/DataProtectionNotice'
 
 type Mode = 'signup' | 'login'
 
@@ -73,6 +74,7 @@ function ClientAuthContent() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_DIAL_CODE.code)
   const [phone, setPhone] = useState('')
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [emailLinkSent, setEmailLinkSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -87,6 +89,7 @@ function ClientAuthContent() {
     setEmailLinkSent(false)
     setPassword('')
     setConfirmPassword('')
+    setPrivacyAccepted(false)
   }
 
   function callbackUrl() {
@@ -139,6 +142,11 @@ function ClientAuthContent() {
 
     if (mode === 'signup' && (!cleanFullName || !cleanPhone)) {
       setError('Indica tu nombre completo y móvil para crear la cuenta.')
+      return
+    }
+
+    if (mode === 'signup' && !privacyAccepted) {
+      setError('Acepta la información de protección de datos para crear la cuenta.')
       return
     }
 
@@ -303,6 +311,14 @@ function ClientAuthContent() {
                 />
               </div>
             </div>
+          )}
+
+          {mode === 'signup' && (
+            <DataProtectionNotice
+              required
+              accepted={privacyAccepted}
+              onAcceptedChange={setPrivacyAccepted}
+            />
           )}
 
           <PasswordInput
