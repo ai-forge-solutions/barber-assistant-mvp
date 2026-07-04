@@ -6,7 +6,7 @@ import BottomTabBar from './BottomTabBar'
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/')
+  if (!user) redirect('/auth/barber?next=/dashboard')
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
