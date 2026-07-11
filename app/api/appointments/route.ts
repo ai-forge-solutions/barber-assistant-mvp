@@ -1,11 +1,11 @@
 import type { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { toMinutes } from '@/lib/utils/time'
 import { signCancelToken } from '@/lib/utils/jwt'
 import { Resend } from 'resend'
 import { confirmationEmailHtml } from '@/lib/emails/confirmation'
 import { newAppointmentEmailHtml } from '@/lib/emails/new-appointment'
+import { getCustomer } from '@/lib/auth/customers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -52,6 +52,22 @@ export async function POST(request: NextRequest) {
 
   if (conflicts && conflicts.length > 0) {
     return Response.json({ error: 'This slot is no longer available' }, { status: 409 })
+  }
+
+  // Verify the requested slot does not overlap a manual block, vacation or holiday
+  const { data: blockedConflicts, error: blockedConflictError } = await supabaseAdmin
+    .from('blocked_slots')
+    .select('id')
+    .eq('barber_id', barberId)
+    .lt('starts_at', endsAt)
+    .gt('ends_at', startsAt)
+
+  if (blockedConflictError) {
+    return Response.json({ error: 'Failed to verify blocked slots' }, { status: 500 })
+  }
+
+  if (blockedConflicts && blockedConflicts.length > 0) {
+    return Response.json({ error: 'This day is blocked by the barber' }, { status: 409 })
   }
 
   // Insert appointment
@@ -185,7 +201,7 @@ async function triggerEmails(
   const [barberResult, shopResult, clientResult] = await Promise.all([
     supabaseAdmin
       .from('barbers')
-      .select('user_id, notification_email')
+      .select('user_id, display_name, notification_email')
       .eq('id', appointment.barber_id)
       .maybeSingle(),
     supabaseAdmin
@@ -207,8 +223,10 @@ async function triggerEmails(
   const barberUser = barberUserResult.data?.user
 
   const clientEmail = clientUser.email
-  const clientName = clientUser.user_metadata?.full_name ?? clientUser.email ?? 'Cliente'
-  const barberName = barberUser?.user_metadata?.full_name ?? barberUser?.email ?? 'Barbero'
+  const customer = await getCustomer(clientUser)
+  const clientName = customer?.full_name || clientUser.user_metadata?.full_name || clientUser.email || 'Cliente'
+  const clientPhone = customer?.phone || clientUser.user_metadata?.phone || ''
+  const barberName = barber.display_name || barberUser?.user_metadata?.full_name || barberUser?.email || 'Barbero'
 
   const cancelToken = await signCancelToken(appointment.id)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -236,17 +254,22 @@ async function triggerEmails(
     )
   }
 
-  // Notification to barber (if notifications enabled)
-  if (barber.notification_email && barberUser?.email) {
+  // Notification to the corresponding barber (if notifications enabled)
+  const barberEmail = barber.notification_email ? barberUser?.email : null
+  if (barberEmail) {
     emailPromises.push(
       resend.emails.send({
-        from: `Barber Assistant <noreply@${process.env.RESEND_DOMAIN ?? 'resend.dev'}>`,
-        to: barberUser.email,
-        subject: `Nueva cita: ${clientName}`,
+        from: `${shop.name} <noreply@${process.env.RESEND_DOMAIN ?? 'resend.dev'}>`,
+        to: barberEmail,
+        subject: `Nueva cita — ${clientName}`,
         html: newAppointmentEmailHtml({
           barberName,
           clientName,
+          clientEmail: clientEmail ?? '',
+          clientPhone,
+          shopName: shop.name,
           serviceName: service.name,
+          servicePrice: service.price,
           startsAt: appointment.starts_at,
         }),
       })

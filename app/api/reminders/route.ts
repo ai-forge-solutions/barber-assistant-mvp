@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { signCancelToken } from '@/lib/utils/jwt'
 import { Resend } from 'resend'
 import { reminderEmailHtml } from '@/lib/emails/reminder'
+import { getCustomer } from '@/lib/auth/customers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -71,7 +72,8 @@ export async function GET(request: NextRequest) {
 
         if (!shop || !clientUser?.email) return
 
-        const clientName = clientUser.user_metadata?.full_name ?? clientUser.email ?? 'Cliente'
+        const customer = await getCustomer(clientUser)
+        const clientName = customer?.full_name || clientUser.user_metadata?.full_name || clientUser.email || 'Cliente'
         const barberName = barberUser?.user_metadata?.full_name ?? barberUser?.email ?? 'Barbero'
 
         const cancelToken = await signCancelToken(appt.id)

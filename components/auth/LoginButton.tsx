@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface LoginButtonProps {
   next?: string
@@ -8,16 +8,11 @@ interface LoginButtonProps {
   variant?: 'primary' | 'secondary'
 }
 
-export default function LoginButton({ next, label = 'Continuar con Google', variant = 'primary' }: LoginButtonProps) {
-  const supabase = createClient()
+export default function LoginButton({ next = '/dashboard', label = 'Continuar', variant = 'primary' }: LoginButtonProps) {
+  const router = useRouter()
 
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${next ?? '/dashboard'}`,
-      },
-    })
+  const handleLogin = () => {
+    router.push(`/auth/barber?next=${encodeURIComponent(next)}`)
   }
 
   if (variant === 'secondary') {

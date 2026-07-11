@@ -9,16 +9,20 @@ export default function BookingButton({ slug }: { slug: string }) {
 
   async function handleClick() {
     const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      router.push(`/${slug}/reservar`)
-    } else {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/${slug}/reservar`,
-        },
-      })
+    const next = `/${slug}/reservar`
+    if (!user) {
+      router.push(`/auth/client?next=${encodeURIComponent(next)}`)
+      return
     }
+
+    const customerRes = await fetch('/api/customer-profile')
+    const customerData = customerRes.ok ? await customerRes.json() : { complete: false }
+    if (!customerData.complete) {
+      router.push(`/auth/client/profile?next=${encodeURIComponent(next)}`)
+      return
+    }
+
+    router.push(next)
   }
 
   return (

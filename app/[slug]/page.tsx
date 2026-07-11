@@ -1,5 +1,6 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getCustomer, hasRequiredCustomer } from '@/lib/auth/customers'
 import PublicNav from '@/components/nav/PublicNav'
 import ColorStripe from '@/components/brand/ColorStripe'
 import BookingButton from './BookingButton'
@@ -33,6 +34,14 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function ShopPage({ params }: PageProps) {
   const { slug } = await params
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  const next = `/${slug}`
+  if (!user) redirect(`/auth/client?next=${encodeURIComponent(next)}`)
+  const customer = await getCustomer(user)
+  if (!hasRequiredCustomer(customer)) {
+    redirect(`/auth/client/profile?next=${encodeURIComponent(next)}`)
+  }
 
   const { data: shop } = await supabase
     .from('shops')
