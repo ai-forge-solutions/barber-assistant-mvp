@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
+import { authCallbackUrl, rememberAuthNext, safeAuthNext } from '@/lib/auth/redirect'
 import { createClient } from '@/lib/supabase/client'
 
 type AuthMode = 'login' | 'signup'
@@ -14,8 +15,7 @@ type BarberAuthFormProps = {
 }
 
 function safeNext(value: string | null) {
-  if (!value || !value.startsWith('/')) return '/dashboard'
-  return value
+  return safeAuthNext(value, '/dashboard')
 }
 
 function PasswordInput({
@@ -84,13 +84,13 @@ export default function BarberAuthForm({ mode }: BarberAuthFormProps) {
   const [notice, setNotice] = useState('')
 
   function callbackUrl() {
-    const appUrl = window.location.origin.replace(/\/$/, '')
-    return `${appUrl}/auth/callback?next=${encodedNext}`
+    return authCallbackUrl(window.location.origin)
   }
 
   async function continueWithGoogle() {
     setLoading(true)
     setError('')
+    rememberAuthNext(next)
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -136,6 +136,7 @@ export default function BarberAuthForm({ mode }: BarberAuthFormProps) {
     }
 
     setLoading(true)
+    rememberAuthNext(next)
     try {
       if (isSignup) {
         const { data, error: signUpError } = await supabase.auth.signUp({
