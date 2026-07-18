@@ -242,16 +242,16 @@ export default function Home() {
                 className="absolute inset-0 h-full w-full object-cover grayscale"
               />
               <div className="absolute inset-0 bg-[#111111] opacity-70" />
-              <div className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-6 py-12 text-center sm:min-h-[640px] sm:px-10">
+              <div className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-8 py-12 text-center sm:min-h-[640px] sm:px-12">
                 <Logo light size="lg" />
-                <h1 className="mt-14 max-w-[660px] font-['Oswald'] text-[38px] font-bold uppercase leading-[0.95] text-white sm:text-[48px]">
-                  <span className="block whitespace-nowrap">Clientes reservan solos.</span>
-                  <span className="block whitespace-nowrap">Tú cortas tranquilo.</span>
+                <h1 className="mt-14 w-full max-w-[20rem] px-1 font-['Oswald'] text-[32px] font-bold uppercase leading-[0.98] text-white min-[390px]:text-[36px] sm:max-w-[680px] sm:text-[50px]">
+                  <span className="block whitespace-nowrap">Reservan online.</span>
+                  <span className="block whitespace-nowrap">Tú sigues cortando.</span>
                 </h1>
                 <div className="mt-8">
                   <PrimaryCta>Empieza gratis</PrimaryCta>
                 </div>
-                <p className="mt-5 max-w-md font-['DM_Sans'] text-[16px] leading-relaxed text-white sm:text-[17px]">
+                <p className="mt-5 w-full max-w-[19rem] font-['DM_Sans'] text-[15px] leading-relaxed text-white sm:max-w-md sm:text-[17px]">
                   Agenda online para barberías independientes. Primer mes gratis.
                 </p>
               </div>
