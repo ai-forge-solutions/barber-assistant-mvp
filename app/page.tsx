@@ -233,43 +233,39 @@ export default function Home() {
     <div className="min-h-screen bg-[#E5E5E5]">
       <div className="mx-auto max-w-[720px] bg-white">
         <ColorStripe />
-        <header className="px-5 py-5 text-center">
-          <Logo size="lg" />
-        </header>
-
         <main>
-          <section className="border-y border-[#E5E5E5]">
-            <div className="relative min-h-[440px] overflow-hidden bg-[#111111] sm:min-h-[500px]">
+          <section className="border-b border-[#E5E5E5]">
+            <div className="relative min-h-[560px] overflow-hidden bg-[#111111] sm:min-h-[640px]">
               <img
                 src="/landing/barbershop.webp"
                 alt="Barbería clásica en blanco y negro"
                 className="absolute inset-0 h-full w-full object-cover grayscale"
               />
-              <div className="absolute inset-0 bg-[#111111] opacity-50" />
-              <div className="relative z-10 flex min-h-[440px] flex-col justify-end px-6 pb-8 text-center sm:min-h-[500px] sm:px-10 sm:pb-12">
-                <p className="mb-4 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.12em] text-white">Asistente para barbershops</p>
-                <h1 className="font-['Oswald'] text-[42px] font-bold uppercase leading-[0.95] text-white sm:text-[58px]">
-                  Tu barbería,<br />sin libreta ni WhatsApp descontrolado
+              <div className="absolute inset-0 bg-[#111111] opacity-70" />
+              <div className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-6 py-12 text-center sm:min-h-[640px] sm:px-10">
+                <Logo light size="lg" />
+                <h1 className="mt-14 max-w-[660px] font-['Oswald'] text-[38px] font-bold uppercase leading-[0.95] text-white sm:text-[48px]">
+                  <span className="block whitespace-nowrap">Clientes reservan solos.</span>
+                  <span className="block whitespace-nowrap">Tú cortas tranquilo.</span>
                 </h1>
-              </div>
-            </div>
-            <div className="px-6 py-8 text-center sm:px-12">
-              <div className="mx-auto flex max-w-xl flex-col gap-3 font-['DM_Sans'] text-[17px] leading-relaxed text-[#555555]">
-                <p>Trujas gestiona las citas de tu barbería en automático.</p>
-                <p>Tus clientes reservan solos.</p>
-                <p>Tú dejas de perder tiempo contestando mensajes entre corte y corte.</p>
-              </div>
-              <div className="mt-7 flex flex-col items-center gap-4">
-                <PrimaryCta>Empieza gratis</PrimaryCta>
-                <div className="flex flex-col items-center gap-1 font-['DM_Sans'] text-[13px] text-[#999999]">
-                  <span>Sin compromiso.</span>
-                  <span>Tu primer mes es gratis.</span>
+                <div className="mt-8">
+                  <PrimaryCta>Empieza gratis</PrimaryCta>
                 </div>
+                <p className="mt-5 max-w-md font-['DM_Sans'] text-[16px] leading-relaxed text-white sm:text-[17px]">
+                  Agenda online para barberías independientes. Primer mes gratis.
+                </p>
               </div>
             </div>
           </section>
 
           <ColorStripe />
+
+          <section className="px-6 py-12 text-center sm:px-8">
+            <div className="mx-auto flex max-w-xl flex-col gap-3 font-['DM_Sans'] text-[17px] leading-relaxed text-[#555555]">
+              <p>Trujas gestiona tus citas en automático.</p>
+              <p>Tus clientes reservan, reciben recordatorios y tú ves la agenda clara.</p>
+            </div>
+          </section>
 
           <section className="px-6 py-12 sm:px-8">
             <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Sabes que esto te suena</h2>
