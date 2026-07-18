@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
+import { PricingTeaser } from '@/components/pricing/PricingBlocks'
 
 const problems = [
   {
@@ -218,7 +219,7 @@ export default function Home() {
                 <a href="https://wa.me/" className="font-['DM_Sans'] text-[14px] text-[#1A3A6B] underline-offset-4 hover:underline">
                   ¿Prefieres que te lo enseñe? Escríbeme por WhatsApp →
                 </a>
-                <p className="font-['DM_Sans'] text-[12px] text-[#999999]">Sin tarjeta. Sin compromiso. Tu primer mes es gratis.</p>
+                <p className="font-['DM_Sans'] text-[12px] text-[#999999]">Tarjeta al empezar. Si hay oferta inicial, no se cobra hasta que toque.</p>
               </div>
             </div>
           </section>
@@ -287,17 +288,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="bg-[#111111] px-6 py-12 text-center sm:px-10">
-            <p className="mx-auto inline-block border border-[#C8102E] px-4 py-2 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">Oferta de apertura</p>
-            <h2 className="mt-6 font-['Oswald'] text-[32px] font-bold uppercase leading-tight text-white">Solo para las primeras 50 barberías</h2>
-            <p className="mx-auto mt-5 max-w-lg font-['DM_Sans'] text-[16px] leading-relaxed text-white">
-              Tu primer mes, gratis. Y tu precio se queda bloqueado para siempre en <strong>150€/año</strong> — nunca subirá aunque el precio normal cambie más adelante.
-            </p>
-            <div className="mx-auto mt-6 inline-block border border-[#555555] px-5 py-2 font-['DM_Sans'] text-[14px] text-[#E5E5E5]">[ — / 50 plazas disponibles ]</div>
-            <div className="mt-7">
-              <PrimaryCta>Empezar mi mes gratis</PrimaryCta>
-            </div>
-          </section>
+          <PricingTeaser />
 
           <section className="px-6 py-12 sm:px-8">
             <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Barberías que ya dejaron la libreta</h2>
@@ -326,7 +317,7 @@ export default function Home() {
                 <div className="px-3 py-4 text-[#555555]">Apps genéricas</div>
               </div>
               {[
-                ['Precio', '150€/año', '400–500€/año'],
+                ['Precio recomendado', '15€/mes', '400–500€/año'],
                 ['Comisiones por reserva', 'No', 'A veces'],
                 ['Marketplace que te compara', 'No', 'Sí'],
                 ['Pensado para', '1–3 sillas, barrio', 'Cadenas, salones'],
