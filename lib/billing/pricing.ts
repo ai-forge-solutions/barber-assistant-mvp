@@ -1,4 +1,4 @@
-export type PricingPlanKey = 'solo' | 'recommended' | 'premium'
+export type PricingPlanKey = 'recommended' | 'premium'
 export type BillingCadence = 'monthly' | 'annual'
 
 export type PricingPlan = {
@@ -18,27 +18,8 @@ export type PricingPlan = {
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
-    key: 'solo',
-    name: 'Arranque',
-    eyebrow: 'Para probar sin lío',
-    monthlyPrice: 29,
-    annualPrice: 24,
-    monthlyBillingLabel: 'Mes a mes. Primer mes gratis.',
-    annualBillingLabel: '24€/mes con compromiso anual. Primer mes gratis.',
-    monthlyStripePriceEnv: 'STRIPE_PRICE_SOLO_MONTHLY',
-    annualStripePriceEnv: 'STRIPE_PRICE_SOLO_ANNUAL',
-    annualBadge: 'Ahorra 17%',
-    description: 'Para una barbería que quiere ordenar la agenda sin compromiso largo.',
-    features: [
-      'Página de reservas para tu barbería',
-      'Agenda diaria en el móvil',
-      'Clientes, servicios y barberos básicos',
-      'Recordatorios operativos por email',
-    ],
-  },
-  {
     key: 'recommended',
-    name: 'Barbería anual',
+    name: 'Barbería basic',
     eyebrow: 'Recomendado',
     monthlyPrice: 29,
     annualPrice: 15,
@@ -49,7 +30,10 @@ export const PRICING_PLANS: PricingPlan[] = [
     annualBadge: 'Recomendado',
     description: 'El precio pensado para una barbería de barrio: menos que un corte al mes y sin comisiones por reserva.',
     features: [
-      'Todo lo del plan Arranque',
+      'Página de reservas para tu barbería',
+      'Agenda diaria en el móvil',
+      'Clientes, servicios y barberos básicos',
+      'Recordatorios operativos por email',
       'Precio bloqueado durante el primer año',
       'Sin comisión por reserva',
       'Configuración guiada de la barbería',
@@ -69,7 +53,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     annualBadge: 'Ahorra 18%',
     description: 'Para locales con más movimiento que necesitan ayuda extra y varias sillas activas.',
     features: [
-      'Todo lo del plan anual',
+      'Todo lo del plan Basic',
       'Soporte prioritario de configuración',
       'Hasta 6 barberos activos',
       'Revisión mensual de agenda y no-shows',

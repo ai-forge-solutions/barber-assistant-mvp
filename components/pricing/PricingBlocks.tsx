@@ -72,7 +72,7 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
         El primer mes cuesta 0€. Después empieza el cobro del plan elegido.
       </p>
 
-      <div className="mt-6 grid gap-3 lg:grid-cols-3 lg:items-start">
+      <div className="mt-6 grid gap-3 lg:grid-cols-2 lg:items-start">
         {PRICING_PLANS.map((plan) => {
           const recommended = plan.key === RECOMMENDED_PLAN.key
           const open = plan.key === openPlan
@@ -152,7 +152,7 @@ export function PricingTeaser() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Plan recomendado</p>
-            <h3 className="mt-1 font-['Oswald'] text-[24px] font-bold uppercase text-[#111111]">Barbería anual</h3>
+            <h3 className="mt-1 font-['Oswald'] text-[24px] font-bold uppercase text-[#111111]">Barbería basic</h3>
           </div>
           <div className="border border-[#C8102E] px-2 py-1 font-['Oswald'] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">0€ hoy</div>
         </div>
