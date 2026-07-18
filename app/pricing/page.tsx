@@ -3,33 +3,18 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import { PricingCards } from '@/components/pricing/PricingBlocks'
 
-const persuasionNotes = [
-  {
-    title: 'Ancla clara',
-    text: 'El plan de 29€/mes queda como referencia. El anual de 15€/mes se percibe como la decisión lógica, no como el plan barato.',
-  },
-  {
-    title: 'Coste fácil de entender',
-    text: '“Menos que un corte al mes” traduce el precio a una unidad que el barbero conoce todos los días.',
-  },
-  {
-    title: 'Sin sustos',
-    text: 'Se pide tarjeta al empezar para activar la cuenta, pero se explica antes de pagar qué se cobra y cuándo.',
-  },
-]
-
 const faqs = [
   {
-    question: '¿Tengo que poner tarjeta?',
-    answer: 'Sí. Para activar TURNO. pedimos tarjeta desde el primer paso, aunque la oferta o el periodo inicial hagan que hoy no se cobre nada.',
-  },
-  {
-    question: '¿Google Pay se puede usar?',
-    answer: 'Sí, si la cuenta de Stripe tiene Apple Pay/Google Pay y el dominio está verificado. En código no es difícil: Stripe Checkout lo muestra solo cuando el navegador y la tarjeta lo permiten. Lo que falta es terminar la configuración real de Stripe.',
+    question: '¿Qué pasa durante el primer mes?',
+    answer: 'Empiezas por 0€. Usas TURNO. con tu barbería real y, pasado el primer mes, empieza el cobro del plan elegido.',
   },
   {
     question: '¿Qué plan recomendáis?',
     answer: 'Barbería anual: 15€/mes con compromiso anual. Es el precio pensado para una barbería de barrio que quiere ordenar reservas sin pagar comisiones por cada cita.',
+  },
+  {
+    question: '¿Puedo empezar mes a mes?',
+    answer: 'Sí. Cambia el selector a mensual si prefieres pagar más y no comprometer el año.',
   },
   {
     question: '¿Puedo cancelar?',
@@ -61,10 +46,7 @@ export default function PricingPage() {
               Elige agenda. No elijas otra conversación por WhatsApp.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl font-['DM_Sans'] text-[17px] leading-relaxed text-[#555555]">
-              TURNO. se vende como una decisión sencilla: el plan recomendado cuesta 15€/mes con compromiso anual, menos que un corte, y evita horas perdidas cuadrando citas.
-            </p>
-            <p className="mx-auto mt-4 max-w-xl border border-[#E5E5E5] px-4 py-3 font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">
-              Activación con tarjeta desde el inicio. Si Stripe aún no está configurado en producción, el checkout queda mockeado y te lleva al alta de barbero sin cobrar.
+              Primer mes gratis: 0€ para probarlo con tu barbería real. Después, el recomendado cuesta 15€/mes con compromiso anual.
             </p>
           </section>
 
@@ -72,25 +54,8 @@ export default function PricingPage() {
             <PricingCards />
           </section>
 
-          <ColorStripe />
-
-          <section className="grid gap-8 bg-[#E5E5E5] px-5 py-12 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Estrategia de anclaje</p>
-              <h2 className="mt-3 font-['Oswald'] text-[34px] font-bold uppercase leading-tight text-[#111111]">Por qué el plan de 15€ se siente obvio</h2>
-            </div>
-            <div className="grid gap-4">
-              {persuasionNotes.map((note) => (
-                <article key={note.title} className="border border-[#E5E5E5] bg-white px-5 py-5">
-                  <h3 className="font-['Oswald'] text-[18px] font-semibold uppercase text-[#111111]">{note.title}</h3>
-                  <p className="mt-2 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">{note.text}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
           <section className="px-6 py-12 sm:px-8">
-            <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Dudas antes de poner la tarjeta</h2>
+            <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Antes de elegir plan</h2>
             <div className="mx-auto mt-8 max-w-3xl divide-y divide-[#E5E5E5] border-y border-[#E5E5E5]">
               {faqs.map((faq) => (
                 <details key={faq.question} className="group py-5">
