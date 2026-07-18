@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PRICING_PLANS, RECOMMENDED_PLAN } from '@/lib/billing/pricing'
+import AvailabilityBar from '@/components/pricing/AvailabilityBar'
 
 function CheckoutButton({ planKey, children }: { planKey: string; children: string }) {
   return (
@@ -71,17 +72,18 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
 export function PricingTeaser() {
   return (
     <section id="precio" className="bg-[#111111] px-6 py-12 text-center sm:px-10">
-      <p className="mx-auto inline-block border border-[#C8102E] px-4 py-2 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">Precio recomendado</p>
+      <p className="mx-auto inline-block border border-[#C8102E] px-4 py-2 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">Solo para las primeras 50 barberías</p>
       <h2 className="mt-6 font-['Oswald'] text-[34px] font-bold uppercase leading-tight text-white">
-        Menos que un corte al mes. Tu agenda ordenada todo el año.
+        Entra ahora y prueba Trujas con tu barbería real.
       </h2>
       <p className="mx-auto mt-5 max-w-lg font-['DM_Sans'] text-[16px] leading-relaxed text-white">
-        El plan anual de TURNO. cuesta <strong>15€/mes</strong>. Lo comparamos contra el mes a mes de 29€ para que la decisión sea fácil: si vas en serio con tu agenda, este es el plan que tiene sentido.
+        Sin compromiso. Tu primer mes es gratis. Queremos ver qué pasa con las primeras barberías antes de abrirlo a todo el mundo.
       </p>
+      <AvailabilityBar />
       <div className="mx-auto mt-7 max-w-md border-2 border-white bg-white px-5 py-5 text-left">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Recomendado</p>
+            <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Plan inicial</p>
             <h3 className="mt-1 font-['Oswald'] text-[24px] font-bold uppercase text-[#111111]">Barbería anual</h3>
           </div>
           <div className="border border-[#C8102E] px-2 py-1 font-['Oswald'] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">Ahorra 48%</div>
@@ -90,9 +92,9 @@ export function PricingTeaser() {
           <span className="font-['Oswald'] text-[48px] font-bold leading-none text-[#111111]">15€</span>
           <span className="pb-1 font-['DM_Sans'] text-[14px] text-[#555555]">/ mes</span>
         </div>
-        <p className="mt-2 font-['DM_Sans'] text-[13px] text-[#555555]">Compromiso anual. Sin comisión por reserva. Tarjeta al empezar, aunque hoy no se cobre.</p>
+        <p className="mt-2 font-['DM_Sans'] text-[13px] text-[#555555]">Compromiso anual. Sin comisión por reserva. Primer mes gratis.</p>
         <div className="mt-5">
-          <CheckoutButton planKey="recommended">Empezar con 15€/mes</CheckoutButton>
+          <CheckoutButton planKey="recommended">Reservar mi plaza</CheckoutButton>
         </div>
       </div>
       <Link href="/pricing" className="mt-6 inline-flex min-h-[44px] items-center justify-center font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white underline-offset-4 hover:underline">
