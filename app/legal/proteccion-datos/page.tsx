@@ -5,7 +5,7 @@ import ColorStripe from '@/components/brand/ColorStripe'
 const sections = [
   {
     title: '¿Quién trata tus datos?',
-    body: 'La barbería con la que reservas actúa como responsable del tratamiento de los datos necesarios para gestionar la cita. TURNO. presta la herramienta tecnológica para facilitar reservas, comunicaciones operativas y gestión de agenda.',
+    body: 'La barbería con la que reservas actúa como responsable del tratamiento de los datos necesarios para gestionar la cita. trujas presta la herramienta tecnológica para facilitar reservas, comunicaciones operativas y gestión de agenda.',
   },
   {
     title: '¿Qué datos se tratan?',
@@ -48,7 +48,7 @@ export default function DataProtectionPage() {
           </h1>
           <p className="font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555] mt-3">
             Esta información resume cómo se usan los datos personales necesarios para gestionar
-            reservas en TURNO. y en las barberías que utilizan la plataforma.
+            reservas en trujas y en las barberías que utilizan la plataforma.
           </p>
         </div>
 

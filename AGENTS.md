@@ -4,7 +4,7 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# TURNO. / Barber Assistant worker skills
+# trujas / Barber Assistant worker skills
 
 Before changing visible UI, copy, landing pages, or frontend components, read and apply `.github/skills/frontend-branding/SKILL.md`. It is the strict project design-system source of truth and overrides generic design advice.
 
@@ -18,4 +18,4 @@ Additional reusable worker skills live in `.github/skills/`:
 | `core-web-vitals` | Fixing or auditing LCP, INP, CLS, or page-experience issues. |
 | `performance` | Speeding up loading/runtime performance or reducing page weight. |
 
-Use these skills additively with the TURNO. branding skill; do not introduce colors, fonts, radii, tone, or UI patterns that violate `.github/skills/frontend-branding/SKILL.md`.
+Use these skills additively with the trujas branding skill; do not introduce colors, fonts, radii, tone, or UI patterns that violate `.github/skills/frontend-branding/SKILL.md`.

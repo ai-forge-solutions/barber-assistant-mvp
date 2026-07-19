@@ -69,7 +69,7 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
     <div className="mx-auto max-w-xl lg:max-w-5xl">
       <CadenceToggle cadence={cadence} onChange={setCadence} />
       <p className="mx-auto mt-3 max-w-md text-center font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">
-        El primer mes cuesta 0€. Después empieza el cobro del plan elegido.
+        El primer mes cuesta 0€. Elige ahora anual recomendado o mes a mes; después se cobra el plan elegido.
       </p>
 
       <div className="mt-6 grid gap-3 lg:grid-cols-2 lg:items-start">
@@ -102,6 +102,7 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
                     </span>
                   )}
                   <span className="block font-['Oswald'] text-[26px] font-bold leading-none text-[#111111]">{price}€</span>
+                  <span className="block font-['DM_Sans'] text-[11px] text-[#999999]">/ mes</span>
                 </span>
               </button>
 
@@ -126,7 +127,7 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
                 </ul>
 
                 <div className="mt-5">
-                  <CheckoutButton planKey={plan.key} cadence={cadence}>Probarlo gratis</CheckoutButton>
+                  <CheckoutButton planKey={plan.key} cadence={cadence}>Empezar con primer mes gratis</CheckoutButton>
                 </div>
               </div>
             </article>
@@ -142,10 +143,10 @@ export function PricingTeaser() {
     <section id="precio" className="bg-[#111111] px-6 py-12 text-center sm:px-10">
       <p className="mx-auto inline-block border border-[#C8102E] px-4 py-2 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">Primer mes gratis</p>
       <h2 className="mt-6 font-['Oswald'] text-[34px] font-bold uppercase leading-tight text-white">
-        Prueba Trujas con tu barbería real por 0€.
+        Prueba trujas con tu barbería real por 0€.
       </h2>
       <p className="mx-auto mt-5 max-w-lg font-['DM_Sans'] text-[16px] leading-relaxed text-white">
-        El recomendado es 15€/mes con compromiso anual. Durante el primer mes no pagas nada.
+        El recomendado es 15€/mes con compromiso anual. Durante el primer mes configuras la agenda y no pagas nada.
       </p>
       <AvailabilityBar />
       <div className="mx-auto mt-7 max-w-md border-2 border-white bg-white px-5 py-5 text-left">
@@ -162,7 +163,7 @@ export function PricingTeaser() {
         </div>
         <p className="mt-2 font-['DM_Sans'] text-[13px] text-[#555555]">Compromiso anual. Sin comisión por reserva. Primer mes gratis.</p>
         <div className="mt-5">
-          <CheckoutButton planKey="recommended" cadence="annual">Probarlo gratis</CheckoutButton>
+          <CheckoutButton planKey="recommended" cadence="annual">Empezar con primer mes gratis</CheckoutButton>
         </div>
       </div>
       <Link href="/pricing" className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]">

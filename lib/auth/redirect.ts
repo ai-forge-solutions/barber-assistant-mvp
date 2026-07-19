@@ -1,4 +1,4 @@
-export const AUTH_NEXT_COOKIE = 'turno_auth_next'
+export const AUTH_NEXT_COOKIE = 'trujas_auth_next'
 
 export function safeAuthNext(value: string | null | undefined, fallback = '/dashboard') {
   if (!value) return fallback

@@ -15,7 +15,7 @@ export default function Logo({ light = false, size = 'md' }: LogoProps) {
     <span
       className={`font-['Rye'] tracking-[0.04em] ${sizeMap[size]} ${light ? 'text-white' : 'text-[#111111]'}`}
     >
-      Trujas
+      trujas
     </span>
   )
 }

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         plan: plan.key,
         cadence,
-        source: 'turno-pricing',
+        source: 'trujas-pricing',
       },
     },
     success_url: `${appUrl}/auth/barber/signup?next=%2Fdashboard&checkout_session_id={CHECKOUT_SESSION_ID}&plan=${plan.key}`,
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     metadata: {
       plan: plan.key,
       cadence,
-      source: 'turno-pricing',
+      source: 'trujas-pricing',
     },
   })
 
