@@ -41,24 +41,21 @@ const appointments = [
   },
 ]
 
-const testimonials = [
+const trustNotes = [
   {
-    avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
-    name: 'Rubén — Barbería Marconi',
-    location: 'Lavapiés, Madrid',
-    quote: 'Dejé de perder tardes contestando WhatsApp. Ahora el cliente coge hora y yo sigo cortando.',
+    label: 'Sin marketplace',
+    title: 'Tu cliente reserva en tu página',
+    text: 'TURNO. no te mete en una lista con otros locales. El enlace es para tu barbería.',
   },
   {
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    name: 'Antonio — Barbería San Blas',
-    location: 'San Blas, Madrid',
-    quote: 'Me gusta porque no va de postureo. Es una agenda clara y ya está. Para una barbería pequeña, eso vale oro.',
+    label: 'Sin comisión',
+    title: 'No pagas por cada reserva',
+    text: 'El precio es mensual. Si entran más citas, no hay comisión extra por reserva.',
   },
   {
-    avatar: 'https://randomuser.me/api/portraits/men/61.jpg',
-    name: 'Javi — El Sillón de Vallecas',
-    location: 'Vallecas, Madrid',
-    quote: 'Los recordatorios me han quitado muchos despistes. La gente llega más a su hora y yo voy menos apretado.',
+    label: 'Primer mes gratis',
+    title: 'Lo pruebas con tu barbería real',
+    text: 'Configuras servicios, barberos y horarios antes de decidir si encaja contigo.',
   },
 ]
 
@@ -73,7 +70,7 @@ const faqs = [
   },
   {
     question: '¿Puedo seguir usando WhatsApp con mis clientes?',
-    answer: 'Sí. Trujas no te quita WhatsApp; te quita la conversación pesada de cuadrar día y hora una y otra vez.',
+    answer: 'Sí. TURNO. no te quita WhatsApp; te quita la conversación pesada de cuadrar día y hora una y otra vez.',
   },
   {
     question: '¿Y si quiero dejarlo?',
@@ -220,7 +217,7 @@ function ReminderMockup() {
             <span className="font-['DM_Sans'] text-[11px] text-[#999999]">ahora</span>
           </div>
           <p className="mt-4 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
-            No te olvides, tienes cita hoy en Barbería Norte a las 17:00. Puedes modificar o cancelar la cita desde trujas.app/barberia-norte
+            No te olvides, tienes cita hoy en Barbería Norte a las 17:00. Puedes modificar o cancelar la cita desde tu enlace de reservas.
           </p>
         </div>
       </div>
@@ -231,29 +228,54 @@ function ReminderMockup() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#E5E5E5]">
-      <div className="mx-auto max-w-[720px] bg-white">
+      <div className="mx-auto max-w-[1040px] bg-white">
         <ColorStripe />
         <main>
-          <section className="border-b border-[#E5E5E5]">
-            <div className="relative min-h-[560px] overflow-hidden bg-[#111111] sm:min-h-[640px]">
-              <img
-                src="/landing/barbershop.webp"
-                alt="Barbería clásica en blanco y negro"
-                className="absolute inset-0 h-full w-full object-cover grayscale"
-              />
-              <div className="absolute inset-0 bg-[#111111] opacity-70" />
-              <div className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-8 py-12 text-center sm:min-h-[640px] sm:px-12">
+          <section className="border-b border-[#E5E5E5] bg-[#111111]">
+            <div className="grid min-h-[620px] items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:py-16">
+              <div className="text-left">
                 <Logo light size="lg" />
-                <h1 className="mt-14 w-full max-w-[20rem] px-1 font-['Oswald'] text-[32px] font-bold uppercase leading-[0.98] text-white min-[390px]:text-[36px] sm:max-w-[680px] sm:text-[50px]">
-                  <span className="block whitespace-nowrap">Reservan online.</span>
-                  <span className="block whitespace-nowrap">Tú sigues cortando.</span>
-                </h1>
-                <div className="mt-8">
-                  <PrimaryCta>Empieza gratis</PrimaryCta>
-                </div>
-                <p className="mt-5 w-full max-w-[19rem] font-['DM_Sans'] text-[15px] leading-relaxed text-white sm:max-w-md sm:text-[17px]">
-                  Agenda online para barberías independientes. Primer mes gratis.
+                <p className="mt-12 inline-block border border-[#C8102E] px-3 py-2 font-['Oswald'] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">
+                  Para barberos independientes en España
                 </p>
+                <h1 className="mt-6 max-w-xl font-['Oswald'] text-[44px] font-bold uppercase leading-[0.95] text-white sm:text-[58px] lg:text-[64px]">
+                  Reservas online. WhatsApp solo cuando hace falta.
+                </h1>
+                <p className="mt-6 max-w-lg font-['DM_Sans'] text-[17px] leading-relaxed text-white">
+                  TURNO. ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <PrimaryCta>Crear mi agenda gratis</PrimaryCta>
+                  <Link
+                    href="/pricing"
+                    className="inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]"
+                  >
+                    Ver precio
+                  </Link>
+                </div>
+                <div className="mt-8 grid gap-3 border-t border-[#555555] pt-6 sm:grid-cols-3">
+                  {[
+                    ['1 enlace', 'Reservas para tu barbería'],
+                    ['0 comisión', 'No pagas por cita recibida'],
+                    ['1 mes gratis', 'Lo pruebas con datos reales'],
+                  ].map(([label, text]) => (
+                    <div key={label} className="border-l-2 border-[#C8102E] pl-3">
+                      <p className="font-['Oswald'] text-[18px] font-bold uppercase text-white">{label}</p>
+                      <p className="mt-1 font-['DM_Sans'] text-[12px] leading-relaxed text-[#E5E5E5]">{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="border-2 border-white bg-white p-4">
+                <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Lo que ve el barbero</p>
+                <h2 className="mt-2 font-['Oswald'] text-[28px] font-bold uppercase leading-tight text-[#111111]">Agenda del día, sin rebuscar en chats</h2>
+                <div className="mt-5">
+                  <AppointmentMockup />
+                </div>
+                <div className="mt-5 grid grid-cols-2 gap-2 font-['DM_Sans'] text-[13px] text-[#555555]">
+                  <p className="border border-[#E5E5E5] px-3 py-3">Confirmadas y pendientes separadas.</p>
+                  <p className="border border-[#E5E5E5] px-3 py-3">Servicios y duración a la vista.</p>
+                </div>
               </div>
             </div>
           </section>
@@ -262,7 +284,7 @@ export default function Home() {
 
           <section className="px-6 py-12 text-center sm:px-8">
             <div className="mx-auto flex max-w-xl flex-col gap-3 font-['DM_Sans'] text-[17px] leading-relaxed text-[#555555]">
-              <p>Trujas gestiona tus citas en automático.</p>
+              <p>TURNO. gestiona tus citas en automático.</p>
               <p>Tus clientes reservan, reciben recordatorios y tú ves la agenda clara.</p>
             </div>
           </section>
@@ -316,7 +338,7 @@ export default function Home() {
               <article>
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-[#111111] font-['Oswald'] text-[14px] font-semibold text-white">3</span>
-                  <h3 className="font-['Oswald'] text-[20px] font-semibold text-[#111111]">Los recordatorios los manda Trujas.</h3>
+                  <h3 className="font-['Oswald'] text-[20px] font-semibold text-[#111111]">Los recordatorios los manda TURNO.</h3>
                 </div>
                 <p className="mt-3 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">La gente no desaparece y tú te dejas de estar pendiente.</p>
                 <div className="mt-4">
@@ -329,18 +351,16 @@ export default function Home() {
           <PricingTeaser />
 
           <section className="px-6 py-12 sm:px-8">
-            <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Barberías que ya dejaron la libreta</h2>
-            <div className="mt-8 flex flex-col gap-4">
-              {testimonials.map((testimonial) => (
-                <article key={testimonial.name} className="border border-[#E5E5E5] bg-white px-5 py-5">
-                  <div className="flex items-center gap-4">
-                    <img src={testimonial.avatar} alt={`Foto de ${testimonial.name}`} className="h-14 w-14 rounded-full border border-[#E5E5E5] object-cover grayscale" />
-                    <div>
-                      <h3 className="font-['Oswald'] text-[16px] font-semibold text-[#111111]">{testimonial.name}</h3>
-                      <p className="font-['DM_Sans'] text-[12px] text-[#999999]">{testimonial.location}</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">“{testimonial.quote}”</p>
+            <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Por qué encaja en una barbería pequeña</h2>
+            <p className="mx-auto mt-4 max-w-lg text-center font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">
+              Sin frases grandilocuentes: una página de reservas, una agenda diaria y un precio que no depende de cuántas citas entren.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {trustNotes.map((note) => (
+                <article key={note.title} className="border border-[#E5E5E5] bg-white px-5 py-5">
+                  <p className="font-['Oswald'] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">{note.label}</p>
+                  <h3 className="mt-3 font-['Oswald'] text-[18px] font-semibold uppercase leading-tight text-[#111111]">{note.title}</h3>
+                  <p className="mt-3 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">{note.text}</p>
                 </article>
               ))}
             </div>
@@ -351,7 +371,7 @@ export default function Home() {
             <div className="mt-8 overflow-hidden border border-[#E5E5E5] bg-white">
               <div className="grid grid-cols-3 border-b border-[#E5E5E5] text-center font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#111111]">
                 <div className="px-3 py-4" />
-                <div className="bg-[#111111] px-3 py-4 text-white">Trujas</div>
+                <div className="bg-[#111111] px-3 py-4 text-white">TURNO.</div>
                 <div className="px-3 py-4 text-[#555555]">Apps genéricas</div>
               </div>
               {[
@@ -387,7 +407,7 @@ export default function Home() {
           </section>
 
           <section className="px-6 py-12 text-center sm:px-10">
-            <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">Trujas gestiona tus citas. Tú sigues cortando.</h2>
+            <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">TURNO. gestiona tus citas. Tú sigues cortando.</h2>
             <div className="mt-7">
               <PrimaryCta>Empieza ahora</PrimaryCta>
             </div>
