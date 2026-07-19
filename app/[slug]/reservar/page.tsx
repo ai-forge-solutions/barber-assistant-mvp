@@ -44,17 +44,23 @@ const EMPTY: BookingState = {
 function StepIndicator({ step }: { step: number }) {
   const labels = ['Barbero', 'Servicio', 'Fecha', 'Hora', 'Confirmar']
   return (
-    <div className="flex items-center justify-center gap-1.5 mb-6">
-      {labels.map((l, i) => (
-        <div key={i} className="flex items-center gap-1.5">
-          <div className={`flex flex-col items-center gap-0.5`}>
-            <div className={`w-6 h-6 rounded-sm flex items-center justify-center font-['Oswald'] font-bold text-[11px] transition-colors ${i < step ? 'bg-[#1A3A6B] text-white' : i === step ? 'bg-[#111111] text-white' : 'bg-[#E5E5E5] text-[#999999]'}`}>
-              {i < step ? '✓' : i + 1}
-            </div>
-          </div>
-          {i < labels.length - 1 && <div className={`w-4 h-px ${i < step ? 'bg-[#1A3A6B]' : 'bg-[#E5E5E5]'}`} />}
-        </div>
-      ))}
+    <div className="mb-6 border border-[#E5E5E5] rounded-sm bg-white p-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#555555]">
+          Paso {step + 1} de {labels.length}
+        </p>
+        <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#111111]">
+          {labels[step]}
+        </p>
+      </div>
+      <div className="mt-3 grid grid-cols-5 gap-1" aria-hidden="true">
+        {labels.map((label, i) => (
+          <div
+            key={label}
+            className={`h-1.5 rounded-none ${i <= step ? 'bg-[#111111]' : 'bg-[#E5E5E5]'}`}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -250,13 +256,13 @@ export default function ReservarPage() {
         <div className="flex flex-col gap-3 w-full max-w-sm">
           <button
             onClick={downloadIcs}
-            className="bg-transparent text-[#111111] border-2 border-[#111111] font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#F5F5F5] min-h-[44px]"
+            className="bg-transparent text-[#111111] border-2 border-[#111111] font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:border-[#1A3A6B] hover:text-[#1A3A6B] min-h-[44px]"
           >
             Añadir al calendario
           </button>
           <Link
             href="/cuenta/citas"
-            className="bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#A50D24] min-h-[44px] flex items-center justify-center"
+            className="bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#111111] min-h-[44px] flex items-center justify-center"
           >
             Ver mis citas
           </Link>
@@ -279,8 +285,9 @@ export default function ReservarPage() {
             <svg className="w-4 h-4 text-[#111111]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
           </button>
         )}
-        <div>
-          <p className="font-['Rye'] text-[16px] text-[#111111]">{shopName}</p>
+        <div className="min-w-0">
+          <p className="font-['DM_Sans'] text-[11px] text-[#999999] uppercase tracking-[0.08em]">Reserva</p>
+          <p className="font-['Rye'] text-[16px] leading-tight text-[#111111] break-words">{shopName}</p>
         </div>
       </header>
 
@@ -291,7 +298,7 @@ export default function ReservarPage() {
         {step === 0 && (
           <div>
             <h2 className="font-['Oswald'] font-bold text-[20px] text-[#111111] uppercase mb-4">Elige tu barbero</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {barbers.map((b) => (
                 <button
                   key={b.id}
@@ -299,7 +306,7 @@ export default function ReservarPage() {
                     persist({ barberId: b.id, barberName: b.display_name })
                     setStep(1)
                   }}
-                  className={`flex flex-col items-center gap-3 border-2 rounded-sm px-4 py-5 transition-colors min-h-[120px] ${booking.barberId === b.id ? 'border-[#111111] bg-[#F5F5F5]' : 'border-[#E5E5E5] hover:border-[#111111]'}`}
+                  className={`flex flex-col items-center gap-3 border-2 rounded-sm px-4 py-5 transition-colors min-h-[120px] ${booking.barberId === b.id ? 'border-[#111111] bg-white' : 'border-[#E5E5E5] hover:border-[#111111]'}`}
                 >
                   {b.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -309,7 +316,7 @@ export default function ReservarPage() {
                       <span className="font-['Oswald'] font-bold text-[20px] text-[#555555]">{initials(b.display_name)}</span>
                     </div>
                   )}
-                  <span className="font-['Oswald'] font-semibold text-[14px] text-[#111111]">{b.display_name}</span>
+                  <span className="font-['Oswald'] font-semibold text-[14px] leading-tight text-[#111111] text-center break-words">{b.display_name}</span>
                 </button>
               ))}
             </div>
@@ -328,13 +335,13 @@ export default function ReservarPage() {
                     persist({ serviceId: s.id, serviceName: s.name, serviceDuration: s.duration_min, servicePrice: s.price })
                     setStep(2)
                   }}
-                  className={`flex items-center justify-between border-2 rounded-sm px-4 py-4 transition-colors min-h-[60px] ${booking.serviceId === s.id ? 'border-[#111111] bg-[#F5F5F5]' : 'border-[#E5E5E5] hover:border-[#111111]'}`}
+                  className={`flex items-start justify-between gap-4 border-2 rounded-sm px-4 py-4 transition-colors min-h-[64px] ${booking.serviceId === s.id ? 'border-[#111111] bg-white' : 'border-[#E5E5E5] hover:border-[#111111]'}`}
                 >
-                  <div className="text-left">
-                    <p className="font-['Oswald'] font-semibold text-[16px] text-[#111111]">{s.name}</p>
+                  <div className="min-w-0 text-left">
+                    <p className="font-['Oswald'] font-semibold text-[16px] leading-tight text-[#111111] break-words">{s.name}</p>
                     <p className="font-['DM_Sans'] text-[12px] text-[#999999]">{s.duration_min} min</p>
                   </div>
-                  <span className="font-['Oswald'] font-bold text-[20px] text-[#111111]">{s.price}€</span>
+                  <span className="font-['Oswald'] font-bold text-[20px] text-[#111111] shrink-0">{s.price}€</span>
                 </button>
               ))}
             </div>
@@ -389,7 +396,7 @@ export default function ReservarPage() {
                       loadSlots(booking.barberId, booking.serviceId, dateKey(day))
                       setStep(3)
                     }}
-                    className={`aspect-square flex items-center justify-center rounded-sm font-['DM_Sans'] text-[14px] transition-colors min-h-[40px] ${past ? 'text-[#E5E5E5] cursor-not-allowed' : selected ? 'bg-[#111111] text-white' : isToday(day) ? 'border-2 border-[#C8102E] text-[#C8102E] font-semibold hover:bg-[#FFF0F2]' : 'hover:bg-[#F5F5F5] text-[#111111]'}`}
+                    className={`aspect-square flex items-center justify-center rounded-sm font-['DM_Sans'] text-[14px] transition-colors min-h-[44px] ${past ? 'text-[#E5E5E5] cursor-not-allowed' : selected ? 'bg-[#111111] text-white' : isToday(day) ? 'border-2 border-[#C8102E] text-[#C8102E] font-semibold hover:border-[#111111]' : 'hover:border hover:border-[#111111] text-[#111111]'}`}
                   >
                     {format(day, 'd')}
                   </button>
@@ -408,7 +415,7 @@ export default function ReservarPage() {
             </p>
 
             {slotError && (
-              <div className="border border-[#F5C0C8] bg-[#FFF0F2] rounded-sm px-4 py-3 mb-4">
+              <div className="border border-[#C8102E] bg-white rounded-sm px-4 py-3 mb-4">
                 <p className="font-['DM_Sans'] text-[13px] text-[#C8102E]">{slotError}</p>
               </div>
             )}
@@ -422,7 +429,7 @@ export default function ReservarPage() {
                 <button onClick={() => setStep(2)} className="font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase text-[#1A3A6B] underline min-h-[44px]">Cambiar fecha</button>
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {slots.map((s) => (
                   <button
                     key={s}
@@ -461,7 +468,7 @@ export default function ReservarPage() {
             </div>
 
             {confirmError && (
-              <div className="border border-[#F5C0C8] bg-[#FFF0F2] rounded-sm px-4 py-3 mb-4">
+              <div className="border border-[#C8102E] bg-white rounded-sm px-4 py-3 mb-4">
                 <p className="font-['DM_Sans'] text-[13px] text-[#C8102E]">{confirmError}</p>
               </div>
             )}
@@ -469,7 +476,7 @@ export default function ReservarPage() {
             <button
               onClick={confirm}
               disabled={confirming}
-              className="w-full bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[16px] tracking-[0.08em] uppercase px-6 py-4 rounded-sm hover:bg-[#A50D24] active:scale-[0.99] transition-colors min-h-[52px] disabled:opacity-40"
+              className="w-full bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[16px] tracking-[0.08em] uppercase px-6 py-4 rounded-sm hover:bg-[#111111] active:scale-[0.99] transition-colors min-h-[52px] disabled:opacity-40"
             >
               {confirming ? 'Confirmando…' : 'Confirmar cita'}
             </button>
@@ -484,7 +491,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <span className="font-['Oswald'] font-semibold text-[12px] tracking-[0.08em] uppercase text-[#555555] flex-shrink-0">{label}</span>
-      <span className="font-['DM_Sans'] text-[14px] text-[#111111] text-right capitalize">{value}</span>
+      <span className="min-w-0 font-['DM_Sans'] text-[14px] text-[#111111] text-right capitalize break-words">{value}</span>
     </div>
   )
 }

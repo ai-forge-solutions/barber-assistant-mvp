@@ -28,7 +28,7 @@ export default function BookingButton({ slug }: { slug: string }) {
   return (
     <button
       onClick={handleClick}
-      className="w-full bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[16px] tracking-[0.08em] uppercase px-6 py-4 rounded-sm hover:bg-[#A50D24] active:scale-[0.99] transition-colors duration-150 min-h-[52px]"
+      className="w-full bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[16px] tracking-[0.08em] uppercase px-6 py-4 rounded-sm hover:bg-[#111111] active:scale-[0.99] transition-colors duration-150 min-h-[52px]"
     >
       Reservar cita
     </button>
