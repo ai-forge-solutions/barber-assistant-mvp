@@ -1,6 +1,6 @@
 ---
 name: turno-brand
-description: Aplica el sistema de diseño de TURNO. a cualquier pantalla Next.js/Tailwind del proyecto — landing, app de barbero y página pública de barbería. Úsala SIEMPRE que toques UI. Modo estricto: rechaza colores fuera de paleta, fuentes no permitidas y componentes que no sigan el sistema.
+description: "Aplica el sistema de diseño de TURNO. a cualquier pantalla Next.js/Tailwind del proyecto — landing, app de barbero y página pública de barbería. Úsala SIEMPRE que toques UI. Modo estricto: rechaza colores fuera de paleta, fuentes no permitidas y componentes que no sigan el sistema."
 ---
 
 # TURNO. · Sistema de Diseño (modo estricto)
