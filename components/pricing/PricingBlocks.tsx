@@ -143,7 +143,7 @@ export function PricingTeaser() {
     <section id="precio" className="bg-[#111111] px-6 py-12 text-center sm:px-10">
       <p className="mx-auto inline-block border border-[#C8102E] px-4 py-2 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">Primer mes gratis</p>
       <h2 className="mt-6 font-['Oswald'] text-[34px] font-bold uppercase leading-tight text-white">
-        Prueba TURNO. con tu barbería real por 0€.
+        Prueba trujas con tu barbería real por 0€.
       </h2>
       <p className="mx-auto mt-5 max-w-lg font-['DM_Sans'] text-[16px] leading-relaxed text-white">
         El recomendado es 15€/mes con compromiso anual. Durante el primer mes configuras la agenda y no pagas nada.

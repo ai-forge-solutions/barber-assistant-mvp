@@ -66,7 +66,7 @@ export default function ReservarPage() {
   const router = useRouter()
   const slug = params.slug as string
   const supabase = createClient()
-  const storageKey = `turno_reserva_${slug}`
+  const storageKey = `trujas_reserva_${slug}`
 
   const [step, setStep] = useState(0)
   const [booking, setBooking] = useState<BookingState>(EMPTY)
@@ -219,7 +219,7 @@ export default function ReservarPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'cita-turno.ics'
+    a.download = 'cita-trujas.ics'
     a.click()
     URL.revokeObjectURL(url)
   }

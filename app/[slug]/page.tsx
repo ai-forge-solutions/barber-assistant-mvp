@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps) {
     .eq('slug', slug)
     .maybeSingle()
 
-  if (!shop) return { title: 'Barbería — TURNO.' }
+  if (!shop) return { title: 'Barbería — trujas' }
 
   const { data: services } = await supabase
     .from('services')

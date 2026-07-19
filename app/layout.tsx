@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TURNO. — Agenda online para barberías",
-  description: "TURNO. gestiona las citas de tu barbería. Tus clientes reservan online y tú dejas de perder tiempo cuadrando horarios por mensajes.",
+  title: "trujas — Agenda online para barberías",
+  description: "trujas gestiona las citas de tu barbería. Tus clientes reservan online y tú dejas de perder tiempo cuadrando horarios por mensajes.",
 };
 
 export default function RootLayout({

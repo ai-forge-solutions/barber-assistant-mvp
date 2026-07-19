@@ -193,7 +193,7 @@ export default function BarberAuthForm({ mode }: BarberAuthFormProps) {
             Cuenta de barbero
           </p>
           <h1 className="font-['Oswald'] font-bold text-[30px] text-[#111111] uppercase mt-1">
-            {isSignup ? 'Crea tu cuenta' : 'Entra a TURNO.'}
+            {isSignup ? 'Crea tu cuenta' : 'Entra a trujas'}
           </h1>
           <p className="font-['DM_Sans'] text-[14px] text-[#555555] mt-2">
             {isSignup

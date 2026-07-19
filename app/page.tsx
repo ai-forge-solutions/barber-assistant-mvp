@@ -45,7 +45,7 @@ const trustNotes = [
   {
     label: 'Sin marketplace',
     title: 'Tu cliente reserva en tu página',
-    text: 'TURNO. no te mete en una lista con otros locales. El enlace es para tu barbería.',
+    text: 'trujas no te mete en una lista con otros locales. El enlace es para tu barbería.',
   },
   {
     label: 'Sin comisión',
@@ -70,7 +70,7 @@ const faqs = [
   },
   {
     question: '¿Puedo seguir usando WhatsApp con mis clientes?',
-    answer: 'Sí. TURNO. no te quita WhatsApp; te quita la conversación pesada de cuadrar día y hora una y otra vez.',
+    answer: 'Sí. trujas no te quita WhatsApp; te quita la conversación pesada de cuadrar día y hora una y otra vez.',
   },
   {
     question: '¿Y si quiero dejarlo?',
@@ -242,7 +242,7 @@ export default function Home() {
                   Reservas online. WhatsApp solo cuando hace falta.
                 </h1>
                 <p className="mt-6 max-w-lg font-['DM_Sans'] text-[17px] leading-relaxed text-white">
-                  TURNO. ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
+                  trujas ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <PrimaryCta>Crear mi agenda gratis</PrimaryCta>
@@ -284,7 +284,7 @@ export default function Home() {
 
           <section className="px-6 py-12 text-center sm:px-8">
             <div className="mx-auto flex max-w-xl flex-col gap-3 font-['DM_Sans'] text-[17px] leading-relaxed text-[#555555]">
-              <p>TURNO. gestiona tus citas en automático.</p>
+              <p>trujas gestiona tus citas en automático.</p>
               <p>Tus clientes reservan, reciben recordatorios y tú ves la agenda clara.</p>
             </div>
           </section>
@@ -338,7 +338,7 @@ export default function Home() {
               <article>
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-[#111111] font-['Oswald'] text-[14px] font-semibold text-white">3</span>
-                  <h3 className="font-['Oswald'] text-[20px] font-semibold text-[#111111]">Los recordatorios los manda TURNO.</h3>
+                  <h3 className="font-['Oswald'] text-[20px] font-semibold text-[#111111]">Los recordatorios los manda trujas</h3>
                 </div>
                 <p className="mt-3 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">La gente no desaparece y tú te dejas de estar pendiente.</p>
                 <div className="mt-4">
@@ -371,7 +371,7 @@ export default function Home() {
             <div className="mt-8 overflow-hidden border border-[#E5E5E5] bg-white">
               <div className="grid grid-cols-3 border-b border-[#E5E5E5] text-center font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#111111]">
                 <div className="px-3 py-4" />
-                <div className="bg-[#111111] px-3 py-4 text-white">TURNO.</div>
+                <div className="bg-[#111111] px-3 py-4 text-white">trujas</div>
                 <div className="px-3 py-4 text-[#555555]">Apps genéricas</div>
               </div>
               {[
@@ -407,7 +407,7 @@ export default function Home() {
           </section>
 
           <section className="px-6 py-12 text-center sm:px-10">
-            <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">TURNO. gestiona tus citas. Tú sigues cortando.</h2>
+            <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">trujas gestiona tus citas. Tú sigues cortando.</h2>
             <div className="mt-7">
               <PrimaryCta>Empieza ahora</PrimaryCta>
             </div>

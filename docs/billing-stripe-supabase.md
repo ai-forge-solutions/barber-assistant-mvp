@@ -1,4 +1,4 @@
-# Stripe y Supabase para TURNO.
+# Stripe y Supabase para trujas
 
 ## Decisión de pricing
 
@@ -43,7 +43,7 @@ NEXT_PUBLIC_APP_URL=https://...
 
 También hay que configurar en Stripe:
 
-- producto TURNO. y los tres prices anteriores;
+- producto trujas y los tres prices anteriores;
 - Customer Portal si Miguel quiere autoservicio de cambio/cancelación;
 - dominio definitivo para el checkout real.
 
