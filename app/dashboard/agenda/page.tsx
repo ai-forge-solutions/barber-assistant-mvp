@@ -195,36 +195,76 @@ export default function AgendaPage() {
 
   const dayLabel = format(selectedDate, 'EEEE', { locale: es })
   const dateLabel = format(selectedDate, 'd MMM', { locale: es })
+  const selectedBarber = barbers.find((b) => b.id === selectedBarberId)
+  const pendingCount = appointments.filter((a) => a.status === 'pending').length
+  const confirmedCount = appointments.filter((a) => a.status === 'confirmed').length
 
   return (
     <div className="flex flex-col px-4 py-5 gap-4 relative">
-      {/* Date navigation */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => setSelectedDate((d) => subDays(d, 1))}
-          className="w-11 h-11 flex items-center justify-center border border-[#E5E5E5] rounded-sm hover:border-[#111111] transition-colors"
-          aria-label="Día anterior"
-        >
-          <svg className="w-4 h-4 text-[#111111]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-        </button>
+      {/* Day command center */}
+      <section className="border-2 border-[#111111] rounded-sm bg-white">
+        <div className="flex items-center justify-between gap-3 px-4 py-4">
+          <button
+            onClick={() => setSelectedDate((d) => subDays(d, 1))}
+            className="w-11 h-11 flex shrink-0 items-center justify-center border border-[#E5E5E5] rounded-sm hover:border-[#111111] transition-colors"
+            aria-label="Día anterior"
+          >
+            <svg className="w-4 h-4 text-[#111111]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+          </button>
 
-        <div className="text-center">
-          <p className="font-['Oswald'] font-bold text-[18px] text-[#111111] uppercase tracking-[0.04em]">
-            {dayLabel}
-          </p>
-          <p className="font-['DM_Sans'] text-[13px] text-[#999999] capitalize">
-            {dateLabel}
-          </p>
+          <div className="min-w-0 text-center">
+            <p className="font-['DM_Sans'] text-[12px] text-[#999999] uppercase tracking-[0.08em]">
+              Agenda de hoy
+            </p>
+            <h1 className="font-['Oswald'] font-bold text-[24px] leading-none text-[#111111] uppercase tracking-[0.04em]">
+              {dayLabel}
+            </h1>
+            <p className="font-['DM_Sans'] text-[13px] text-[#555555] capitalize mt-1">
+              {dateLabel}{selectedBarber ? ` · ${selectedBarber.display_name}` : ''}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setSelectedDate((d) => addDays(d, 1))}
+            className="w-11 h-11 flex shrink-0 items-center justify-center border border-[#E5E5E5] rounded-sm hover:border-[#111111] transition-colors"
+            aria-label="Día siguiente"
+          >
+            <svg className="w-4 h-4 text-[#111111]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </button>
         </div>
 
-        <button
-          onClick={() => setSelectedDate((d) => addDays(d, 1))}
-          className="w-11 h-11 flex items-center justify-center border border-[#E5E5E5] rounded-sm hover:border-[#111111] transition-colors"
-          aria-label="Día siguiente"
-        >
-          <svg className="w-4 h-4 text-[#111111]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-        </button>
-      </div>
+        <div className="grid grid-cols-3 border-t border-[#E5E5E5]">
+          <div className="px-3 py-3 text-center">
+            <p className="font-['Oswald'] font-bold text-[22px] text-[#111111] leading-none">{appointments.length}</p>
+            <p className="font-['DM_Sans'] text-[11px] text-[#999999] mt-1">citas</p>
+          </div>
+          <div className="px-3 py-3 text-center border-x border-[#E5E5E5]">
+            <p className="font-['Oswald'] font-bold text-[22px] text-[#C8102E] leading-none">{pendingCount}</p>
+            <p className="font-['DM_Sans'] text-[11px] text-[#999999] mt-1">pendientes</p>
+          </div>
+          <div className="px-3 py-3 text-center">
+            <p className="font-['Oswald'] font-bold text-[22px] text-[#1A3A6B] leading-none">{confirmedCount}</p>
+            <p className="font-['DM_Sans'] text-[11px] text-[#999999] mt-1">confirmadas</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-[#E5E5E5] p-3">
+          <button
+            onClick={() => setShowBlockModal(true)}
+            className="w-full min-h-[44px] rounded-sm bg-[#111111] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-[#1A3A6B] active:scale-[0.98]"
+          >
+            Bloquear hueco
+          </button>
+          {shop && (
+            <Link
+              href={`/${shop.slug}`}
+              className="flex min-h-[44px] w-full items-center justify-center rounded-sm border border-[#E5E5E5] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#555555] transition-colors hover:border-[#111111] hover:text-[#111111]"
+            >
+              Ver página pública
+            </Link>
+          )}
+        </div>
+      </section>
 
       {/* Barber selector (only if multiple) */}
       {barbers.length > 1 && (
@@ -247,8 +287,8 @@ export default function AgendaPage() {
           <span className="font-['DM_Sans'] text-[14px] text-[#999999]">Cargando citas…</span>
         </div>
       ) : appointments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-4">
-          <p className="font-['Oswald'] font-semibold text-[18px] text-[#111111] uppercase">Sin citas hoy</p>
+        <div className="flex flex-col items-center justify-center border border-[#E5E5E5] rounded-sm px-5 py-12 gap-4">
+          <p className="font-['Oswald'] font-semibold text-[18px] text-[#111111] uppercase">Sin citas este día</p>
           {shop && (
             <p className="font-['DM_Sans'] text-[14px] text-[#555555] text-center">
               Comparte tu{' '}
@@ -269,15 +309,6 @@ export default function AgendaPage() {
         </div>
       )}
 
-      {/* FAB — block slot */}
-      <button
-        onClick={() => setShowBlockModal(true)}
-        className="fixed bottom-[80px] right-4 w-14 h-14 bg-[#C8102E] text-white rounded-sm flex items-center justify-center shadow-lg hover:bg-[#A50D24] active:scale-95 transition-all z-30"
-        aria-label="Bloquear hueco"
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-      </button>
-
       {/* ── Appointment detail drawer ─────────────────────────────────────── */}
       {activeAppt && (
         <div className="fixed inset-0 z-50 flex flex-col justify-end">
@@ -287,7 +318,7 @@ export default function AgendaPage() {
           {/* Drawer */}
           <div className="relative bg-white rounded-t-none border-t-4 border-t-[#111111] px-5 pt-5 pb-8 max-w-lg mx-auto w-full">
             {/* Handle */}
-            <div className="w-10 h-1 bg-[#E5E5E5] rounded-full mx-auto mb-5" />
+            <div className="w-10 h-1 bg-[#E5E5E5] rounded-none mx-auto mb-5" />
 
             {/* Status badge */}
             <div className="flex items-center justify-between mb-4">
@@ -310,43 +341,43 @@ export default function AgendaPage() {
 
             {/* Action buttons by status */}
             {activeAppt.status === 'pending' && (
-              <div className="flex gap-3">
+              <div className="grid grid-cols-1 gap-2">
                 <button
                   onClick={() => patchStatus(activeAppt.id, 'confirmed')}
                   disabled={statusLoading}
-                  className="flex-1 bg-[#1A3A6B] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-4 py-3 rounded-sm hover:bg-[#142d56] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
+                  className="bg-[#1A3A6B] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-4 py-3 rounded-sm hover:bg-[#111111] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
                 >
                   Confirmar
                 </button>
                 <button
                   onClick={() => patchStatus(activeAppt.id, 'cancelled')}
                   disabled={statusLoading}
-                  className="flex-1 bg-transparent text-[#C8102E] border-2 border-[#C8102E] font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-4 py-3 rounded-sm hover:bg-[#FFF0F2] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
+                  className="bg-transparent text-[#C8102E] border-2 border-[#C8102E] font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-4 py-3 rounded-sm hover:border-[#111111] hover:text-[#111111] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
                 >
                   Cancelar
                 </button>
               </div>
             )}
             {activeAppt.status === 'confirmed' && (
-              <div className="flex gap-2 flex-wrap">
+              <div className="grid grid-cols-1 gap-2">
                 <button
                   onClick={() => patchStatus(activeAppt.id, 'completed')}
                   disabled={statusLoading}
-                  className="flex-1 bg-[#1A3A6B] text-white font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase px-3 py-3 rounded-sm hover:bg-[#142d56] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
+                  className="bg-[#1A3A6B] text-white font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase px-3 py-3 rounded-sm hover:bg-[#111111] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
                 >
                   Completada
                 </button>
                 <button
                   onClick={() => patchStatus(activeAppt.id, 'no_show')}
                   disabled={statusLoading}
-                  className="flex-1 bg-transparent text-[#555555] border border-[#E5E5E5] font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase px-3 py-3 rounded-sm hover:border-[#111111] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
+                  className="bg-transparent text-[#555555] border border-[#E5E5E5] font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase px-3 py-3 rounded-sm hover:border-[#111111] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
                 >
                   No-show
                 </button>
                 <button
                   onClick={() => patchStatus(activeAppt.id, 'cancelled')}
                   disabled={statusLoading}
-                  className="flex-1 bg-transparent text-[#C8102E] border-2 border-[#C8102E] font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase px-3 py-3 rounded-sm hover:bg-[#FFF0F2] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
+                  className="bg-transparent text-[#C8102E] border-2 border-[#C8102E] font-['Oswald'] font-semibold text-[13px] tracking-[0.08em] uppercase px-3 py-3 rounded-sm hover:border-[#111111] hover:text-[#111111] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
                 >
                   Cancelar
                 </button>
@@ -361,7 +392,7 @@ export default function AgendaPage() {
         <div className="fixed inset-0 z-50 flex flex-col justify-end">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowBlockModal(false)} />
           <div className="relative bg-white border-t-4 border-t-[#111111] px-5 pt-5 pb-8 max-w-lg mx-auto w-full">
-            <div className="w-10 h-1 bg-[#E5E5E5] rounded-full mx-auto mb-5" />
+            <div className="w-10 h-1 bg-[#E5E5E5] rounded-none mx-auto mb-5" />
             <h2 className="font-['Oswald'] font-bold text-[20px] text-[#111111] uppercase mb-4">Bloquear hueco</h2>
             <div className="flex gap-3 mb-4">
               <div className="flex-1">
@@ -397,7 +428,7 @@ export default function AgendaPage() {
             <button
               onClick={submitBlock}
               disabled={blockLoading}
-              className="w-full bg-[#111111] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#333] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
+              className="w-full bg-[#111111] text-white font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:bg-[#1A3A6B] active:scale-[0.98] transition-colors min-h-[44px] disabled:opacity-40"
             >
               {blockLoading ? 'Guardando…' : 'Bloquear hueco'}
             </button>

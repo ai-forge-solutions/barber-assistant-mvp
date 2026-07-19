@@ -1,11 +1,11 @@
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'
 
 const badgeStyles: Record<AppointmentStatus, string> = {
-  pending:   'bg-[#FFF0F2] text-[#C8102E] border-[#F5C0C8]',
-  confirmed: 'bg-[#EEF2FF] text-[#1A3A6B] border-[#C0CCF0]',
-  completed: 'bg-[#F5F5F5] text-[#555555] border-[#E5E5E5]',
-  cancelled: 'bg-[#F5F5F5] text-[#999999] border-[#E5E5E5]',
-  no_show:   'bg-[#FFF0F2] text-[#C8102E] border-[#F5C0C8]',
+  pending:   'bg-white text-[#C8102E] border-[#C8102E]',
+  confirmed: 'bg-white text-[#1A3A6B] border-[#1A3A6B]',
+  completed: 'bg-white text-[#555555] border-[#E5E5E5]',
+  cancelled: 'bg-white text-[#999999] border-[#E5E5E5]',
+  no_show:   'bg-white text-[#C8102E] border-[#C8102E]',
 }
 
 const badgeLabels: Record<AppointmentStatus, string> = {
