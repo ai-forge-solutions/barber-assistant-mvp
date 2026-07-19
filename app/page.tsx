@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
-import { PricingTeaser } from '@/components/pricing/PricingBlocks'
+import PricingTeaser from '@/components/pricing/PricingTeaser'
 
 const problems = [
   {

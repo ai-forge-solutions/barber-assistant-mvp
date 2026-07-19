@@ -310,7 +310,14 @@ export default function ReservarPage() {
                 >
                   {b.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={b.photo_url} alt={b.display_name} className="w-14 h-14 rounded-sm object-cover" />
+                    <img
+                      src={b.photo_url}
+                      alt={b.display_name}
+                      width={56}
+                      height={56}
+                      decoding="async"
+                      className="w-14 h-14 rounded-sm object-cover"
+                    />
                   ) : (
                     <div className="w-14 h-14 rounded-sm bg-[#E5E5E5] flex items-center justify-center">
                       <span className="font-['Oswald'] font-bold text-[20px] text-[#555555]">{initials(b.display_name)}</span>

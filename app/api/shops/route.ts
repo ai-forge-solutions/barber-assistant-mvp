@@ -2,6 +2,10 @@ import type { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+const PUBLIC_CATALOG_HEADERS = {
+  'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+}
+
 // GET /api/shops?slug=xxx  — public, no auth required
 export async function GET(request: NextRequest) {
   const slug = new URL(request.url).searchParams.get('slug')
@@ -15,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
   if (!data) return Response.json({ error: 'Not found' }, { status: 404 })
-  return Response.json(data)
+  return Response.json(data, { headers: PUBLIC_CATALOG_HEADERS })
 }
 
 // POST /api/shops

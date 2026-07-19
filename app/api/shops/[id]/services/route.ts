@@ -2,6 +2,10 @@ import type { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+const PUBLIC_CATALOG_HEADERS = {
+  'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+}
+
 async function requireOwner(shopId: string, userId: string) {
   const { data } = await supabaseAdmin
     .from('shops')
@@ -112,7 +116,7 @@ export async function GET(
     .eq('is_active', true)
     .order('name')
   if (error) return Response.json({ error: error.message }, { status: 500 })
-  return Response.json(data ?? [])
+  return Response.json(data ?? [], { headers: PUBLIC_CATALOG_HEADERS })
 }
 
 // DELETE /api/shops/[id]/services
