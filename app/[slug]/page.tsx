@@ -73,7 +73,14 @@ export default async function ShopPage({ params }: PageProps) {
         <div className="flex items-start gap-4">
           {shop.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={shop.logo_url} alt={shop.name} className="w-16 h-16 rounded-sm object-contain border border-[#E5E5E5] flex-shrink-0" />
+            <img
+              src={shop.logo_url}
+              alt={shop.name}
+              width={64}
+              height={64}
+              fetchPriority="high"
+              className="w-16 h-16 rounded-sm object-contain border border-[#E5E5E5] flex-shrink-0"
+            />
           ) : (
             <div className="w-16 h-16 rounded-sm bg-[#111111] flex items-center justify-center flex-shrink-0">
               <span className="font-['Rye'] text-[22px] text-white">
@@ -152,7 +159,15 @@ export default async function ShopPage({ params }: PageProps) {
                 <div key={b.id} className="flex flex-col items-center gap-2">
                   {b.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={b.photo_url} alt={b.display_name} className="w-16 h-16 rounded-sm object-cover border border-[#E5E5E5]" />
+                    <img
+                      src={b.photo_url}
+                      alt={b.display_name}
+                      width={64}
+                      height={64}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-16 h-16 rounded-sm object-cover border border-[#E5E5E5]"
+                    />
                   ) : (
                     <div className="w-16 h-16 rounded-sm bg-[#E5E5E5] flex items-center justify-center">
                       <span className="font-['Oswald'] font-bold text-[20px] text-[#555555]">{initials(b.display_name)}</span>
