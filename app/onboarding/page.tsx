@@ -299,7 +299,7 @@ export default function OnboardingPage() {
               <Label>Enlace público</Label>
               <div className="flex items-center border border-[#E5E5E5] focus-within:border-[#111111] rounded-sm overflow-hidden transition-colors">
                 <span className="px-3 py-3 font-['DM_Sans'] text-[13px] text-[#999999] bg-[#F5F5F5] border-r border-[#E5E5E5] whitespace-nowrap select-none">
-                  turno.app/
+                  trujas.app/
                 </span>
                 <input
                   className="flex-1 px-3 py-3 font-['DM_Sans'] text-[14px] text-[#111111] outline-none bg-white min-h-[44px]"

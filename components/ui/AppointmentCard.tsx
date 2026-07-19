@@ -29,11 +29,11 @@ export default function AppointmentCard({ appointment, onClick }: AppointmentCar
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-4 border-2 border-[#111111] border-l-4 ${statusBorderStyles[status]} rounded-sm bg-white px-5 py-4 text-left min-h-[64px]`}
+      className={`w-full flex items-start gap-3 border-2 border-[#111111] border-l-4 ${statusBorderStyles[status]} rounded-sm bg-white px-4 py-4 text-left min-h-[76px] transition-colors hover:border-[#1A3A6B]`}
     >
       {/* Hora */}
-      <div className="min-w-[56px]">
-        <span className="font-['Oswald'] font-bold text-[28px] text-[#111111] leading-none">
+      <div className="w-[54px] shrink-0 pt-0.5">
+        <span className="block font-['Oswald'] font-bold text-[26px] text-[#111111] leading-none">
           {time}
         </span>
         {period && (
@@ -44,20 +44,22 @@ export default function AppointmentCard({ appointment, onClick }: AppointmentCar
       </div>
 
       {/* Separador */}
-      <div className="w-px h-9 bg-[#E5E5E5] shrink-0" />
+      <div className="w-px min-h-11 bg-[#E5E5E5] shrink-0" />
 
       {/* Info */}
-      <div className="flex-1 min-w-0">
-        <p className="font-['Oswald'] font-semibold text-[16px] text-[#111111] truncate">
+      <div className="flex-1 min-w-0 pr-1">
+        <p className="font-['Oswald'] font-semibold text-[16px] leading-tight text-[#111111] break-words">
           {clientName}
         </p>
-        <p className="font-['DM_Sans'] text-[12px] text-[#999999] mt-0.5 truncate">
+        <p className="font-['DM_Sans'] text-[12px] text-[#999999] mt-1 break-words">
           {service} · {duration} min
         </p>
       </div>
 
       {/* Badge */}
-      <StatusBadge status={status} />
+      <div className="shrink-0 max-w-[96px]">
+        <StatusBadge status={status} />
+      </div>
     </button>
   )
 }

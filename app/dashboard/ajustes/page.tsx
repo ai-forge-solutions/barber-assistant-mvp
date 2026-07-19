@@ -43,7 +43,7 @@ export default function AjustesPage() {
   function downloadQr() {
     const a = document.createElement('a')
     a.href = qrSrc
-    a.download = `turno-qr-${shop?.slug ?? 'barberia'}.png`
+    a.download = `trujas-qr-${shop?.slug ?? 'barberia'}.png`
     a.click()
   }
 

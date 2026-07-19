@@ -3,7 +3,7 @@ import PublicNav from '@/components/nav/PublicNav'
 import ColorStripe from '@/components/brand/ColorStripe'
 
 export const metadata = {
-  title: 'Cita cancelada — TURNO.',
+  title: 'Cita cancelada — trujas',
 }
 
 export default function CancelSuccess() {

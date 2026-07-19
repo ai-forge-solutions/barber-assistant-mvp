@@ -6,14 +6,14 @@ import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
 import { createClient } from '@/lib/supabase/client'
 import { COUNTRY_DIAL_CODES, DEFAULT_COUNTRY_DIAL_CODE } from '@/lib/auth/countries'
+import { authCallbackUrl, rememberAuthNext, safeAuthNext } from '@/lib/auth/redirect'
 import { normalizePhone } from '@/lib/auth/client-profile'
 import DataProtectionNotice from '@/components/legal/DataProtectionNotice'
 
 type Mode = 'signup' | 'login'
 
 function safeNext(value: string | null) {
-  if (!value || !value.startsWith('/')) return '/cuenta/citas'
-  return value
+  return safeAuthNext(value, '/cuenta/citas')
 }
 
 function PasswordInput({
@@ -93,13 +93,13 @@ function ClientAuthContent() {
   }
 
   function callbackUrl() {
-    const appUrl = window.location.origin.replace(/\/$/, '')
-    return `${appUrl}/auth/callback?next=${encodeURIComponent(next)}`
+    return authCallbackUrl(window.location.origin)
   }
 
   async function continueWithGoogle() {
     setLoading(true)
     setError('')
+    rememberAuthNext(next, '/cuenta/citas')
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -151,6 +151,7 @@ function ClientAuthContent() {
     }
 
     setLoading(true)
+    rememberAuthNext(next, '/cuenta/citas')
     try {
       if (mode === 'signup') {
         const { data, error: signUpError } = await supabase.auth.signUp({

@@ -16,7 +16,7 @@ export default function DataProtectionNotice({
       <p className="font-['DM_Sans'] text-[12px] leading-relaxed text-[#555555]">
         Usaremos tu nombre, email y móvil solo para gestionar tu cita, enviarte confirmaciones,
         recordatorios y avisos relacionados con la reserva. La barbería actúa como responsable del
-        servicio y TURNO. como proveedor tecnológico.
+        servicio y trujas como proveedor tecnológico.
       </p>
 
       <details className="mt-2 group">

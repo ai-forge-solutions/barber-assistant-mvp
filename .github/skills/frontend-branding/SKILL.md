@@ -1,12 +1,15 @@
 ---
-name: turno-brand
-description: Aplica el sistema de diseño de TURNO. a cualquier pantalla Next.js/Tailwind del proyecto — landing, app de barbero y página pública de barbería. Úsala SIEMPRE que toques UI. Modo estricto: rechaza colores fuera de paleta, fuentes no permitidas y componentes que no sigan el sistema.
+name: trujas-brand
+description: "Aplica el sistema de diseño de trujas a cualquier pantalla Next.js/Tailwind del proyecto — landing, app de barbero y página pública de barbería. Úsala SIEMPRE que toques UI. Modo estricto: rechaza colores fuera de paleta, fuentes no permitidas y componentes que no sigan el sistema."
 ---
 
-# TURNO. · Sistema de Diseño (modo estricto)
+# trujas · Sistema de Diseño (modo estricto)
 
-Eres un diseñador-ingeniero trabajando en **TURNO.**, un SaaS de gestión
+Eres un diseñador-ingeniero trabajando en **trujas**, un SaaS de gestión
 de citas para barberías independientes en España.
+
+**Nombre de producto no negociable:** siempre escribir `trujas`, en minúsculas y sin punto. No usar `TURNO`, `TURNO.`, `Turno` ni `trujas.` en copy, logo, metadata, legal, emails o mocks.
+
 Stack: **Next.js 14 (App Router) · Tailwind CSS · Supabase**.
 
 Tu trabajo es que cada pantalla que toques salga con el branding correcto
@@ -16,7 +19,7 @@ sin que nadie tenga que pedírtelo explícitamente.
 
 ## Contexto del producto
 
-TURNO. tiene tres superficies distintas:
+trujas tiene tres superficies distintas:
 
 | Superficie | Quién la usa | Mood |
 |---|---|---|
@@ -93,7 +96,7 @@ Importar siempre así en `layout.tsx` o `globals.css`:
 
 | Rol | Fuente | Tamaño | Peso | Uso |
 |---|---|---|---|---|
-| Logo TURNO. | Rye | 24–72px | — | Navbar, hero de landing |
+| Logo trujas | Rye | 24–72px | — | Navbar, hero de landing |
 | Nombre barbería | Rye | 28–48px | — | Página pública `/[slug]` |
 | H1 landing | Oswald | 48–64px | 700 | Hero de captación |
 | H2 sección | Oswald | 28–36px | 700 | Títulos de sección |
@@ -243,7 +246,7 @@ const badgeLabels = {
 ```tsx
 <nav className="bg-[#111111] px-5 py-3.5 flex items-center justify-between">
   <span className="font-['Rye'] text-[22px] text-white tracking-[0.04em]">
-    TURNO<span className="text-[#C8102E]">.</span>
+    trujas
   </span>
   <span className="font-['Oswald'] font-semibold text-[12px] text-[#999999] uppercase tracking-[0.1em]">
     {dayLabel} · {dateLabel}
@@ -257,7 +260,7 @@ const badgeLabels = {
 ```tsx
 <nav className="bg-white border-b border-[#E5E5E5] px-6 py-4 flex items-center justify-between">
   <span className="font-['Rye'] text-[22px] text-[#111111] tracking-[0.04em]">
-    TURNO<span className="text-[#C8102E]">.</span>
+    trujas
   </span>
   {/* nav links en Oswald */}
 </nav>
