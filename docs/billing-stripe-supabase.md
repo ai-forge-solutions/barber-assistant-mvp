@@ -2,50 +2,60 @@
 
 ## Decisión de pricing
 
-La página `/pricing` usa tres tiers para crear anclaje:
+La página `/pricing` y la pantalla `/billing` usan dos planes de Stripe:
 
-1. `Arranque` — 29€/mes mensual o 24€/mes anual. Sirve como opción flexible de entrada.
-2. `Barbería anual` — recomendado: 15€/mes con compromiso anual, con primer mes gratis.
-3. `Barbería pro` — 39€/mes mensual o 32€/mes anual para equipos/locales con más sillas.
+1. `Barbería basic` — 29€/mes mensual o 15€/mes con permanencia anual, con primer mes gratis.
+2. `Barbería pro` — 39€/mes mensual o 32€/mes con permanencia anual, con primer mes gratis.
 
 El plan recomendado se integra también en la home porque la landing ya está enfocada a conversión. `/pricing` queda como página específica para comparar planes con toggle mensual/anual y cajas desplegables.
 
 ## Primer mes gratis
 
-El checkout de `/api/billing/checkout` usa Stripe Checkout en modo `subscription` con:
+El checkout de `/api/stripe/create-checkout-session` usa Stripe Checkout en modo `subscription` con:
 
 - `trial_period_days: 30` para que el primer mes sea 0€.
-- `payment_method_collection: 'if_required'` para no pedir método de pago si Stripe no lo necesita al iniciar el trial.
+- `payment_method_collection: 'always'` para pedir tarjeta al iniciar el trial.
 - `allow_promotion_codes: true` para futuras ofertas controladas desde Stripe.
-- redirección a `/auth/barber/signup` tras checkout correcto.
+- redirección a `/billing?checkout=success&session_id={CHECKOUT_SESSION_ID}` tras checkout correcto.
+- metadata de `shop_id`, `owner_user_id`, `plan` y `cadence` para sincronizar la suscripción por webhook.
 
-Mientras falten variables de Stripe, el endpoint queda mockeado y redirige a:
+La ruta legacy `/api/billing/checkout` reexporta el endpoint nuevo para no romper CTAs existentes.
+
+Mientras falte `STRIPE_SECRET_KEY`, el endpoint redirige de vuelta a:
 
 ```text
-/auth/barber/signup?next=/dashboard&billing_mock=true&plan=<plan>
+/billing?checkout=missing_config&plan=<plan>
 ```
 
-Así se puede revisar el flujo y el copy sin cobrar.
+Así se puede revisar el copy sin cobrar. Para validar Checkout real hacen falta secrets de Stripe en el entorno del servidor.
 
 ## Variables necesarias para cerrar cobros reales
 
 ```env
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_SOLO_MONTHLY=price_...
-STRIPE_PRICE_SOLO_ANNUAL=price_...
-STRIPE_PRICE_RECOMMENDED_MONTHLY=price_...
-STRIPE_PRICE_RECOMMENDED_ANNUAL=price_...
-STRIPE_PRICE_PREMIUM_MONTHLY=price_...
-STRIPE_PRICE_PREMIUM_ANNUAL=price_...
+STRIPE_PRICE_BASIC_MONTHLY=price_...
+STRIPE_PRICE_BASIC_ANNUAL=price_...
+STRIPE_PRICE_PRO_MONTHLY=price_...
+STRIPE_PRICE_PRO_ANNUAL=price_...
 NEXT_PUBLIC_APP_URL=https://...
+```
+
+Si no se definen los `STRIPE_PRICE_*`, el servidor resuelve prices activos por lookup key:
+
+```text
+price_barberia_monthly
+price_barberia_yearly
+price_barberia_pro_monthly
+price_barberia_pro_yearly
 ```
 
 También hay que configurar en Stripe:
 
-- producto TURNO. y los tres prices anteriores;
-- Customer Portal si Miguel quiere autoservicio de cambio/cancelación;
-- dominio definitivo para el checkout real.
+- productos y prices anteriores;
+- Customer Portal para autoservicio de cambio/cancelación;
+- webhook público apuntando a `/api/stripe/webhook`;
+- dominio definitivo para Checkout y Portal.
 
 ## Supabase: acceso de barberos con suscripción activa
 
@@ -66,22 +76,23 @@ active, trialing
 
 Además, si `current_period_end` existe, debe estar en el futuro.
 
-La función `public.shop_has_active_subscription(shop_id)` centraliza la comprobación. En una tarea posterior se debería usar en el guard del dashboard y mantenerla sincronizada con webhooks de Stripe:
+La función `public.shop_has_active_subscription(shop_id)` centraliza la comprobación. El dashboard y la página pública de reservas la usan para bloquear acceso cuando la suscripción no está activa. El webhook firmado de Stripe mantiene el estado local con estos eventos:
 
 - `checkout.session.completed`
 - `customer.subscription.created`
 - `customer.subscription.updated`
 - `customer.subscription.deleted`
 - `invoice.payment_failed`
-- `invoice.paid`
+- `invoice.payment_succeeded`
+
+El Customer Portal se abre desde `/api/stripe/create-portal-session` para usuarios autenticados con barbería asociada y `stripe_customer_id` local.
 
 ## Pendiente para una tarea posterior
 
-Para empezar a cobrar de verdad faltan datos de Miguel / Stripe:
+Para terminar la validación real faltan datos/configuración de Stripe y entorno:
 
-1. confirmar si los planes anuales se facturan mes a mes con compromiso anual o en un cargo anual;
-2. claves live/test de Stripe;
-3. IDs reales de los prices;
-4. webhook secret;
-5. dominio definitivo para el checkout real;
-6. si se debe bloquear dashboard inmediatamente cuando `past_due` o dar periodo de gracia.
+1. configurar `STRIPE_SECRET_KEY` y `STRIPE_WEBHOOK_SECRET` en Netlify/entorno de deploy;
+2. confirmar que los lookup keys o `STRIPE_PRICE_*` existen en Stripe;
+3. configurar el webhook público hacia `/api/stripe/webhook`;
+4. habilitar Customer Portal en Stripe;
+5. hacer smoke test real de Checkout/Portal con cuenta de prueba antes de promover producción.
