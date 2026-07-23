@@ -6,8 +6,35 @@ export function safeAuthNext(value: string | null | undefined, fallback = '/dash
   return value
 }
 
+function canonicalAppOrigin(origin: string) {
+  const normalized = origin.replace(/\/$/, '')
+
+  try {
+    const url = new URL(normalized)
+
+    if (url.hostname === 'barber-assitant.netlify.app') {
+      return 'https://trujas.app'
+    }
+  } catch {
+    return normalized
+  }
+
+  return normalized
+}
+
+export function appOrigin(fallbackOrigin: string) {
+  const fallback = canonicalAppOrigin(fallbackOrigin)
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim()
+
+  if (configured?.startsWith('http://') || configured?.startsWith('https://')) {
+    return canonicalAppOrigin(configured)
+  }
+
+  return fallback
+}
+
 export function authCallbackUrl(origin: string) {
-  return `${origin.replace(/\/$/, '')}/auth/callback`
+  return `${appOrigin(origin)}/auth/callback`
 }
 
 export function readAuthNextCookie(value: string | undefined, fallback = '/dashboard') {

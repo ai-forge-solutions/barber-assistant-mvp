@@ -81,8 +81,19 @@ const faqs = [
 function PrimaryCta({ children }: { children: ReactNode }) {
   return (
     <Link
-      href="/auth/barber?next=%2Fdashboard"
+      href="/pricing"
       className="inline-flex min-h-[44px] items-center justify-center rounded-sm bg-[#C8102E] px-8 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
+    >
+      {children}
+    </Link>
+  )
+}
+
+function BarberLoginCta({ children }: { children: ReactNode }) {
+  return (
+    <Link
+      href="/auth/barber?next=%2Fdashboard"
+      className="inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]"
     >
       {children}
     </Link>
@@ -239,19 +250,14 @@ export default function Home() {
                   Para barberos independientes en España
                 </p>
                 <h1 className="mt-6 max-w-xl font-['Oswald'] text-[44px] font-bold uppercase leading-[0.95] text-white sm:text-[58px] lg:text-[64px]">
-                  Reservas online. WhatsApp solo cuando hace falta.
+                  Deja de recibir mensajes para cuadrar citas en tu tiempo libre
                 </h1>
                 <p className="mt-6 max-w-lg font-['DM_Sans'] text-[17px] leading-relaxed text-white">
                   trujas ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <PrimaryCta>Crear mi agenda gratis</PrimaryCta>
-                  <Link
-                    href="/pricing"
-                    className="inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]"
-                  >
-                    Ver precio
-                  </Link>
+                  <PrimaryCta>Empezar gratis</PrimaryCta>
+                  <BarberLoginCta>¿Ya tienes cuenta?</BarberLoginCta>
                 </div>
                 <div className="mt-8 grid gap-3 border-t border-[#555555] pt-6 sm:grid-cols-3">
                   {[
@@ -409,7 +415,7 @@ export default function Home() {
           <section className="px-6 py-12 text-center sm:px-10">
             <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">trujas gestiona tus citas. Tú sigues cortando.</h2>
             <div className="mt-7">
-              <PrimaryCta>Empieza ahora</PrimaryCta>
+              <PrimaryCta>Empezar gratis</PrimaryCta>
             </div>
             <p className="mt-4 font-['DM_Sans'] text-[12px] text-[#999999]">Sin compromiso. Tu primer mes es gratis.</p>
           </section>
