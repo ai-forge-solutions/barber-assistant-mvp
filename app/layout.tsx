@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Trujas — Asistente para barbershops",
-  description: "Trujas gestiona las citas de tu barbería en automático. Tus clientes reservan solos y tú dejas de perder tiempo contestando mensajes.",
+  title: "trujas — Agenda online para barberías",
+  description: "trujas gestiona las citas de tu barbería. Tus clientes reservan online y tú dejas de perder tiempo cuadrando horarios por mensajes.",
 };
 
 export default function RootLayout({

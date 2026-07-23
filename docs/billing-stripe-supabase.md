@@ -1,4 +1,4 @@
-# Stripe y Supabase para TURNO.
+# Stripe y Supabase para trujas
 
 ## Decisión de pricing
 
@@ -56,6 +56,17 @@ También hay que configurar en Stripe:
 - Customer Portal para autoservicio de cambio/cancelación;
 - webhook público apuntando a `/api/stripe/webhook`;
 - dominio definitivo para Checkout y Portal.
+
+## Resumen ejecutivo: setup productivo para aceptar pagos
+
+Para aceptar pagos reales en producción no basta con desplegar el código. Hay que completar este setup operativo:
+
+1. Crear en Stripe los productos y prices de `Barbería basic` y `Barbería pro` para mensual/anual, usando los lookup keys documentados o copiando los price IDs a `STRIPE_PRICE_*`.
+2. Configurar en Netlify/producción `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` y `NEXT_PUBLIC_APP_URL` con el dominio definitivo.
+3. Publicar un webhook de Stripe hacia `https://<dominio>/api/stripe/webhook` con eventos de Checkout, suscripciones e invoices.
+4. Habilitar Customer Portal en Stripe para cambios/cancelaciones de plan desde `/billing`.
+5. Ejecutar la migración de Supabase de suscripciones antes de activar cobros, para que el webhook pueda persistir `shop_subscriptions`.
+6. Hacer un smoke test con modo test de Stripe: login de barbero, checkout, webhook recibido, suscripción `trialing/active` en Supabase y acceso al dashboard/reservas.
 
 ## Supabase: acceso de barberos con suscripción activa
 

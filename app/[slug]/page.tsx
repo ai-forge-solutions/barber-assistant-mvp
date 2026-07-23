@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps) {
     .eq('slug', slug)
     .maybeSingle()
 
-  if (!shop) return { title: 'Barbería — TURNO.' }
+  if (!shop) return { title: 'Barbería — trujas' }
 
   const { data: services } = await supabase
     .from('services')
@@ -74,10 +74,17 @@ export default async function ShopPage({ params }: PageProps) {
 
       {/* Shop header */}
       <header className="px-5 py-8 max-w-lg mx-auto w-full">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start gap-4">
           {shop.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={shop.logo_url} alt={shop.name} className="w-16 h-16 rounded-sm object-contain border border-[#E5E5E5]" />
+            <img
+              src={shop.logo_url}
+              alt={shop.name}
+              width={64}
+              height={64}
+              fetchPriority="high"
+              className="w-16 h-16 rounded-sm object-contain border border-[#E5E5E5] flex-shrink-0"
+            />
           ) : (
             <div className="w-16 h-16 rounded-sm bg-[#111111] flex items-center justify-center flex-shrink-0">
               <span className="font-['Rye'] text-[22px] text-white">
@@ -85,9 +92,21 @@ export default async function ShopPage({ params }: PageProps) {
               </span>
             </div>
           )}
-          <div>
-            <h1 className="font-['Rye'] text-[28px] text-[#111111] tracking-[0.03em]">{shop.name}</h1>
-            <p className="font-['DM_Sans'] text-[14px] text-[#555555] mt-0.5">{shop.address}</p>
+          <div className="min-w-0">
+            <p className="font-['DM_Sans'] text-[12px] text-[#999999] uppercase tracking-[0.08em]">Reserva online</p>
+            <h1 className="font-['Rye'] text-[30px] leading-tight text-[#111111] tracking-[0.03em] break-words">{shop.name}</h1>
+            <p className="font-['DM_Sans'] text-[14px] text-[#555555] mt-1 break-words">{shop.address}</p>
+          </div>
+        </div>
+        <div className="mt-6 border-2 border-[#111111] rounded-sm p-4">
+          <p className="font-['Oswald'] text-[20px] font-bold uppercase leading-tight text-[#111111]">
+            Elige servicio, barbero y hora en pocos pasos.
+          </p>
+          <p className="mt-2 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
+            La barbería recibe tu cita al momento. Tú solo tienes que elegir cuándo vienes.
+          </p>
+          <div className="mt-4">
+            <BookingButton slug={slug} />
           </div>
         </div>
       </header>
@@ -123,12 +142,12 @@ export default async function ShopPage({ params }: PageProps) {
             <h2 className="font-['Oswald'] font-bold text-[18px] text-[#111111] uppercase tracking-[0.04em] mb-3">Servicios</h2>
             <ul className="flex flex-col gap-2">
               {services.map((s: { id: string; name: string; duration_min: number; price: number }) => (
-                <li key={s.id} className="flex items-center justify-between border border-[#E5E5E5] rounded-sm px-4 py-3">
-                  <div>
-                    <p className="font-['Oswald'] font-semibold text-[15px] text-[#111111]">{s.name}</p>
+                <li key={s.id} className="flex items-start justify-between gap-4 border border-[#E5E5E5] rounded-sm px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="font-['Oswald'] font-semibold text-[15px] leading-tight text-[#111111] break-words">{s.name}</p>
                     <p className="font-['DM_Sans'] text-[12px] text-[#999999]">{s.duration_min} min</p>
                   </div>
-                  <span className="font-['Oswald'] font-bold text-[18px] text-[#111111]">{s.price}€</span>
+                  <span className="font-['Oswald'] font-bold text-[18px] text-[#111111] shrink-0">{s.price}€</span>
                 </li>
               ))}
             </ul>
@@ -144,13 +163,21 @@ export default async function ShopPage({ params }: PageProps) {
                 <div key={b.id} className="flex flex-col items-center gap-2">
                   {b.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={b.photo_url} alt={b.display_name} className="w-16 h-16 rounded-sm object-cover border border-[#E5E5E5]" />
+                    <img
+                      src={b.photo_url}
+                      alt={b.display_name}
+                      width={64}
+                      height={64}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-16 h-16 rounded-sm object-cover border border-[#E5E5E5]"
+                    />
                   ) : (
                     <div className="w-16 h-16 rounded-sm bg-[#E5E5E5] flex items-center justify-center">
                       <span className="font-['Oswald'] font-bold text-[20px] text-[#555555]">{initials(b.display_name)}</span>
                     </div>
                   )}
-                  <span className="font-['DM_Sans'] text-[12px] text-[#555555]">{b.display_name}</span>
+                  <span className="max-w-20 text-center font-['DM_Sans'] text-[12px] leading-tight text-[#555555] break-words">{b.display_name}</span>
                 </div>
               ))}
             </div>

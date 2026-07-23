@@ -48,7 +48,7 @@ export function newAppointmentEmailHtml(data: NewAppointmentEmailData): string {
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
         ${rows.map(([label, value]) => `<tr><td style="padding:8px 0;color:#71717a;font-size:14px;">${label}</td><td style="padding:8px 0;color:#18181b;font-weight:600;text-align:right;">${value}</td></tr>`).join('')}
       </table>
-      <p style="color:#71717a;font-size:13px;line-height:1.5;margin:0;">Puedes gestionar la cita desde tu agenda en TURNO.</p>
+      <p style="color:#71717a;font-size:13px;line-height:1.5;margin:0;">Puedes gestionar la cita desde tu agenda en trujas</p>
     </div>
   </div>
 </body>
