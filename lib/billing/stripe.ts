@@ -101,7 +101,7 @@ export async function ensureStripeCustomer({
     metadata: {
       shop_id: shopId,
       owner_user_id: userId,
-      source: 'turno-dashboard',
+      source: 'trujas-dashboard',
     },
   })
 

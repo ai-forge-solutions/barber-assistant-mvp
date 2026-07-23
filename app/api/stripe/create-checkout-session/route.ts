@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     owner_user_id: user.id,
     plan: plan.key,
     cadence,
-    source: 'turno-billing',
+    source: 'trujas-billing',
   }
 
   const session = await stripe.checkout.sessions.create({

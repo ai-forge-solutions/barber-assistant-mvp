@@ -136,7 +136,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
         <section>
           <h2 className="font-['Oswald'] text-[26px] font-bold uppercase text-[#111111]">Elige plan</h2>
           <p className="mt-2 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
-            Stripe cobra de forma segura. TURNO. no guarda tarjetas.
+            Stripe cobra de forma segura. trujas no guarda tarjetas.
           </p>
 
           <div className="mt-4 grid gap-3">
