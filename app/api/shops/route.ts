@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
   if (!data) return Response.json({ error: 'Not found' }, { status: 404 })
-  return Response.json(data, { headers: PUBLIC_CATALOG_HEADERS })
+  const { data: subscriptionActive } = await supabaseAdmin.rpc('shop_has_active_subscription', { target_shop_id: data.id })
+  return Response.json({ ...data, subscription_active: subscriptionActive === true }, { headers: PUBLIC_CATALOG_HEADERS })
 }
 
 // POST /api/shops

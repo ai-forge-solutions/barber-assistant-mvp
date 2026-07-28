@@ -50,7 +50,7 @@ export default function PricingTeaser() {
         </div>
         <p className="mt-2 font-['DM_Sans'] text-[13px] text-[#555555]">Compromiso anual. Sin comisión por reserva. Primer mes gratis.</p>
         <div className="mt-5">
-          <CheckoutButton planKey="recommended" cadence="annual">Empezar con primer mes gratis</CheckoutButton>
+          <CheckoutButton planKey="basic" cadence="annual">Empezar con primer mes gratis</CheckoutButton>
         </div>
       </div>
       <Link href="/pricing" className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]">
