@@ -27,7 +27,7 @@ function CheckoutButton({
       : "min-h-[44px] w-full rounded-sm bg-[#C8102E] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
 
   return (
-    <form action="/api/billing/checkout" method="POST">
+    <form action="/api/stripe/create-checkout-session" method="POST">
       <input type="hidden" name="plan" value={planKey} />
       <input type="hidden" name="cadence" value={cadence} />
       <button type="submit" className={className}>

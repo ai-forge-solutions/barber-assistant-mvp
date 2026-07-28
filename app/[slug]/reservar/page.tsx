@@ -78,6 +78,7 @@ export default function ReservarPage() {
   const [booking, setBooking] = useState<BookingState>(EMPTY)
   const [shopName, setShopName] = useState('')
   const [shopAddress, setShopAddress] = useState('')
+  const [subscriptionActive, setSubscriptionActive] = useState(true)
 
   // Step data
   const [barbers, setBarbers] = useState<Barber[]>([])
@@ -118,6 +119,12 @@ export default function ReservarPage() {
       if (!shop?.id) { router.replace('/'); return }
       setShopName(shop.name)
       setShopAddress(shop.address ?? '')
+      setSubscriptionActive(shop.subscription_active === true)
+
+      if (shop.subscription_active !== true) {
+        setLoading(false)
+        return
+      }
 
       // Load barbers and services in parallel
       const [barbersRes, servicesRes] = await Promise.all([
@@ -236,6 +243,28 @@ export default function ReservarPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <span className="font-['DM_Sans'] text-[14px] text-[#999999]">Cargando…</span>
+      </div>
+    )
+  }
+
+  if (!subscriptionActive) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white px-5 text-center">
+        <div className="mb-6 border-2 border-[#C8102E] px-4 py-3 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">
+          Reservas pausadas
+        </div>
+        <h1 className="font-['Oswald'] text-[28px] font-bold uppercase leading-tight text-[#111111]">
+          {shopName || 'Esta barbería'} todavía no puede recibir citas.
+        </h1>
+        <p className="mt-3 max-w-sm font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">
+          La página de reservas se activará cuando la suscripción vuelva a estar activa.
+        </p>
+        <Link
+          href={`/${slug}`}
+          className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-[#111111] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#111111]"
+        >
+          Volver
+        </Link>
       </div>
     )
   }

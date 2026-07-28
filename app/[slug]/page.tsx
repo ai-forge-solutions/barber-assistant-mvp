@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { getCustomer, hasRequiredCustomer } from '@/lib/auth/customers'
 import PublicNav from '@/components/nav/PublicNav'
 import ColorStripe from '@/components/brand/ColorStripe'
@@ -50,6 +51,9 @@ export default async function ShopPage({ params }: PageProps) {
     .maybeSingle()
 
   if (!shop) notFound()
+
+  const { data: subscriptionActive } = await supabaseAdmin.rpc('shop_has_active_subscription', { target_shop_id: shop.id })
+  const bookingEnabled = subscriptionActive === true
 
   const [{ data: services }, { data: barbers }, { data: schedules }] = await Promise.all([
     supabase.from('services').select('id, name, duration_min, price').eq('shop_id', shop.id).eq('is_active', true).order('name'),
@@ -184,7 +188,18 @@ export default async function ShopPage({ params }: PageProps) {
       {/* Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E5E5] px-5 py-4 z-30">
         <div className="max-w-lg mx-auto">
-          <BookingButton slug={slug} />
+          {bookingEnabled ? (
+            <BookingButton slug={slug} />
+          ) : (
+            <div className="border-2 border-[#C8102E] bg-white px-4 py-3 text-center">
+              <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#C8102E]">
+                Reservas pausadas
+              </p>
+              <p className="mt-1 font-['DM_Sans'] text-[12px] text-[#555555]">
+                Esta barbería tiene que activar su suscripción para recibir citas.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
