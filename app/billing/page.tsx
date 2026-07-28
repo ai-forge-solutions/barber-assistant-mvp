@@ -21,6 +21,11 @@ const statusLabels: Record<string, string> = {
   paused: 'Pausada',
 }
 
+const setupReasonLabels: Record<string, string> = {
+  stripe_price_missing: 'Falta un price activo de Stripe para el plan elegido. Revisa los lookup keys o las variables STRIPE_PRICE_*.',
+  supabase_billing_schema: 'Falta aplicar la migración de suscripciones en Supabase antes de cobrar.',
+}
+
 function value(params: Record<string, string | string[] | undefined>, key: string) {
   const raw = params[key]
   return Array.isArray(raw) ? raw[0] : raw
@@ -50,6 +55,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
   const params = searchParams ? await searchParams : {}
   const checkout = value(params, 'checkout')
   const portal = value(params, 'portal')
+  const setupReason = value(params, 'reason')
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -98,6 +104,22 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
           <div className="border-2 border-[#C8102E] bg-white px-4 py-3">
             <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#C8102E]">Stripe no está configurado</p>
             <p className="mt-1 font-['DM_Sans'] text-[13px] text-[#555555]">Falta STRIPE_SECRET_KEY o los prices/lookup keys en el entorno del servidor.</p>
+          </div>
+        )}
+
+        {checkout === 'missing_setup' && (
+          <div className="border-2 border-[#C8102E] bg-white px-4 py-3">
+            <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#C8102E]">Falta setup de cobro</p>
+            <p className="mt-1 font-['DM_Sans'] text-[13px] text-[#555555]">
+              {setupReason ? setupReasonLabels[setupReason] ?? 'Revisa la configuración de Stripe y Supabase antes de volver a intentarlo.' : 'Revisa la configuración de Stripe y Supabase antes de volver a intentarlo.'}
+            </p>
+          </div>
+        )}
+
+        {checkout === 'checkout_error' && (
+          <div className="border-2 border-[#C8102E] bg-white px-4 py-3">
+            <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#C8102E]">No se pudo abrir Stripe</p>
+            <p className="mt-1 font-['DM_Sans'] text-[13px] text-[#555555]">No se ha cobrado nada. Inténtalo otra vez y, si sigue fallando, revisa los logs de Stripe Checkout.</p>
           </div>
         )}
 
