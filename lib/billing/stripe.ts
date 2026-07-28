@@ -36,6 +36,56 @@ export type ShopSubscription = {
 const ACTIVE_SUBSCRIPTION_STATUSES = ['incomplete', 'trialing', 'active', 'past_due', 'paused']
 const STRIPE_API_VERSION = '2026-06-24.dahlia'
 
+export type BillingSetupErrorReason = 'stripe_price_missing' | 'supabase_billing_schema'
+
+export class BillingSetupError extends Error {
+  reason: BillingSetupErrorReason
+
+  constructor(reason: BillingSetupErrorReason, message: string) {
+    super(message)
+    this.name = 'BillingSetupError'
+    this.reason = reason
+  }
+}
+
+export function isBillingSetupError(error: unknown): error is BillingSetupError {
+  return error instanceof BillingSetupError
+}
+
+function getSupabaseErrorCode(error: unknown) {
+  return typeof error === 'object' && error !== null && 'code' in error
+    ? String((error as { code?: string }).code ?? '')
+    : ''
+}
+
+function getSupabaseErrorMessage(error: unknown) {
+  return typeof error === 'object' && error !== null && 'message' in error
+    ? String((error as { message?: string }).message ?? '')
+    : String(error)
+}
+
+function isBillingSchemaError(error: unknown) {
+  const code = getSupabaseErrorCode(error)
+  const message = getSupabaseErrorMessage(error)
+  return ['42P01', '42703', '23514', 'PGRST204'].includes(code) || message.includes('shop_subscriptions')
+}
+
+function assertNoBillingSchemaError(error: unknown) {
+  if (!error) return
+  if (isBillingSchemaError(error)) {
+    throw new BillingSetupError(
+      'supabase_billing_schema',
+      'La tabla de suscripciones de Supabase no está lista para Stripe Checkout.'
+    )
+  }
+  throw error
+}
+
+function getDatabasePlanKey(plan: PricingPlanKey | undefined) {
+  if (plan === 'pro') return 'premium'
+  return 'recommended'
+}
+
 export function getStripe() {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY
   if (!stripeSecretKey) return null
@@ -61,7 +111,7 @@ export async function getShopSubscription(shopId: string) {
     .limit(1)
     .maybeSingle()
 
-  if (error) throw error
+  assertNoBillingSchemaError(error)
   return (data ?? null) as ShopSubscription | null
 }
 
@@ -73,7 +123,7 @@ export async function resolveStripePriceId(stripe: Stripe, plan: PricingPlan, ca
   const prices = await stripe.prices.list({ active: true, limit: 1, lookup_keys: [lookupKey] })
   const price = prices.data[0]
   if (!price?.id) {
-    throw new Error(`No hay price activo en Stripe para lookup_key=${lookupKey}`)
+    throw new BillingSetupError('stripe_price_missing', `No hay price activo en Stripe para lookup_key=${lookupKey}`)
   }
   return price.id
 }
@@ -85,6 +135,7 @@ export async function ensureStripeCustomer({
   userId,
   userEmail,
   subscription,
+  planKey,
 }: {
   stripe: Stripe
   shopId: string
@@ -92,6 +143,7 @@ export async function ensureStripeCustomer({
   userId: string
   userEmail?: string | null
   subscription: ShopSubscription | null
+  planKey?: PricingPlanKey
 }) {
   if (subscription?.stripe_customer_id) return subscription.stripe_customer_id
 
@@ -106,17 +158,19 @@ export async function ensureStripeCustomer({
   })
 
   if (subscription) {
-    await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('shop_subscriptions')
       .update({ stripe_customer_id: customer.id, updated_at: new Date().toISOString() })
       .eq('id', subscription.id)
+    assertNoBillingSchemaError(error)
   } else {
-    await supabaseAdmin.from('shop_subscriptions').insert({
+    const { error } = await supabaseAdmin.from('shop_subscriptions').insert({
       shop_id: shopId,
-      plan_key: 'basic',
+      plan_key: getDatabasePlanKey(planKey),
       status: 'incomplete',
       stripe_customer_id: customer.id,
     })
+    assertNoBillingSchemaError(error)
   }
 
   return customer.id
@@ -137,10 +191,10 @@ function readSubscriptionPeriod(subscription: Stripe.Subscription) {
   }
 }
 
-function planFromMetadata(metadata: Stripe.Metadata | null | undefined): PricingPlanKey {
+function planFromMetadata(metadata: Stripe.Metadata | null | undefined): PricingPlanKey | 'recommended' | 'premium' {
   const plan = metadata?.plan
-  if (plan === 'pro' || plan === 'premium') return 'pro'
-  return 'basic'
+  if (plan === 'pro' || plan === 'premium') return 'premium'
+  return 'recommended'
 }
 
 export async function upsertSubscriptionFromStripe(subscription: Stripe.Subscription, eventId?: string) {
@@ -173,6 +227,8 @@ export async function upsertSubscriptionFromStripe(subscription: Stripe.Subscrip
     .select('id')
     .maybeSingle()
 
+  assertNoBillingSchemaError(bySubscription.error)
+
   if (bySubscription.data?.id) return bySubscription.data.id as string
 
   const byCustomer = await supabaseAdmin
@@ -181,6 +237,8 @@ export async function upsertSubscriptionFromStripe(subscription: Stripe.Subscrip
     .eq('stripe_customer_id', customerId)
     .select('id')
     .maybeSingle()
+
+  assertNoBillingSchemaError(byCustomer.error)
 
   if (byCustomer.data?.id) return byCustomer.data.id as string
 
@@ -194,7 +252,10 @@ export async function upsertSubscriptionFromStripe(subscription: Stripe.Subscrip
     .select('id')
     .single()
 
-  if (error) throw error
+  assertNoBillingSchemaError(error)
+  if (!data?.id) {
+    throw new Error(`No se pudo guardar la suscripción de Stripe ${subscription.id}`)
+  }
   return data.id as string
 }
 
@@ -206,7 +267,7 @@ export async function markCheckoutSessionCompleted(session: Stripe.Checkout.Sess
 
   if (!shopId || !customerId) return
 
-  await supabaseAdmin
+  const { error } = await supabaseAdmin
     .from('shop_subscriptions')
     .update({
       plan_key: planKey,
@@ -218,6 +279,7 @@ export async function markCheckoutSessionCompleted(session: Stripe.Checkout.Sess
     })
     .eq('shop_id', shopId)
     .in('status', ACTIVE_SUBSCRIPTION_STATUSES)
+  assertNoBillingSchemaError(error)
 }
 
 export { TRIAL_PERIOD_DAYS }
