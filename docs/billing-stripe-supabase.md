@@ -29,6 +29,13 @@ Mientras falte `STRIPE_SECRET_KEY`, el endpoint redirige de vuelta a:
 
 Así se puede revisar el copy sin cobrar. Para validar Checkout real hacen falta secrets de Stripe en el entorno del servidor.
 
+Si Stripe está configurado pero falta setup operativo, el endpoint no debe devolver un 500 genérico: redirige a `/billing?checkout=missing_setup&reason=<motivo>` para que el barbero vea un error controlado y el equipo pueda diagnosticarlo en logs. Motivos esperados:
+
+- `supabase_billing_schema`: falta aplicar las migraciones de `shop_subscriptions` en Supabase, o la tabla/columnas todavía no están disponibles en producción.
+- `stripe_price_missing`: no hay un price activo con el lookup key esperado y tampoco existe la variable `STRIPE_PRICE_*` correspondiente.
+
+Un error de Stripe al crear la sesión redirige a `/billing?checkout=checkout_error`; revisar logs del deploy y el evento/price de Stripe antes de reintentar.
+
 ## Variables necesarias para cerrar cobros reales
 
 ```env

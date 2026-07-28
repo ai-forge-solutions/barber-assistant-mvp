@@ -8,6 +8,7 @@ import {
   getAppUrl,
   getShopSubscription,
   getStripe,
+  isBillingSetupError,
   resolveStripePriceId,
 } from '@/lib/billing/stripe'
 
@@ -41,16 +42,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(billingUrl, 303)
   }
 
-  const subscription = await getShopSubscription(shop.id)
-  const priceId = await resolveStripePriceId(stripe, plan, cadence)
-  const customerId = await ensureStripeCustomer({
-    stripe,
-    shopId: shop.id,
-    shopName: shop.name,
-    userId: user.id,
-    userEmail: user.email,
-    subscription,
-  })
+  let subscription: Awaited<ReturnType<typeof getShopSubscription>>
+  let priceId: string
+  let customerId: string
+
+  try {
+    subscription = await getShopSubscription(shop.id)
+    priceId = await resolveStripePriceId(stripe, plan, cadence)
+    customerId = await ensureStripeCustomer({
+      stripe,
+      shopId: shop.id,
+      shopName: shop.name,
+      userId: user.id,
+      userEmail: user.email,
+      subscription,
+      planKey: plan.key,
+    })
+  } catch (error) {
+    console.error('[stripe checkout] configuración incompleta:', error)
+    const billingUrl = new URL('/billing', appUrl)
+    billingUrl.searchParams.set('checkout', isBillingSetupError(error) ? 'missing_setup' : 'checkout_error')
+    if (isBillingSetupError(error)) billingUrl.searchParams.set('reason', error.reason)
+    billingUrl.searchParams.set('plan', plan.key)
+    billingUrl.searchParams.set('cadence', cadence)
+    return NextResponse.redirect(billingUrl, 303)
+  }
 
   const successUrl = new URL('/billing', appUrl)
   successUrl.searchParams.set('checkout', 'success')
@@ -68,25 +84,40 @@ export async function POST(request: NextRequest) {
     source: 'trujas-billing',
   }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    customer: customerId,
-    client_reference_id: shop.id,
-    line_items: [{ price: priceId, quantity: 1 }],
-    payment_method_collection: 'always',
-    allow_promotion_codes: true,
-    billing_address_collection: 'auto',
-    subscription_data: {
-      trial_period_days: TRIAL_PERIOD_DAYS,
+  let session
+  try {
+    session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      customer: customerId,
+      client_reference_id: shop.id,
+      line_items: [{ price: priceId, quantity: 1 }],
+      payment_method_collection: 'always',
+      allow_promotion_codes: true,
+      billing_address_collection: 'auto',
+      subscription_data: {
+        trial_period_days: TRIAL_PERIOD_DAYS,
+        metadata,
+      },
+      success_url: successUrl.toString(),
+      cancel_url: cancelUrl.toString(),
       metadata,
-    },
-    success_url: successUrl.toString(),
-    cancel_url: cancelUrl.toString(),
-    metadata,
-  })
+    })
+  } catch (error) {
+    console.error('[stripe checkout] error creando sesión:', error)
+    const billingUrl = new URL('/billing', appUrl)
+    billingUrl.searchParams.set('checkout', 'checkout_error')
+    billingUrl.searchParams.set('plan', plan.key)
+    billingUrl.searchParams.set('cadence', cadence)
+    return NextResponse.redirect(billingUrl, 303)
+  }
 
   if (!session.url) {
-    return NextResponse.json({ error: 'No se pudo crear la sesión de pago.' }, { status: 500 })
+    console.error('[stripe checkout] sesión sin URL:', session.id)
+    const billingUrl = new URL('/billing', appUrl)
+    billingUrl.searchParams.set('checkout', 'checkout_error')
+    billingUrl.searchParams.set('plan', plan.key)
+    billingUrl.searchParams.set('cadence', cadence)
+    return NextResponse.redirect(billingUrl, 303)
   }
 
   return NextResponse.redirect(session.url, 303)
