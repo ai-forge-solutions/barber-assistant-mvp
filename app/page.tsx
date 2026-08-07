@@ -103,7 +103,7 @@ function BarberLoginCta({ children }: { children: ReactNode }) {
 }
 
 function WhatsappMockup() {
-  return <MobileMockup className="max-w-[305px]" />
+  return <MobileMockup className="max-w-[245px] xs:max-w-[265px] sm:max-w-[305px]" />
 }
 
 function ReservationMockup() {
