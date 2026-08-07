@@ -3,6 +3,7 @@ import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import PricingTeaser from '@/components/pricing/PricingTeaser'
+import MobileMockup from '@/components/ui/great-ui-mobile-mockup'
 
 const problems = [
   {
@@ -117,45 +118,7 @@ function PhoneShell({ children, label }: { children: ReactNode; label: string })
 }
 
 function WhatsappMockup() {
-  const messages = [
-    { from: 'client', text: '¿Tienes hueco el jueves?' },
-    { from: 'barber', text: 'El jueves lo tengo lleno.' },
-    { from: 'client', text: 'Vale, ¿y el viernes?' },
-    { from: 'barber', text: 'Viernes me queda 11:00 o 13:30.' },
-    { from: 'client', text: 'Uy, esas no me van. ¿La semana que viene?' },
-  ]
-
-  return (
-    <PhoneShell label="WhatsApp">
-      <div className="flex items-center gap-3 border-b border-[#E5E5E5] px-3 py-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-[#111111] bg-[#111111] font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-white">
-          CL
-        </div>
-        <div>
-          <p className="font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Cliente por WhatsApp</p>
-          <p className="font-['DM_Sans'] text-[12px] text-[#999999]">en línea</p>
-        </div>
-      </div>
-      <div className="flex min-h-[420px] flex-col gap-3 bg-white px-3 py-4">
-        {messages.map((message) => (
-          <div
-            key={message.text}
-            className={`max-w-[84%] rounded-sm border px-3 py-2 font-['DM_Sans'] text-[14px] leading-relaxed ${
-              message.from === 'barber'
-                ? 'self-end border-[#111111] bg-[#111111] text-white'
-                : 'self-start border-[#E5E5E5] bg-white text-[#111111]'
-            }`}
-          >
-            {message.text}
-          </div>
-        ))}
-        <div className="mt-auto border-l-4 border-[#C8102E] bg-white px-3 py-3">
-          <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Esto no es una cita</p>
-          <p className="mt-1 font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">Es la conversación interminable.</p>
-        </div>
-      </div>
-    </PhoneShell>
-  )
+  return <MobileMockup className="max-w-[305px]" />
 }
 
 function ReservationMockup() {
