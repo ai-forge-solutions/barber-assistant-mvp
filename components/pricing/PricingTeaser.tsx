@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import AvailabilityBar from '@/components/pricing/AvailabilityBar'
 import type { BillingCadence, PricingPlanKey } from '@/lib/billing/pricing'
 
 function CheckoutButton({
@@ -32,10 +31,6 @@ export default function PricingTeaser() {
       <h2 className="mt-6 font-['Oswald'] text-[34px] font-bold uppercase leading-tight text-white">
         Prueba trujas con tu barbería real por 0€.
       </h2>
-      <p className="mx-auto mt-5 max-w-lg font-['DM_Sans'] text-[16px] leading-relaxed text-white">
-        El recomendado es 15€/mes con compromiso anual. Durante el primer mes configuras la agenda y no pagas nada.
-      </p>
-      <AvailabilityBar />
       <div className="mx-auto mt-7 max-w-md border-2 border-white bg-white px-5 py-5 text-left">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -44,11 +39,14 @@ export default function PricingTeaser() {
           </div>
           <div className="border border-[#C8102E] px-2 py-1 font-['Oswald'] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#C8102E]">0€ hoy</div>
         </div>
-        <div className="mt-5 flex items-end gap-2">
-          <span className="font-['Oswald'] text-[48px] font-bold leading-none text-[#111111]">15€</span>
-          <span className="pb-1 font-['DM_Sans'] text-[14px] text-[#555555]">/ mes</span>
+        <div className="mt-5 border-y border-[#E5E5E5] py-4">
+          <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Empieza por 0€ el primer mes</p>
+          <div className="mt-3 flex items-end gap-2">
+            <span className="font-['Oswald'] text-[48px] font-bold leading-none text-[#111111]">15€</span>
+            <span className="pb-1 font-['DM_Sans'] text-[14px] text-[#555555]">/ mes después</span>
+          </div>
         </div>
-        <p className="mt-2 font-['DM_Sans'] text-[13px] text-[#555555]">Compromiso anual. Sin comisión por reserva. Primer mes gratis.</p>
+        <p className="mt-3 font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">Con el Basic anual, después del primer mes gratis pagas 15€/mes: más o menos lo que cuesta un corte de pelo.</p>
         <div className="mt-5">
           <CheckoutButton planKey="basic" cadence="annual">Empezar con primer mes gratis</CheckoutButton>
         </div>

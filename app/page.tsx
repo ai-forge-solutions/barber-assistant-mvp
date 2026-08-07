@@ -74,7 +74,7 @@ const faqs = [
   },
   {
     question: '¿Y si quiero dejarlo?',
-    answer: 'No hay permanencia. Lo pruebas el primer mes y decides si encaja con tu barbería.',
+    answer: 'Tienes 30 días para probarlo con tu barbería. Si no te convence durante ese primer mes, cancelas antes de pagar.',
   },
 ]
 
@@ -250,7 +250,7 @@ export default function Home() {
                   Para barberos independientes en España
                 </p>
                 <h1 className="mt-6 max-w-xl font-['Oswald'] text-[44px] font-bold uppercase leading-[0.95] text-white sm:text-[58px] lg:text-[64px]">
-                  Deja de recibir mensajes para cuadrar citas en tu tiempo libre
+                  ¿Y si pudieras olvidarte de agendar citas en tu tiempo libre?
                 </h1>
                 <p className="mt-6 max-w-lg font-['DM_Sans'] text-[17px] leading-relaxed text-white">
                   trujas ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
