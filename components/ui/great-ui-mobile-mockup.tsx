@@ -166,8 +166,8 @@ export interface ChatMessage {
 const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 1,
-    sender: "Cliente",
-    avatarInitial: "C",
+    sender: "Pablo",
+    avatarInitial: "P",
     text: "Buenas! ¿Tienes hueco mañana por la tarde?",
     isCurrentUser: false,
     timestamp: "18:42",
@@ -182,8 +182,8 @@ const DEFAULT_MESSAGES: ChatMessage[] = [
   },
   {
     id: 3,
-    sender: "Cliente",
-    avatarInitial: "C",
+    sender: "Pablo",
+    avatarInitial: "P",
     text: "¿Y el viernes a última hora?",
     isCurrentUser: false,
     timestamp: "18:45",
@@ -198,8 +198,8 @@ const DEFAULT_MESSAGES: ChatMessage[] = [
   },
   {
     id: 5,
-    sender: "Cliente",
-    avatarInitial: "C",
+    sender: "Pablo",
+    avatarInitial: "P",
     text: "Uff, justo salgo tarde. Déjame mirar y te digo.",
     isCurrentUser: false,
     timestamp: "18:51",
@@ -214,10 +214,21 @@ const DEFAULT_MESSAGES: ChatMessage[] = [
   },
 ];
 
-const MESSAGE_DELAYS = [1200, 4200, 6800, 10400, 13600, 17200];
-const TYPING_DELAYS = [2600, 8400, 15200];
-const TYPING_OFF_DELAYS = [4100, 10300, 17100];
-const CYCLE_RESET_DELAY = 24500;
+interface MessageSequenceStep {
+  index: number;
+  typingAt?: number;
+  revealAt: number;
+}
+
+const MESSAGE_SEQUENCE: MessageSequenceStep[] = [
+  { index: 0, typingAt: 900, revealAt: 2900 },
+  { index: 1, revealAt: 5600 },
+  { index: 2, typingAt: 7600, revealAt: 10100 },
+  { index: 3, revealAt: 13300 },
+  { index: 4, typingAt: 15300, revealAt: 18400 },
+  { index: 5, revealAt: 21600 },
+];
+const CYCLE_RESET_DELAY = 28500;
 
 export interface MobileMockupProps {
   headerTitle?: string;
@@ -231,10 +242,10 @@ export interface MobileMockupProps {
 }
 
 export function MobileMockup({
-  headerTitle = "Cliente por WhatsApp",
+  headerTitle = "Pablo",
   headerSubtitle = "online",
-  avatarUrl,
-  avatarFallback = "C",
+  avatarUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+  avatarFallback = "P",
   messages = DEFAULT_MESSAGES,
   autoPlay = true,
   className,
@@ -260,28 +271,21 @@ export function MobileMockup({
       }, 0),
     );
 
-    messages.forEach((_, index) => {
+    MESSAGE_SEQUENCE.forEach((step) => {
+      if (step.typingAt !== undefined) {
+        timers.push(
+          setTimeout(() => {
+            if (isMounted) setShowTyping(true);
+          }, step.typingAt),
+        );
+      }
+
       timers.push(
         setTimeout(() => {
           if (!isMounted) return;
-          setVisibleMessages(messages.slice(0, index + 1));
-        }, MESSAGE_DELAYS[index] ?? 1200 + index * 3000),
-      );
-    });
-
-    TYPING_DELAYS.forEach((delay) => {
-      timers.push(
-        setTimeout(() => {
-          if (isMounted) setShowTyping(true);
-        }, delay),
-      );
-    });
-
-    TYPING_OFF_DELAYS.forEach((delay) => {
-      timers.push(
-        setTimeout(() => {
-          if (isMounted) setShowTyping(false);
-        }, delay),
+          setShowTyping(false);
+          setVisibleMessages(messages.slice(0, step.index + 1));
+        }, step.revealAt),
       );
     });
 
