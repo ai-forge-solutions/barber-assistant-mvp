@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
@@ -161,52 +162,15 @@ function AppointmentMockup() {
 
 function ReminderMockup() {
   return (
-    <div className="mx-auto flex w-full max-w-[310px] justify-center bg-transparent py-1">
-      <div className="relative w-full rounded-[42px] bg-[#111111] p-2 shadow-[0_18px_45px_rgba(17,17,17,0.22)]">
-        <div className="absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-b-xl bg-[#111111]" />
-        <div className="absolute -left-[5px] top-24 h-16 w-[3px] rounded-l-sm bg-[#111111]" />
-        <div className="absolute -right-[5px] top-32 h-20 w-[3px] rounded-r-sm bg-[#111111]" />
-        <div className="relative h-[560px] overflow-hidden rounded-[34px] bg-[#111111]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_18%,rgba(40,104,74,0.95),transparent_34%),radial-gradient(circle_at_76%_52%,rgba(71,132,151,0.72),transparent_42%),radial-gradient(circle_at_44%_92%,rgba(132,92,92,0.52),transparent_42%),linear-gradient(180deg,#2d705b_0%,#65766e_54%,#464956_100%)] blur-[1px]" />
-          <div className="absolute inset-0 bg-black/12" />
-
-          <div className="relative z-10 flex h-full flex-col px-7 pb-6 pt-5 text-white">
-            <div className="flex items-center justify-between font-['DM_Sans'] text-[12px] font-semibold">
-              <span>17:00</span>
-              <span className="text-[13px]">⌁ ▱</span>
-            </div>
-
-            <div className="mt-8 flex flex-col items-center text-center">
-              <div className="text-[28px] leading-none">⌘</div>
-              <p className="mt-3 font-['Oswald'] text-[72px] font-bold leading-none tracking-[-0.04em] text-white sm:text-[78px]">17:00</p>
-              <p className="mt-3 font-['DM_Sans'] text-[18px] font-medium text-white/90">Sábado, 18 de julio</p>
-              <p className="mt-1 font-['DM_Sans'] text-[13px] text-white/75">Pantalla bloqueada</p>
-            </div>
-
-            <div className="mt-12 rounded-[18px] border border-white/35 bg-[#eef3f5]/95 px-4 py-4 text-[#111111] shadow-[0_14px_30px_rgba(17,17,17,0.25)] backdrop-blur-md">
-              <div className="flex items-center gap-2.5">
-                <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white shadow-sm">
-                  <span className="text-[18px] leading-none">✉️</span>
-                </div>
-                <p className="flex-1 font-['DM_Sans'] text-[17px] font-bold leading-none">Gmail</p>
-                <span className="font-['DM_Sans'] text-[13px] text-[#555555]">ahora</span>
-              </div>
-              <p className="mt-4 font-['DM_Sans'] text-[15px] font-bold leading-snug">Recordatorio de cita</p>
-              <p className="mt-2 font-['DM_Sans'] text-[15px] leading-snug text-[#111111]">
-                Hola Carlos! No te olvides, tienes cita hoy en Barbería Norte a las 17:00. Puedes modificar o cancelar la cita desde{' '}
-                <span className="font-bold text-[#1A3A6B] underline underline-offset-2">trujas.app/barberia-norte</span>
-              </p>
-            </div>
-
-            <div className="mt-auto text-center font-['DM_Sans'] text-[13px] font-medium text-white/85">Desliza hacia arriba para desbloquear</div>
-            <div className="mt-5 flex items-end justify-between px-5">
-              <div className="grid h-11 w-11 place-items-center rounded-full border border-white/25 bg-white/10 text-lg backdrop-blur-sm">✦</div>
-              <div className="h-1 w-24 rounded-full bg-white/90" />
-              <div className="grid h-11 w-11 place-items-center rounded-full border border-white/25 bg-white/10 text-lg backdrop-blur-sm">⊙</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="mx-auto flex w-full max-w-[315px] justify-center bg-transparent py-1">
+      <Image
+        src="/images/trujas-reminder-lockscreen.png"
+        alt="Mockup de pantalla bloqueada con recordatorio de cita de trujas"
+        width={682}
+        height={1280}
+        className="h-auto w-full object-contain"
+        priority={false}
+      />
     </div>
   )
 }
