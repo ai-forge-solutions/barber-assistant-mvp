@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
@@ -101,24 +102,8 @@ function BarberLoginCta({ children }: { children: ReactNode }) {
   )
 }
 
-function PhoneShell({ children, label }: { children: ReactNode; label: string }) {
-  return (
-    <div className="mx-auto w-full max-w-[330px] rounded-[28px] border-2 border-[#111111] bg-[#111111] p-3">
-      <div className="mx-auto mb-3 h-1 w-20 rounded-sm bg-[#E5E5E5]" />
-      <div className="overflow-hidden rounded-[20px] border border-[#E5E5E5] bg-white">
-        <div className="flex items-center justify-between border-b border-[#E5E5E5] px-4 py-2 font-['DM_Sans'] text-[11px] text-[#111111]">
-          <span>9:41</span>
-          <span>{label}</span>
-        </div>
-        {children}
-      </div>
-      <div className="mx-auto mt-3 h-1 w-24 rounded-sm bg-[#E5E5E5]" />
-    </div>
-  )
-}
-
 function WhatsappMockup() {
-  return <MobileMockup className="max-w-[305px]" />
+  return <MobileMockup className="max-w-[245px] xs:max-w-[265px] sm:max-w-[305px]" />
 }
 
 function ReservationMockup() {
@@ -177,25 +162,16 @@ function AppointmentMockup() {
 
 function ReminderMockup() {
   return (
-    <PhoneShell label="Gmail">
-      <div className="bg-[#E5E5E5] px-3 py-6">
-        <div className="border-2 border-[#111111] bg-white px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-[#C8102E] font-['Oswald'] text-[14px] font-semibold uppercase text-[#C8102E]">
-              M
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Gmail</p>
-              <p className="truncate font-['DM_Sans'] text-[12px] text-[#999999]">Barbería Norte</p>
-            </div>
-            <span className="font-['DM_Sans'] text-[11px] text-[#999999]">ahora</span>
-          </div>
-          <p className="mt-4 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
-            No te olvides, tienes cita hoy en Barbería Norte a las 17:00. Puedes modificar o cancelar la cita desde tu enlace de reservas.
-          </p>
-        </div>
-      </div>
-    </PhoneShell>
+    <div className="mx-auto flex w-full max-w-[315px] justify-center bg-transparent py-1">
+      <Image
+        src="/images/trujas-reminder-lockscreen.png"
+        alt="Mockup de pantalla bloqueada con recordatorio de cita de trujas"
+        width={682}
+        height={1280}
+        className="h-auto w-full object-contain"
+        priority={false}
+      />
+    </div>
   )
 }
 
