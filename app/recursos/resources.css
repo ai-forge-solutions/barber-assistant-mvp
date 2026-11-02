@@ -1,3 +1,12 @@
+/* Match the condensed heading's fallback width while Oswald loads.
+   80.15% measured from the 600-weight alphabet/digits against Arial Bold.
+   Local-only, unique family: no global font override or new download. */
+@font-face {
+  font-family: 'trujas Oswald Fallback';
+  src: local('Arial Bold'), local('Liberation Sans Bold'), local('Roboto Bold');
+  font-weight: 600;
+  size-adjust: 80.15%;
+}
 .resources-shell {
   --resources-red: #C8102E;
   width: 100%;
@@ -19,7 +28,7 @@
 .resources-shell .resources-nav-links a { font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-size: .875rem; text-decoration: none; }
 .resources-shell .resources-nav a { display: inline-flex; align-items: center; min-height: 44px; }
 .resources-shell .resources-main { width: 100%; max-width: 70ch; margin-inline: auto; padding: 2rem 1.25rem 3rem; overflow-wrap: anywhere; }
-.resources-shell h1, .resources-shell h2, .resources-shell h3, .resources-shell h4 { font-family: 'Oswald', sans-serif; font-weight: 600; line-height: 1.22; text-wrap: pretty; }
+.resources-shell h1, .resources-shell h2, .resources-shell h3, .resources-shell h4 { font-family: 'Oswald', 'trujas Oswald Fallback', sans-serif; font-weight: 600; line-height: 1.22; text-wrap: pretty; }
 .resources-shell h1 { font-size: clamp(1.875rem, 5vw, 2.75rem); margin: .75rem 0 1.25rem; }
 .resources-shell h2 { font-size: clamp(1.5rem, 4vw, 1.875rem); }
 .resources-shell h3 { font-size: 1.25rem; }

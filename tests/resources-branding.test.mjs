@@ -10,4 +10,10 @@ test('resources use the canonical brand red and scope their styles to their own 
   assert.equal(css.match(/--resources-red:\s*(#[\da-f]+)/i)?.[1], canonicalRed)
   assert.doesNotMatch(css, /box-shadow|linear-gradient|radial-gradient/)
   assert.doesNotMatch(css, /(^|\n)\s*(body|html|h1|a)\s*\{/)
+  assert.match(css, /font-family: 'Oswald', 'trujas Oswald Fallback', sans-serif/)
+  const fallback = css.match(/@font-face\s*\{([^}]+)\}/)?.[1]
+  assert.ok(fallback, 'Condensed local fallback avoids heading reflow while Oswald loads')
+  assert.match(fallback, /font-family: 'trujas Oswald Fallback'/)
+  assert.match(fallback, /size-adjust: 80\.15%/)
+  assert.doesNotMatch(fallback, /url\(/)
 })
