@@ -5,6 +5,13 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import PricingTeaser from '@/components/pricing/PricingTeaser'
 import MobileMockup from '@/components/ui/great-ui-mobile-mockup'
+import { marketingMetadata } from '@/lib/seo'
+
+export const metadata = marketingMetadata(
+  '/',
+  'trujas — Agenda online para barberías',
+  'trujas gestiona las citas de tu barbería. Tus clientes reservan online y tú dejas de perder tiempo cuadrando horarios por mensajes.',
+)
 
 const problems = [
   {
