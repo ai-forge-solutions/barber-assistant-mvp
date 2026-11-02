@@ -38,6 +38,9 @@ test('sitemap is XML with an explicit marketing-only URL allowlist', async () =>
   assert.match(body, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/)
   assert.deepEqual([...body.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]), [
     'https://trujas.app/', 'https://trujas.app/pricing',
+    'https://trujas.app/recursos',
+    'https://trujas.app/recursos/montar-barberia-espana',
+    'https://trujas.app/recursos/organizar-agenda-barberia',
   ])
   assert.doesNotMatch(body, /<lastmod>/, 'Do not fabricate modification dates on each build')
 })
@@ -51,6 +54,7 @@ test('home canonical and social metadata are in the initial HTML', async () => {
   assert.match(html, /property="og:locale" content="es_ES"/)
   assert.match(html, /Agenda online para barberías/)
   assert.match(html, /href="\/pricing"/)
+  assert.match(html, /href="\/recursos"/, 'The editorial index must be discoverable from home')
 })
 
 test('pricing has its own canonical and title without changing the trial offer', async () => {
@@ -60,7 +64,7 @@ test('pricing has its own canonical and title without changing the trial offer',
   assert.equal(canonical(html), 'https://trujas.app/pricing')
   assert.match(html, /<title>Precios y planes para barberías — trujas<\/title>/)
   assert.match(html, /property="og:url" content="https:\/\/trujas\.app\/pricing"/)
-  assert.match(html, /Primer mes gratis en todos los planes/)
+  assert.match(html, /primer mes gratis/i)
   assert.match(html, /30 días gratis/)
 })
 

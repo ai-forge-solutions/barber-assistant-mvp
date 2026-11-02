@@ -1,0 +1,73 @@
+.resources-shell {
+  --resources-red: #C8102E;
+  width: 100%;
+  min-width: 0;
+  background: #FFFFFF;
+  color: #111111;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.resources-shell *, .resources-shell *::before, .resources-shell *::after { box-sizing: border-box; }
+.resources-shell a { color: inherit; text-underline-offset: .2em; }
+.resources-shell a:hover { color: var(--resources-red); }
+.resources-shell :focus-visible { outline: 3px solid var(--resources-red); outline-offset: 4px; }
+.resources-shell .resources-header { border-top: 6px solid var(--resources-red); border-bottom: 1px solid #E5E5E5; }
+.resources-shell .resources-nav { max-width: 70ch; margin-inline: auto; padding: .75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.resources-shell .resources-brand { font-family: 'Rye', serif; font-size: 1.5rem; text-decoration: none; }
+.resources-shell .resources-nav-links { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+.resources-shell .resources-nav-links a { font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-size: .875rem; text-decoration: none; }
+.resources-shell .resources-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.resources-shell .resources-main { width: 100%; max-width: 70ch; margin-inline: auto; padding: 2rem 1.25rem 3rem; overflow-wrap: anywhere; }
+.resources-shell h1, .resources-shell h2, .resources-shell h3, .resources-shell h4 { font-family: 'Oswald', sans-serif; font-weight: 600; line-height: 1.22; text-wrap: pretty; }
+.resources-shell h1 { font-size: clamp(1.875rem, 5vw, 2.75rem); margin: .75rem 0 1.25rem; }
+.resources-shell h2 { font-size: clamp(1.5rem, 4vw, 1.875rem); }
+.resources-shell h3 { font-size: 1.25rem; }
+.resources-shell .resources-eyebrow { color: var(--resources-red); font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; font-size: .8rem; letter-spacing: .08em; line-height: 1.5; }
+.resources-shell .resources-intro { padding-block: 1rem 2rem; border-bottom: 2px solid #111111; }
+.resources-shell .resources-intro > p:last-child { color: #555555; }
+.resources-shell .resources-list { list-style: none; margin: 0; padding: 0; }
+.resources-shell .resources-card { padding-block: 2rem; border-bottom: 1px solid #E5E5E5; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: .75rem; }
+.resources-shell .resources-number { color: var(--resources-red); font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 1.25rem; }
+.resources-shell .resources-card h2 { margin: 0 0 1rem; }
+.resources-shell .resources-card h2 a { text-decoration: none; }
+.resources-shell .resources-card p { color: #555555; margin-block: 0 1rem; }
+.resources-shell .resources-read { display: inline-flex; align-items: center; min-height: 44px; gap: .5rem; font-weight: 500; }
+.resources-shell .resources-breadcrumb { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; color: #555555; font-size: .875rem; margin-bottom: 1.5rem; }
+.resources-shell .resources-breadcrumb a { display: inline-flex; align-items: center; min-height: 44px; }
+.resources-shell .resource-article-header { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #111111; }
+.resources-shell .resources-date { color: #555555; font-size: .875rem; }
+.resources-shell .resource-prose { min-width: 0; }
+.resources-shell .resource-prose p { margin-block: 1.25rem; }
+.resources-shell .resource-prose h2 { margin-block: 2.5rem 1rem; }
+.resources-shell .resource-prose h3, .resources-shell .resource-prose h4 { margin-block: 2rem .75rem; }
+.resources-shell .resource-prose strong { font-weight: 500; }
+.resources-shell .resource-prose a { color: var(--resources-red); text-decoration: underline; }
+.resources-shell .resource-prose a:hover { color: #111111; }
+.resources-shell .resource-prose ul, .resources-shell .resource-prose ol { padding-inline-start: 1.5rem; margin-block: 1.25rem; }
+.resources-shell .resource-prose ul { list-style: disc; }
+.resources-shell .resource-prose ol { list-style: decimal; }
+.resources-shell .resource-prose li { margin-block: .625rem; padding-inline-start: .2rem; }
+.resources-shell .resource-prose .contains-task-list { list-style: none; padding-inline-start: 0; }
+.resources-shell .resource-prose .task-list-item input { margin-inline-end: .5rem; accent-color: #111111; }
+.resources-shell .resource-prose blockquote { border-left: 3px solid var(--resources-red); margin: 1.5rem 0; padding-inline-start: 1rem; }
+.resources-shell .resource-table-scroll { width: 100%; max-width: 100%; overflow-x: auto; margin-block: 1.5rem; border: 1px solid #E5E5E5; overscroll-behavior-x: contain; }
+.resources-shell .resource-table-scroll table { width: 100%; min-width: 34rem; border-collapse: collapse; font-size: .9375rem; line-height: 1.6; }
+.resources-shell .resource-table-scroll th, .resources-shell .resource-table-scroll td { text-align: left; vertical-align: top; padding: .875rem; border-bottom: 1px solid #E5E5E5; }
+.resources-shell .resource-table-scroll th { font-weight: 500; border-bottom: 2px solid #111111; }
+.resources-shell .resources-related { border-top: 2px solid #111111; margin-top: 3rem; padding-top: 1.5rem; }
+.resources-shell .resources-related h2 { margin: 0 0 1rem; }
+.resources-shell .resources-related ul { list-style: none; padding: 0; }
+.resources-shell .resources-related li a { display: inline-block; padding-block: .75rem; min-height: 44px; }
+.resources-shell .resources-footer { border-top: 1px solid #E5E5E5; max-width: 70ch; padding: 2rem 1.25rem; margin-inline: auto; }
+.resources-shell .resources-footer p { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 1.5rem; margin-bottom: 1rem; }
+.resources-shell .resources-cta { display: inline-flex; min-height: 44px; align-items: center; padding: .75rem 1.25rem; border: 2px solid var(--resources-red); border-radius: 2px; color: #FFFFFF; background: var(--resources-red); font-family: 'Oswald', sans-serif; font-weight: 600; font-size: .875rem; text-transform: uppercase; letter-spacing: .08em; text-decoration: none; }
+.resources-shell .resources-cta:hover { background: #111111; border-color: #111111; color: #FFFFFF; }
+.resources-shell .resources-home { display: block; width: fit-content; padding-block: .75rem; margin-top: .5rem; min-height: 44px; }
+.resources-shell .resources-sr-only, .resources-shell .resources-skip:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.resources-shell .resources-skip:focus { display: block; padding: 1rem; background: #FFFFFF; }
+@media (min-width: 640px) {
+  .resources-shell .resources-main { padding-top: 3.5rem; }
+  .resources-shell .resources-card { grid-template-columns: 3rem minmax(0, 1fr); gap: 1.25rem; padding-block: 2.5rem; }
+  .resources-shell .resources-number { font-size: 1.75rem; }
+}

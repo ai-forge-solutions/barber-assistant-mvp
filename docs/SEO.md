@@ -1,54 +1,51 @@
-# trujas · Base técnica SEO y límites de publicación
+# trujas · SEO y publicación de recursos
 
 ## Alcance
 
-Base desde `develop`: rutas públicas `/robots.txt` y `/sitemap.xml`, metadata inicial de home/precios y pruebas HTTP de regresión. No crea artículos, no publica en producción, no configura cron, analítica, OAuth, Stripe ni base de datos. No cambia copy/JSX, diseño, precios, recordatorios, checkout ni autenticación de reservas.
+Rutas públicas de rastreo `/robots.txt` y `/sitemap.xml`, metadatos de home/precios y sección editorial `/recursos` con dos guías aprobadas por Miguel el2/11/2026. La autorización puntual de publicar estos textos no activa cron ni autopublicación futura. No se cambian DB, OAuth, Stripe, servicios de email, precios ni autenticación de reservas.
 
-## Causa y solución
+La landing conserva su contenido y diseño salvo un enlace «Guías para barberos» en el footer. No se utiliza la publicación como pretexto para promover otros cambios pendientes de develop a producción.
 
-Sin rutas de metadata, `/robots.txt` y `/sitemap.xml` coinciden con `app/[slug]/page.tsx`. Esa página requiere login de cliente antes de consultar la barbería y devuelve 307. Las convenciones `app/robots.ts` y `app/sitemap.ts` generan rutas estáticas específicas, con prioridad sobre `[slug]`. El proxy excluye **solo esos dos paths exactos**; mantiene el refresco de sesión en rutas de producto.
+## Rutas y seguridad
 
-El sitemap enumera exclusivamente `https://trujas.app/` y `/pricing`. No consulta Supabase ni incluye barberías, datos de clientes, reservas, tokens o borradores. No inventa `lastmod`. Nuevas rutas editoriales requieren revisión y alta explícita; no se publica un directorio de barberías.
+Sin rutas de metadata, `/robots.txt` y `/sitemap.xml` coincidían con `app/[slug]/page.tsx`, que requiere login antes de consultar la barbería. Las convenciones `app/robots.ts` y `app/sitemap.ts` tienen prioridad específica. El proxy excluye solo esos dos nombres exactos; se preservan sus near-matches y el límite de sesión de las reservas.
 
-Robots permite el contenido público y desaconseja rastrear superficies operativas. `Disallow` no autentica ni garantiza desindexación: la autenticación existente sigue siendo el límite de acceso. No se ha convertido `/[slug]` en página pública ni corregido su comportamiento heredado para slugs inexistentes (también redirigen al login).
+Sitemap explícito: home, precios, índice de recursos y los dos artículos aprobados. No consulta Supabase ni enumera barberías, clientes, citas, tokens o borradores. No inventa fechas lastmod en cada build. Añadir otra pieza requiere contenido aprobado e inclusión explícita.
 
-Canonicals y Open Graph se declaran en cada página de marketing, **nunca como canonical global en root layout**. Se conservan título y descripción de home; precios tiene metadata específica sin inventar descuentos o condiciones. No se añaden reviews, ratings ni estadísticas estructuradas ficticias.
+Robots desaconseja rastrear superficies operativas; no autentica ni garantiza desindexación. Los canonicals se declaran por página, nunca uno global que dirija cuentas/barberías a la home. No se inventan autores expertos, ratings, reseñas ni resultados.
 
-## Verificación local reproducible
+La sección editorial estática usa una allowlist de slugs. Los desconocidos deben dar404, no login o200 de fallback. Markdown versionado dentro del repo, sin dependencia runtime del workspace del operador; render de servidor sin habilitar HTML crudo de Markdown. La procedencia/hashes y eliminación de envoltorios de revisión deben poder verificarse sin copiar secretos o datos GSC al repo.
+
+## Verificación reproducible
 
 ```sh
 npm ci --no-audit --no-fund
 npm run lint
-# Valores ficticios únicamente para compilar/smoke local. No copiar a producción.
+npm run test:resources
+# Solo placeholders para compilación y smoke local, nunca producción:
 export NEXT_PUBLIC_SUPABASE_URL=https://trujas-seo.invalid
 export NEXT_PUBLIC_SUPABASE_ANON_KEY=local-placeholder
 export SUPABASE_SERVICE_ROLE_KEY=local-placeholder
-export RESEND_API_KEY=re_local_placeholder
-export STRIPE_SECRET_KEY=sk_test_local_placeholder
+export RESEND_API_KEY=local-placeholder
+export STRIPE_SECRET_KEY=local-placeholder
 export NEXT_TELEMETRY_DISABLED=1
 npm run build
 npm run start -- --hostname 127.0.0.1 --port 3214
-# En otra terminal con el servidor listo:
+# En otra terminal, tras verificar disponibilidad:
 SEO_TEST_BASE_URL=http://127.0.0.1:3214 npm run test:seo
+SEO_TEST_BASE_URL=http://127.0.0.1:3214 node --test tests/resources-http.test.mjs
 ```
 
-La suite valida status/content-type de robots y sitemap, allowlist de URLs, metadata en HTML inicial, CTA hacia precios y conservación de login de cliente/barbero, incluidas rutas de metadata parecidas pero no iguales. No crea usuarios, reservas, pagos, correos ni eventos de conversión. No prueba entregas reales de Supabase/Resend/Stripe; los placeholders no son credenciales ni prueba del backend.
+Los tests de datos/contenido son independientes del servidor. Los tests HTTP requieren un build y servidor actuales; no basta con editar la fuente del proceso `next start`. Comprobar además móvil, tablas con scroll confinado, enlaces índice→post→precios y ausencia de estados/nota de revisión en UI.
 
-El repositorio no tenía suite general de tests: `test:seo` es una suite HTTP focalizada, no cobertura funcional completa del producto. Requiere un build y servidor actuales: editar fuente después de compilar exige reconstruir antes de dar por verde la prueba.
+Los placeholders no prueban Supabase, Resend o Stripe. No crear usuarios, reservas, correos, cobros o conversiones ficticias para validar publicación. Suite SEO focalizada no equivale a cobertura funcional total. Registrar warnings preexistentes y no presentarlos como nuevos errores.
 
-## Operación editorial separada
+## Aprobación, promoción y cierre
 
-Workspace local de trujas: `/home/hermes/seo-trujas`, separado de Velz (método de referencia, nunca estado compartido). Configuración local, evidencias GSC, investigaciones, revisiones y entregas tienen raíz propia. No se incluye el snapshot GSC ni secretos en Git.
+Flujo: fuente/version/hash → aprobación → implementación/PR a develop → pruebas/preview → promoción selectiva a main autorizada → revisión desplegada/URLs reales. No identificar clic en CTA con alta, ni alta con activación o pago.
 
-Flujo: investigar intención del dueño de barbería → priorizar por evidencia → redactar artefacto versionado → revisión identificada por hash → implementación en rama/PR a `develop` → publicación autorizada por separado → comprobar URL real → medir. Una PR no es publicación, un clic no es alta y un alta no es activación ni pago.
+Si main y develop divergen, inspeccionar commits y diff primero. Promover únicamente commits/paths editoriales y su base técnica, preservando fixes de producción y otros cambios pendientes. Probar también la rama concreta de release. No afirmar publicación por haber abierto una PR o recibido un check de preview.
 
-Hasta verificar el contrato real de producto, el plan Basic declara recordatorios **por email** en `lib/billing/pricing.ts`. No convertir el mockup de WhatsApp en promesa de automatización universal en nuevos contenidos. El compromiso anual y el precio posterior a la prueba deben explicitarse al citar precios; la página `/pricing` es la referencia comercial actual.
+El workspace `/home/hermes/seo-trujas` conserva investigación, aprobaciones, evidencias y entregas aisladas de Velz. No es una dependencia de la web publicada. La fuente comercial de Basic declara recordatorios por EMAIL, no WhatsApp universal. Revalidar precios y compromiso al modificar contenidos.
 
-## Puertas pendientes antes de automatizar o publicar
-
-- Revisión/merge a `develop` y autorización separada para producción; comprobar robots/sitemap/metadatos en el despliegue real, no inferirlos del build.
-- Elegir estructura editorial sin colisionar con `[slug]`; no hay nuevas páginas editoriales en este cambio.
-- Consentimiento/analítica y atribución de prueba, configuración, primera reserva y pago: propuesta, no instrumentación instalada. No enviar PII ni simular conversiones.
-- Destino de revisión/entrega propio de trujas y permisos de envío aprobados explícitamente. No heredar carpetas o autorizaciones de Velz.
-- Medición móvil antes/después en condiciones equivalentes; resultados de laboratorio local no son datos de campo ni INP real.
-- Cron y publicación automática permanecen desactivados. Ningún script de esta PR programa jobs o publica contenido.
+Analítica alta→configuración→uso→pago, envío de informes y cron tienen contratos/permisos separados. La publicación puntual no los instala ni activa. `docs/SEO-VERIFICATION.md` conserva evidencia histórica de la primera base sin artículos; la publicación posterior se verifica y registra separadamente.
