@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "publicationDate": "2026-11-02",
+  "integrity": "SHA-256 over original and derived UTF-8 file bytes. Sources were read completely and matched the approved hashes before derivation. Derivatives are versioned locally; runtime and tests need no external editorial workspace.",
+  "articles": [
+    {
+      "slug": "montar-barberia-espana",
+      "sourceFile": "montar-barberia-espana-2026-v1.md",
+      "sourceSha256": "61fb40de174c9ae4e550a9381cc8cf589673159b14776b4c484b8a6ff2bdee45",
+      "derivedSha256": "2ee1154e064e029671078066ba6ca1c97dfb3ff950b1a8d684d93fd6e57fb4e4",
+      "transform": "Remove only the opening HTML editorial comment and its following blank line. Remove exactly the visible phrase ' Borrador pendiente de aprobación y no publicado.' from the review date. Keep the H1 in the derivative and extract it at render time into the article template. Preserve every other body byte, all tables, checklist, and all seven final sources."
+    },
+    {
+      "slug": "organizar-agenda-barberia",
+      "sourceFile": "organizar-agenda-barberia-v1.md",
+      "sourceSha256": "ae8473b6ae6446060fce5c3c1355bb74519f5bb37d904be9bb2ae1b89704a5a7",
+      "derivedSha256": "fa2e5a5a725de3c391d0a7e554aec9279e98e320e767ccf674e6f04fcfddbe21",
+      "transform": "Remove only opening YAML frontmatter and its following blank line. Remove the final horizontal separator and the entire 'Notas de revisión — no publicar este bloque' section. End the retained body with one newline. Keep the H1 in the derivative and extract it at render time into the article template. No approved body wording changed."
+    }
+  ]
+}

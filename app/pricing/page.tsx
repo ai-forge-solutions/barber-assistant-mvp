@@ -2,6 +2,13 @@ import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import { PricingCards } from '@/components/pricing/PricingBlocks'
+import { marketingMetadata } from '@/lib/seo'
+
+export const metadata = marketingMetadata(
+  '/pricing',
+  'Precios y planes para barberías — trujas',
+  'Elige cómo quieres llevar tu agenda con trujas. Todos los planes empiezan con 30 días gratis y sin comisión por reserva.',
+)
 
 export default function PricingPage() {
   return (

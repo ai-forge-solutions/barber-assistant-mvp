@@ -5,6 +5,13 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import PricingTeaser from '@/components/pricing/PricingTeaser'
 import MobileMockup from '@/components/ui/great-ui-mobile-mockup'
+import { marketingMetadata } from '@/lib/seo'
+
+export const metadata = marketingMetadata(
+  '/',
+  'trujas — Agenda online para barberías',
+  'trujas gestiona las citas de tu barbería. Tus clientes reservan online y tú dejas de perder tiempo cuadrando horarios por mensajes.',
+)
 
 const problems = [
   {
@@ -364,6 +371,7 @@ export default function Home() {
         <footer className="px-6 py-8 text-center">
           <Logo size="md" />
           <div className="mt-4 flex flex-col items-center gap-3 font-['DM_Sans'] text-[14px] sm:flex-row sm:justify-center">
+            <Link href="/recursos" className="inline-flex min-h-[44px] items-center text-[#555555] underline-offset-4 hover:text-[#111111] hover:underline">Guías para barberos</Link>
             <Link href="/privacidad" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Privacidad</Link>
             <Link href="/terminos" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Términos</Link>
           </div>
