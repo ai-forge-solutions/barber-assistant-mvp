@@ -1,8 +1,18 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import PricingTeaser from '@/components/pricing/PricingTeaser'
+import CookieSettingsButton from '@/components/analytics/CookieSettingsButton'
+import MobileMockup from '@/components/ui/great-ui-mobile-mockup'
+import { marketingMetadata } from '@/lib/seo'
+
+export const metadata = marketingMetadata(
+  '/',
+  'trujas — Agenda online para barberías',
+  'trujas gestiona las citas de tu barbería. Tus clientes reservan online y tú dejas de perder tiempo cuadrando horarios por mensajes.',
+)
 
 const problems = [
   {
@@ -74,14 +84,17 @@ const faqs = [
   },
   {
     question: '¿Y si quiero dejarlo?',
-    answer: 'No hay permanencia. Lo pruebas el primer mes y decides si encaja con tu barbería.',
+    answer: 'Tienes 30 días para probarlo con tu barbería. Si no te convence durante ese primer mes, cancelas antes de pagar.',
   },
 ]
 
-function PrimaryCta({ children }: { children: ReactNode }) {
+function PrimaryCta({ children, location }: { children: ReactNode; location: string }) {
   return (
     <Link
       href="/pricing"
+      data-ga-event="cta_click"
+      data-ga-cta-id="start_free"
+      data-ga-cta-location={location}
       className="inline-flex min-h-[44px] items-center justify-center rounded-sm bg-[#C8102E] px-8 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
     >
       {children}
@@ -93,6 +106,9 @@ function BarberLoginCta({ children }: { children: ReactNode }) {
   return (
     <Link
       href="/auth/barber?next=%2Fdashboard"
+      data-ga-event="cta_click"
+      data-ga-cta-id="barber_login"
+      data-ga-cta-location="hero"
       className="inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]"
     >
       {children}
@@ -100,62 +116,8 @@ function BarberLoginCta({ children }: { children: ReactNode }) {
   )
 }
 
-function PhoneShell({ children, label }: { children: ReactNode; label: string }) {
-  return (
-    <div className="mx-auto w-full max-w-[330px] rounded-[28px] border-2 border-[#111111] bg-[#111111] p-3">
-      <div className="mx-auto mb-3 h-1 w-20 rounded-sm bg-[#E5E5E5]" />
-      <div className="overflow-hidden rounded-[20px] border border-[#E5E5E5] bg-white">
-        <div className="flex items-center justify-between border-b border-[#E5E5E5] px-4 py-2 font-['DM_Sans'] text-[11px] text-[#111111]">
-          <span>9:41</span>
-          <span>{label}</span>
-        </div>
-        {children}
-      </div>
-      <div className="mx-auto mt-3 h-1 w-24 rounded-sm bg-[#E5E5E5]" />
-    </div>
-  )
-}
-
 function WhatsappMockup() {
-  const messages = [
-    { from: 'client', text: '¿Tienes hueco el jueves?' },
-    { from: 'barber', text: 'El jueves lo tengo lleno.' },
-    { from: 'client', text: 'Vale, ¿y el viernes?' },
-    { from: 'barber', text: 'Viernes me queda 11:00 o 13:30.' },
-    { from: 'client', text: 'Uy, esas no me van. ¿La semana que viene?' },
-  ]
-
-  return (
-    <PhoneShell label="WhatsApp">
-      <div className="flex items-center gap-3 border-b border-[#E5E5E5] px-3 py-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-[#111111] bg-[#111111] font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-white">
-          CL
-        </div>
-        <div>
-          <p className="font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Cliente por WhatsApp</p>
-          <p className="font-['DM_Sans'] text-[12px] text-[#999999]">en línea</p>
-        </div>
-      </div>
-      <div className="flex min-h-[420px] flex-col gap-3 bg-white px-3 py-4">
-        {messages.map((message) => (
-          <div
-            key={message.text}
-            className={`max-w-[84%] rounded-sm border px-3 py-2 font-['DM_Sans'] text-[14px] leading-relaxed ${
-              message.from === 'barber'
-                ? 'self-end border-[#111111] bg-[#111111] text-white'
-                : 'self-start border-[#E5E5E5] bg-white text-[#111111]'
-            }`}
-          >
-            {message.text}
-          </div>
-        ))}
-        <div className="mt-auto border-l-4 border-[#C8102E] bg-white px-3 py-3">
-          <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Esto no es una cita</p>
-          <p className="mt-1 font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">Es la conversación interminable.</p>
-        </div>
-      </div>
-    </PhoneShell>
-  )
+  return <MobileMockup className="max-w-[245px] xs:max-w-[265px] sm:max-w-[305px]" />
 }
 
 function ReservationMockup() {
@@ -214,25 +176,16 @@ function AppointmentMockup() {
 
 function ReminderMockup() {
   return (
-    <PhoneShell label="Gmail">
-      <div className="bg-[#E5E5E5] px-3 py-6">
-        <div className="border-2 border-[#111111] bg-white px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-[#C8102E] font-['Oswald'] text-[14px] font-semibold uppercase text-[#C8102E]">
-              M
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Gmail</p>
-              <p className="truncate font-['DM_Sans'] text-[12px] text-[#999999]">Barbería Norte</p>
-            </div>
-            <span className="font-['DM_Sans'] text-[11px] text-[#999999]">ahora</span>
-          </div>
-          <p className="mt-4 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
-            No te olvides, tienes cita hoy en Barbería Norte a las 17:00. Puedes modificar o cancelar la cita desde tu enlace de reservas.
-          </p>
-        </div>
-      </div>
-    </PhoneShell>
+    <div className="mx-auto flex w-full max-w-[315px] justify-center bg-transparent py-1">
+      <Image
+        src="/images/trujas-reminder-lockscreen.png"
+        alt="Mockup de pantalla bloqueada con recordatorio de cita de trujas"
+        width={682}
+        height={1280}
+        className="h-auto w-full object-contain"
+        priority={false}
+      />
+    </div>
   )
 }
 
@@ -250,13 +203,13 @@ export default function Home() {
                   Para barberos independientes en España
                 </p>
                 <h1 className="mt-6 max-w-xl font-['Oswald'] text-[44px] font-bold uppercase leading-[0.95] text-white sm:text-[58px] lg:text-[64px]">
-                  Deja de recibir mensajes para cuadrar citas en tu tiempo libre
+                  ¿Y si pudieras olvidarte de agendar citas en tu tiempo libre?
                 </h1>
                 <p className="mt-6 max-w-lg font-['DM_Sans'] text-[17px] leading-relaxed text-white">
                   trujas ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <PrimaryCta>Empezar gratis</PrimaryCta>
+                  <PrimaryCta location="hero">Empezar gratis</PrimaryCta>
                   <BarberLoginCta>¿Ya tienes cuenta?</BarberLoginCta>
                 </div>
                 <div className="mt-8 grid gap-3 border-t border-[#555555] pt-6 sm:grid-cols-3">
@@ -415,7 +368,7 @@ export default function Home() {
           <section className="px-6 py-12 text-center sm:px-10">
             <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">trujas gestiona tus citas. Tú sigues cortando.</h2>
             <div className="mt-7">
-              <PrimaryCta>Empezar gratis</PrimaryCta>
+              <PrimaryCta location="final_cta">Empezar gratis</PrimaryCta>
             </div>
             <p className="mt-4 font-['DM_Sans'] text-[12px] text-[#999999]">Sin compromiso. Tu primer mes es gratis.</p>
           </section>
@@ -425,8 +378,10 @@ export default function Home() {
         <footer className="px-6 py-8 text-center">
           <Logo size="md" />
           <div className="mt-4 flex flex-col items-center gap-3 font-['DM_Sans'] text-[14px] sm:flex-row sm:justify-center">
+            <Link href="/recursos" className="inline-flex min-h-[44px] items-center text-[#555555] underline-offset-4 hover:text-[#111111] hover:underline">Guías para barberos</Link>
             <Link href="/privacidad" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Privacidad</Link>
             <Link href="/terminos" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Términos</Link>
+            <CookieSettingsButton className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline" />
           </div>
         </footer>
       </div>

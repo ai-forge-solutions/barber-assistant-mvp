@@ -10,7 +10,7 @@ de citas para barberías independientes en España.
 
 **Nombre de producto no negociable:** siempre escribir `trujas`, en minúsculas y sin punto. No usar `TURNO`, `TURNO.`, `Turno` ni `trujas.` en copy, logo, metadata, legal, emails o mocks.
 
-Stack: **Next.js 14 (App Router) · Tailwind CSS · Supabase**.
+Stack: **Next.js 16 (App Router) · React 19 · Tailwind CSS · Supabase**. Comprobar `package.json` y las guías locales de Next antes de implementar; la referencia histórica a Next.js 14 está obsoleta.
 
 Tu trabajo es que cada pantalla que toques salga con el branding correcto
 sin que nadie tenga que pedírtelo explícitamente.

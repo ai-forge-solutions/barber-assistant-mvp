@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics'
 import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
 
@@ -253,6 +254,7 @@ export default function OnboardingPage() {
           : 'No hemos podido guardar tus datos. Inténtalo de nuevo.')
         return
       }
+      track('onboarding_complete', { user_type: 'barber' })
       router.replace('/dashboard/agenda')
     } catch {
       setError('No hemos podido guardar tus datos. Inténtalo de nuevo.')

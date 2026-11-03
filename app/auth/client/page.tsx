@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics'
 import { COUNTRY_DIAL_CODES, DEFAULT_COUNTRY_DIAL_CODE } from '@/lib/auth/countries'
 import { authCallbackUrl, rememberAuthNext, safeAuthNext } from '@/lib/auth/redirect'
 import { normalizePhone } from '@/lib/auth/client-profile'
@@ -100,6 +101,8 @@ function ClientAuthContent() {
     setLoading(true)
     setError('')
     rememberAuthNext(next, '/cuenta/citas')
+    // Google does not tell us yet whether the account is new: this records intent.
+    track(mode === 'signup' ? 'sign_up' : 'login', { method: 'google', user_type: 'client' })
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -169,6 +172,7 @@ function ClientAuthContent() {
         })
 
         if (signUpError) throw signUpError
+        track('sign_up', { method: 'email', user_type: 'client' })
         if (data.session) {
           await fetch('/api/customer-profile', {
             method: 'PUT',
@@ -194,6 +198,7 @@ function ClientAuthContent() {
         password: cleanPassword,
       })
       if (loginError) throw loginError
+      track('login', { method: 'email', user_type: 'client' })
       router.replace(next)
     } catch {
       setError(mode === 'signup'

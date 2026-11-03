@@ -14,6 +14,9 @@ export default function PublicNav({ slug }: PublicNavProps) {
       {slug && (
         <Link
           href={`/${slug}/reservar`}
+          data-ga-event="cta_click"
+          data-ga-cta-id="book_appointment"
+          data-ga-cta-location="shop_nav"
           className="flex min-h-[44px] items-center justify-center rounded-sm bg-[#C8102E] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
         >
           Reservar
