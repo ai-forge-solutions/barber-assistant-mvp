@@ -62,7 +62,7 @@ En el navegador: sin elegir, no hay peticiones a `googletagmanager.com`/`google-
 
 Hermes lee GA4 con una cuenta de servicio de solo lectura, sin navegador:
 
-- Cuenta de servicio `hermes-ga4-reader@hermes-oauth-501323.iam.gserviceaccount.com`, en el proyecto de GCP **hermes-oauth** (`hermes-oauth-501323`), donde está activada la **Google Analytics Data API**. No tiene roles en el proyecto.
+- Cuenta de servicio `hermes-ga4-reader@hermes-oauth-501323.iam.gserviceaccount.com`, en el proyecto de GCP **hermes-oauth** (`hermes-oauth-501323`), donde están activadas la **Google Analytics Data API** (informes) y la **Google Analytics Admin API** (listar cuentas y propiedades con `accountSummaries`). No tiene roles en el proyecto.
 - Acceso: rol **Viewer** en las propiedades GA4 trujas.app (`562094841`) y velz.io (`561805505`), desde *Admin → Property access management*. Puede leer informes, pero no cambiar la configuración.
 - La clave JSON (`private_key_id` que empieza por `0f86c3b5`) vive solo en la máquina de Hermes, en `~/.hermes/ga4-reader.json` con permisos `600`. Nunca se sube a un repo: Google desactiva automáticamente las claves que detecta en repos públicos. Para rotarla, crea una nueva en *IAM → Service accounts → hermes-ga4-reader → Keys* y borra la anterior.
 - En `~/.hermes/.env`:
