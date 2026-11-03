@@ -28,6 +28,9 @@ export default function BookingButton({ slug }: { slug: string }) {
   return (
     <button
       onClick={handleClick}
+      data-ga-event="cta_click"
+      data-ga-cta-id="book_appointment"
+      data-ga-cta-location="shop_page"
       className="w-full bg-[#C8102E] text-white font-['Oswald'] font-semibold text-[16px] tracking-[0.08em] uppercase px-6 py-4 rounded-sm hover:bg-[#111111] active:scale-[0.99] transition-colors duration-150 min-h-[52px]"
     >
       Reservar cita

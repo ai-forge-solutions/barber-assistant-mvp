@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import PublicNav from '@/components/nav/PublicNav'
 import ColorStripe from '@/components/brand/ColorStripe'
+import TrackEvent from '@/components/analytics/TrackEvent'
 
 export const metadata = {
   title: 'Cita cancelada — trujas',
@@ -11,6 +12,7 @@ export default function CancelSuccess() {
     <div className="min-h-screen flex flex-col bg-white">
       <PublicNav />
       <ColorStripe />
+      <TrackEvent name="booking_cancelled" />
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-16 max-w-lg mx-auto w-full text-center">
         {/* Icono check */}
         <div className="w-16 h-16 rounded-full border-2 border-[#1A3A6B] flex items-center justify-center mb-6">

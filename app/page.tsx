@@ -4,6 +4,7 @@ import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import PricingTeaser from '@/components/pricing/PricingTeaser'
+import CookieSettingsButton from '@/components/analytics/CookieSettingsButton'
 import MobileMockup from '@/components/ui/great-ui-mobile-mockup'
 import { marketingMetadata } from '@/lib/seo'
 
@@ -87,10 +88,13 @@ const faqs = [
   },
 ]
 
-function PrimaryCta({ children }: { children: ReactNode }) {
+function PrimaryCta({ children, location }: { children: ReactNode; location: string }) {
   return (
     <Link
       href="/pricing"
+      data-ga-event="cta_click"
+      data-ga-cta-id="start_free"
+      data-ga-cta-location={location}
       className="inline-flex min-h-[44px] items-center justify-center rounded-sm bg-[#C8102E] px-8 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
     >
       {children}
@@ -102,6 +106,9 @@ function BarberLoginCta({ children }: { children: ReactNode }) {
   return (
     <Link
       href="/auth/barber?next=%2Fdashboard"
+      data-ga-event="cta_click"
+      data-ga-cta-id="barber_login"
+      data-ga-cta-location="hero"
       className="inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]"
     >
       {children}
@@ -202,7 +209,7 @@ export default function Home() {
                   trujas ordena servicios, barberos y horas en un enlace claro. Tus clientes eligen hueco; tú ves la agenda sin perseguir mensajes.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <PrimaryCta>Empezar gratis</PrimaryCta>
+                  <PrimaryCta location="hero">Empezar gratis</PrimaryCta>
                   <BarberLoginCta>¿Ya tienes cuenta?</BarberLoginCta>
                 </div>
                 <div className="mt-8 grid gap-3 border-t border-[#555555] pt-6 sm:grid-cols-3">
@@ -361,7 +368,7 @@ export default function Home() {
           <section className="px-6 py-12 text-center sm:px-10">
             <h2 className="mx-auto max-w-lg font-['Oswald'] text-[36px] font-bold uppercase leading-tight text-[#111111]">trujas gestiona tus citas. Tú sigues cortando.</h2>
             <div className="mt-7">
-              <PrimaryCta>Empezar gratis</PrimaryCta>
+              <PrimaryCta location="final_cta">Empezar gratis</PrimaryCta>
             </div>
             <p className="mt-4 font-['DM_Sans'] text-[12px] text-[#999999]">Sin compromiso. Tu primer mes es gratis.</p>
           </section>
@@ -374,6 +381,7 @@ export default function Home() {
             <Link href="/recursos" className="inline-flex min-h-[44px] items-center text-[#555555] underline-offset-4 hover:text-[#111111] hover:underline">Guías para barberos</Link>
             <Link href="/privacidad" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Privacidad</Link>
             <Link href="/terminos" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Términos</Link>
+            <CookieSettingsButton className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline" />
           </div>
         </footer>
       </div>

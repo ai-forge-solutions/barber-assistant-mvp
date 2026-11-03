@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:seo": "node --test tests/seo-http.test.mjs",
-    "test:resources": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/resources-content.test.mjs"
+    "test:resources": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/resources-content.test.mjs",
+    "test:analytics": "node --test tests/analytics.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
