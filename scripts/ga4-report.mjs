@@ -120,6 +120,11 @@ async function main() {
   console.log(`GA4 property ${property} · last ${days} days\n`)
   console.log('Funnel (events / users)')
   console.table(funnel)
+  const others = events.filter(([name]) => !FUNNEL.includes(name))
+  if (others.length) {
+    console.log('Other events (events / users)')
+    console.table(others.map(([event, count, users]) => ({ event, count, users })))
+  }
   console.log('Channels (sessions / users / key events)')
   console.table(channels.map(([channel, sessions, users, keyEvents]) => ({ channel, sessions, users, keyEvents })))
   if (ctas.length) {
