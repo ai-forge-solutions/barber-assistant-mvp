@@ -7,6 +7,7 @@ import Logo from '@/components/brand/Logo'
 import ColorStripe from '@/components/brand/ColorStripe'
 import { authCallbackUrl, rememberAuthNext, safeAuthNext } from '@/lib/auth/redirect'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics'
 
 type AuthMode = 'login' | 'signup'
 
@@ -91,6 +92,8 @@ export default function BarberAuthForm({ mode }: BarberAuthFormProps) {
     setLoading(true)
     setError('')
     rememberAuthNext(next)
+    // Google does not tell us yet whether the account is new: this records intent.
+    track(isSignup ? 'sign_up' : 'login', { method: 'google', user_type: 'barber' })
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -158,6 +161,7 @@ export default function BarberAuthForm({ mode }: BarberAuthFormProps) {
           return
         }
 
+        track('sign_up', { method: 'email', user_type: 'barber' })
         if (data.session) {
           router.replace(next)
           return
@@ -173,6 +177,7 @@ export default function BarberAuthForm({ mode }: BarberAuthFormProps) {
         password: cleanPassword,
       })
       if (loginError) throw loginError
+      track('login', { method: 'email', user_type: 'barber' })
       router.replace(next)
     } catch {
       setError(isSignup

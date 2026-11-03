@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
+import CookieSettingsButton from '@/components/analytics/CookieSettingsButton'
 
 const sections = [
   {
@@ -17,11 +18,11 @@ const sections = [
   },
   {
     title: 'Base legal',
-    body: 'La base principal es la ejecución de la reserva solicitada y la relación contractual o precontractual entre cliente y barbería. Cuando haga falta consentimiento para una comunicación concreta, se pedirá de forma separada.',
+    body: 'La base principal es la ejecución de la reserva solicitada y la relación contractual o precontractual entre cliente y barbería. La analítica web solo se activa con tu consentimiento, que puedes retirar cuando quieras. Cuando haga falta consentimiento para una comunicación concreta, se pedirá de forma separada.',
   },
   {
     title: 'Con quién compartimos datos',
-    body: 'No vendemos datos personales. Pueden acceder proveedores tecnológicos necesarios para operar trujas, como infraestructura, base de datos, autenticación, envío de emails o herramientas de seguridad, siempre limitados a la prestación del servicio.',
+    body: 'No vendemos datos personales. Pueden acceder proveedores tecnológicos necesarios para operar trujas, como infraestructura, base de datos, autenticación, envío de emails o herramientas de seguridad, siempre limitados a la prestación del servicio. Si aceptas las cookies analíticas, Google Analytics recibe datos de uso de la web, sin tu nombre, email ni teléfono.',
   },
   {
     title: 'Conservación',
@@ -31,9 +32,29 @@ const sections = [
     title: 'Derechos',
     body: 'Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad contactando con la barbería donde reservaste o mediante el canal de contacto disponible en trujas También puedes reclamar ante la autoridad de protección de datos competente.',
   },
+]
+
+const cookieRows = [
   {
-    title: 'Cookies y datos técnicos',
-    body: 'trujas puede usar cookies o tecnologías similares imprescindibles para mantener sesión, seguridad y funcionamiento básico. Si se incorporan cookies analíticas o comerciales no necesarias, se informará y se solicitará el consentimiento que corresponda.',
+    name: 'Sesión de Supabase (sb-…)',
+    owner: 'trujas',
+    purpose: 'Mantener tu sesión iniciada y proteger la cuenta.',
+    duration: 'Sesión o hasta que cierras sesión',
+    type: 'Necesaria',
+  },
+  {
+    name: 'trujas_consent_v1 (almacenamiento local)',
+    owner: 'trujas',
+    purpose: 'Recordar si aceptaste o rechazaste la analítica.',
+    duration: 'Hasta que la borres',
+    type: 'Necesaria',
+  },
+  {
+    name: '_ga, _ga_<ID>',
+    owner: 'Google Analytics',
+    purpose: 'Contar visitas y saber qué pasos de la web se usan, de forma agregada.',
+    duration: '13 meses',
+    type: 'Analítica (solo si aceptas)',
   },
 ]
 
@@ -56,9 +77,46 @@ export default function PrivacyPage() {
             </section>
           ))}
         </div>
+        <section id="cookies" className="mt-4 scroll-mt-6 rounded-sm border border-[#E5E5E5] bg-white px-5 py-5">
+          <h2 className="font-['Oswald'] text-[19px] font-semibold uppercase text-[#111111]">Cookies y analítica</h2>
+          <p className="mt-2 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
+            Usamos cookies imprescindibles para la sesión y la seguridad, que no necesitan consentimiento. Además, si aceptas en el aviso de cookies, usamos Google Analytics 4 (Google Ireland Limited) para medir de forma agregada qué páginas se visitan y en qué paso se quedan las reservas, los registros y las altas de barberías. Sin tu aceptación no se carga ningún script de Google.
+          </p>
+          <p className="mt-2 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
+            No enviamos a Google tu nombre, email, teléfono ni el contenido de tus citas, y quitamos de las direcciones los identificadores y enlaces privados (por ejemplo, de cancelación o de pago). No usamos publicidad, remarketing ni Google Signals. Google Analytics no guarda direcciones IP. Google puede tratar datos fuera del Espacio Económico Europeo con las garantías del Marco de Privacidad de Datos UE-EE. UU. y las cláusulas contractuales tipo. Los datos de analítica se conservan 14 meses.
+          </p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[520px] border-collapse text-left font-['DM_Sans'] text-[13px] text-[#555555]">
+              <thead>
+                <tr className="border-b-2 border-[#111111]">
+                  {['Cookie', 'De quién', 'Para qué', 'Duración', 'Tipo'].map((heading) => (
+                    <th key={heading} className="py-2 pr-3 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#111111]">{heading}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {cookieRows.map((row) => (
+                  <tr key={row.name} className="border-b border-[#E5E5E5] align-top">
+                    <td className="py-2 pr-3 text-[#111111]">{row.name}</td>
+                    <td className="py-2 pr-3">{row.owner}</td>
+                    <td className="py-2 pr-3">{row.purpose}</td>
+                    <td className="py-2 pr-3">{row.duration}</td>
+                    <td className="py-2 pr-3">{row.type}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-4 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
+            Puedes cambiar tu elección cuando quieras. Si retiras el consentimiento, dejamos de medir y borramos las cookies de Google Analytics de este navegador.
+          </p>
+          <CookieSettingsButton className="mt-4 inline-flex min-h-[44px] items-center rounded-sm border-2 border-[#111111] px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-[#111111] hover:bg-[#E5E5E5]">
+            Cambiar preferencias de cookies
+          </CookieSettingsButton>
+        </section>
         <div className="mt-8 rounded-sm border-l-4 border-[#C8102E] bg-white px-5 py-4">
           <p className="font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">
-            Última actualización: julio de 2026. Si una barbería necesita añadir sus datos legales concretos, debe incorporarlos en su página pública o documentación de contratación antes de vender el servicio a sus clientes.
+            Última actualización: noviembre de 2026. Si una barbería necesita añadir sus datos legales concretos, debe incorporarlos en su página pública o documentación de contratación antes de vender el servicio a sus clientes.
           </p>
         </div>
         <Link href="/" className="mt-8 inline-flex min-h-[44px] items-center rounded-sm border-2 border-[#111111] px-6 py-3 font-['Oswald'] text-[14px] font-semibold uppercase tracking-[0.08em] text-[#111111] hover:bg-[#E5E5E5]">

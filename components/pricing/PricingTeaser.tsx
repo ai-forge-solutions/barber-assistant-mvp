@@ -16,6 +16,10 @@ function CheckoutButton({
       <input type="hidden" name="cadence" value={cadence} />
       <button
         type="submit"
+        data-ga-event="begin_checkout"
+        data-ga-plan={planKey}
+        data-ga-billing-cadence={cadence}
+        data-ga-cta-location="landing_pricing"
         className="min-h-[44px] w-full rounded-sm bg-[#C8102E] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
       >
         {children}
@@ -51,7 +55,7 @@ export default function PricingTeaser() {
           <CheckoutButton planKey="basic" cadence="annual">Empezar con primer mes gratis</CheckoutButton>
         </div>
       </div>
-      <Link href="/pricing" className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]">
+      <Link href="/pricing" data-ga-event="cta_click" data-ga-cta-id="see_plans" data-ga-cta-location="landing_pricing" className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-sm border-2 border-white px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-white hover:text-[#111111] active:scale-[0.98]">
         Ver todos los planes
       </Link>
     </section>

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isBefore, isToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -38,6 +39,9 @@ const EMPTY: BookingState = {
   serviceId: '', serviceName: '', serviceDuration: 0, servicePrice: 0,
   date: '', slot: '',
 }
+
+// Analytics ids for each step (never names, prices per barber or IDs).
+const STEP_IDS = ['barber', 'service', 'date', 'time', 'confirm']
 
 // ── Step indicator ───────────────────────────────────────────────────────────
 
@@ -150,10 +154,18 @@ export default function ReservarPage() {
         }
       } catch { /* ignore */ }
 
+      track('booking_start')
       setLoading(false)
     }
     init()
   }, [slug]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const trackedStep = useRef<number | null>(null)
+  useEffect(() => {
+    if (loading || confirmed || !subscriptionActive || trackedStep.current === step) return
+    trackedStep.current = step
+    track('booking_step', { booking_step: STEP_IDS[step], step_number: step + 1 })
+  }, [step, loading, confirmed, subscriptionActive])
 
   function persist(patch: Partial<BookingState>) {
     const next = { ...booking, ...patch }
@@ -200,6 +212,7 @@ export default function ReservarPage() {
       })
 
       if (res.status === 409) {
+        track('booking_slot_unavailable')
         setStep(3)
         setSlotError('Este horario ya no está disponible. Elige otro.')
         persist({ slot: '' })
@@ -209,6 +222,7 @@ export default function ReservarPage() {
       if (!res.ok) throw new Error()
       const appt = await res.json()
       setConfirmed({ startsAt: appt.starts_at, endsAt: appt.ends_at })
+      track('booking_complete', { value: booking.servicePrice, currency: 'EUR', service_duration_min: booking.serviceDuration })
       sessionStorage.removeItem(storageKey)
     } catch {
       setConfirmError('No hemos podido confirmar la cita. Inténtalo de nuevo.')
@@ -285,6 +299,7 @@ export default function ReservarPage() {
         <div className="flex flex-col gap-3 w-full max-w-sm">
           <button
             onClick={downloadIcs}
+            data-ga-event="add_to_calendar"
             className="bg-transparent text-[#111111] border-2 border-[#111111] font-['Oswald'] font-semibold text-[14px] tracking-[0.08em] uppercase px-6 py-3 rounded-sm hover:border-[#1A3A6B] hover:text-[#1A3A6B] min-h-[44px]"
           >
             Añadir al calendario

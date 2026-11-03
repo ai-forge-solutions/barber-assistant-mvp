@@ -5,6 +5,7 @@ import { getDashboardAccess } from '@/lib/dashboard/access'
 import { PRICING_PLANS, getPlanBillingLabel, getPlanPrice, type BillingCadence } from '@/lib/billing/pricing'
 import AppNav from '@/components/nav/AppNav'
 import ColorStripe from '@/components/brand/ColorStripe'
+import TrackEvent from '@/components/analytics/TrackEvent'
 
 type BillingPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -43,6 +44,10 @@ function CheckoutForm({ planKey, cadence, children }: { planKey: string; cadence
       <input type="hidden" name="cadence" value={cadence} />
       <button
         type="submit"
+        data-ga-event="begin_checkout"
+        data-ga-plan={planKey}
+        data-ga-billing-cadence={cadence}
+        data-ga-cta-location="billing"
         className="min-h-[44px] w-full rounded-sm bg-[#C8102E] px-5 py-3 font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-150 hover:bg-[#111111] active:scale-[0.98]"
       >
         {children}
@@ -88,6 +93,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
 
         {checkout === 'success' && (
           <div className="border-2 border-[#1A3A6B] bg-white px-4 py-3">
+            <TrackEvent name="checkout_completed" onceKey="trujas_ga_checkout_completed" stripParams={['session_id']} />
             <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#1A3A6B]">Checkout confirmado</p>
             <p className="mt-1 font-['DM_Sans'] text-[13px] text-[#555555]">Stripe está sincronizando tu suscripción. Si todavía ves esta pantalla, espera unos segundos y recarga.</p>
           </div>

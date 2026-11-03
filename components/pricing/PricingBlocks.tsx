@@ -30,7 +30,7 @@ function CheckoutButton({
     <form action="/api/stripe/create-checkout-session" method="POST">
       <input type="hidden" name="plan" value={planKey} />
       <input type="hidden" name="cadence" value={cadence} />
-      <button type="submit" className={className}>
+      <button type="submit" className={className} data-ga-event="begin_checkout" data-ga-plan={planKey} data-ga-billing-cadence={cadence} data-ga-cta-location="pricing">
         {children}
       </button>
     </form>
