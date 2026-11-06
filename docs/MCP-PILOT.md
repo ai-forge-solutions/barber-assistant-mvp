@@ -1,5 +1,11 @@
 # Piloto MCP de reservas de trujas
 
+## Estado verificado · 2026-11-06
+
+Las tres migraciones ya están aplicadas al proyecto de trujas. Se verificaron permisos, reserva/idempotencia/solapes con rollback en Supabase real, y OAuth + MCP HTTP con dos cuentas de prueba. Suite MCP: **67 pruebas correctas, ninguna saltada**; lint y build correctos usando explícitamente el entorno de trujas. Local `/api/mcp/status`: HTTP 200, `ready: true`.
+
+La rama pública todavía devuelve 404. Esto **no** acredita despliegue ni conexión desde Claude/ChatGPT. Evidencia, cambios heredados y comando reproducible: [MCP-PILOT-VERIFICATION.md](MCP-PILOT-VERIFICATION.md).
+
 ## Estado y alcance
 
 Rama de pruebas: `feat/mcp-booking-pilot`, basada en `develop`. No promueve producción.
