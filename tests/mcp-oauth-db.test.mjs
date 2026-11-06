@@ -16,7 +16,7 @@ test('real PostgreSQL: service-only privileges, atomic code replay and refresh r
  try {
   await pg.initialise();await pg.start();db=pg.getPgClient();await db.connect()
   await db.query(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key);grant usage on schema public to service_role;insert into auth.users values('00000000-0000-4000-8000-000000000001')`)
-  await db.query(await readFile(new URL('../supabase/migrations/20261106090000_mcp_oauth.sql',import.meta.url),'utf8'))
+  await db.query(await readFile(new URL('../supabase/migrations/20261106184405_mcp_oauth.sql',import.meta.url),'utf8'))
   await t.test('browser roles cannot read tables or execute token RPCs',async()=>{
    for(const role of ['anon','authenticated']) {
     for(const table of ['mcp_oauth_clients','mcp_oauth_codes','mcp_oauth_grants']){

@@ -13,7 +13,7 @@ const user = id(1), shop = id(2), barber = id(3), service = id(4)
 const resource = 'https://example.test/mcp'
 
 test('PostgreSQL real: propuesta persistente y confirmación atómica', { skip: !modules }, async t => {
-  const migration = await readFile(new URL('../supabase/migrations/20261106091000_mcp_booking.sql', import.meta.url), 'utf8').catch(() => '')
+  const migration = await readFile(new URL('../supabase/migrations/20261106184407_mcp_booking.sql', import.meta.url), 'utf8').catch(() => '')
   assert.ok(migration, 'Falta migración de reservas MCP')
   const require = createRequire(join(modules, '_test.cjs'))
   const { default: EmbeddedPostgres } = await import(require.resolve('embedded-postgres'))

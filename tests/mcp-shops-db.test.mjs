@@ -92,7 +92,7 @@ test('PostgreSQL real: frontera cliente/multibarbería', { skip: !modules }, asy
     `)
     const historySnapshot = async () => (await db.query('select to_jsonb(a) row from public.appointments a order by id')).rows
     const before = await historySnapshot()
-    const migration = await readFile(new URL('../supabase/migrations/20261106092000_customer_shop_preferences.sql', import.meta.url), 'utf8')
+    const migration = await readFile(new URL('../supabase/migrations/20261106184409_customer_shop_preferences.sql', import.meta.url), 'utf8')
     await t.test('migración ejecuta y permite reaplicar sin backfill ni alterar citas', async () => {
       await db.query(migration)
       await db.query(migration)

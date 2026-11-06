@@ -44,9 +44,9 @@ No incluye pagos, cambios ni cancelación. La creación MCP no ejecuta el envío
 **Proyecto esperado:** `gnskwavxxipvwpznzzdh` (trujas). La conexión SQL global del agente pertenece a otro producto: NO utilizarla ni inferir acceso correcto por tener credenciales globales.
 
 Orden:
-1. `supabase/migrations/20261106090000_mcp_oauth.sql`: tablas de clientes, códigos y concesiones OAuth + RPCs de registro/exchange/refresh.
-2. `supabase/migrations/20261106091000_mcp_booking.sql`: extensión `btree_gist`, exclusión en `appointments`, tabla de propuestas y funciones de disponibilidad/preparación/confirmación.
-3. `supabase/migrations/20261106092000_customer_shop_preferences.sql`: preferencias explícitas y lecturas seguras de historial/citas.
+1. `supabase/migrations/20261106184405_mcp_oauth.sql`: tablas de clientes, códigos y concesiones OAuth + RPCs de registro/exchange/refresh.
+2. `supabase/migrations/20261106184407_mcp_booking.sql`: extensión `btree_gist`, exclusión en `appointments`, tabla de propuestas y funciones de disponibilidad/preparación/confirmación.
+3. `supabase/migrations/20261106184409_customer_shop_preferences.sql`: preferencias explícitas y lecturas seguras de historial/citas.
 
 No hay backfill de preferencias ni limpieza de citas. Nuevas tablas/RPCs solo accesibles al rol de servicio; RLS activada. Revisar SQL e impacto de locks/constraint antes de aplicar contra la base compartida. La service-role REST existente no es una conexión SQL ni permiso para crear un ejecutor SQL improvisado.
 

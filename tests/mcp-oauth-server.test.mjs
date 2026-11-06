@@ -34,7 +34,7 @@ test('replayed or expired code and refresh return sanitized invalid_grant',async
  const failed=await api.token(request('/oauth/token',{grant_type:'refresh_token',client_id:'abc',resource:origin+'/mcp',refresh_token:opaqueToken()}),{...deps,db:()=>broken});assert.equal(failed.status,503);assert.deepEqual(await failed.json(),{error:'server_error'})
 })
 test('migration declares service-only RLS, atomic delete/rotate, and durable registration cap',async()=>{
- const sql=await readFile(new URL('../supabase/migrations/20261106090000_mcp_oauth.sql',import.meta.url),'utf8')
+ const sql=await readFile(new URL('../supabase/migrations/20261106184405_mcp_oauth.sql',import.meta.url),'utf8')
  for(const name of ['clients','codes','grants']) assert.match(sql,new RegExp('alter table public.mcp_oauth_'+name+' enable row level security','i'))
  assert.match(sql,/delete from public\.mcp_oauth_codes[\s\S]*returning/i)
  assert.match(sql,/update public\.mcp_oauth_grants[\s\S]*refresh_hash = p_refresh_hash[\s\S]*returning/i)
