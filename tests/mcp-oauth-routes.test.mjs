@@ -14,6 +14,8 @@ test('consent promises creation only and escapes untrusted client names',async()
  const r=await authorize(new Request(origin+'/oauth/authorize?'+params()),{db:clientDb,user})
  assert.equal(r.status,200);const html=await r.text()
  assert.match(html,/Solo crear citas/);assert.doesNotMatch(html,/Crear, cambiar y cancelar/);assert.match(html,/Asistente &lt;seguro&gt;/)
+ assert.match(r.headers.get('content-security-policy'),/form-action 'self' https:\/\/client\.example;/,'Native browser must be allowed to follow the validated OAuth callback redirect')
+ assert.equal(r.headers.get('referrer-policy'),'same-origin','Native form POST must retain its same-origin Origin; external callbacks must not receive the referrer')
  assert.match(r.headers.get('set-cookie'),/__Host-trujas-oauth-consent=.*HttpOnly; SameSite=Lax/)
 })
 test('connections renders an inferred array relation without quotes',async()=>{

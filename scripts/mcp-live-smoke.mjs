@@ -14,7 +14,7 @@ Object.assign(process.env, (await import('node:util')).parseEnv(await readFile(p
 const origin = process.env.MCP_SMOKE_ORIGIN || 'http://localhost:3124'
 const target = new URL(origin)
 assert.equal(target.origin, origin, 'Use an origin without a path or embedded credentials')
-assert.ok(['localhost', '127.0.0.1', 'feat-mcp-booking-pilot--barber-assitant.netlify.app'].includes(target.hostname), 'Only loopback or the explicit pilot preview is allowed')
+assert.ok(['localhost', '127.0.0.1', 'feat-mcp-booking-pilot--barber-assitant.netlify.app', 'deploy-preview-33--barber-assitant.netlify.app'].includes(target.hostname), 'Only loopback or the explicit pilot preview is allowed')
 if (!['localhost', '127.0.0.1'].includes(target.hostname)) assert.equal(target.protocol, 'https:')
 assert.equal(new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname, 'gnskwavxxipvwpznzzdh.supabase.co')
 const accounts = JSON.parse(await readFile(process.env.MCP_SMOKE_ACCOUNTS, 'utf8'))
