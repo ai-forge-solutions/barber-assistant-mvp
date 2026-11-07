@@ -10,9 +10,11 @@
     "test:seo": "node --test tests/seo-http.test.mjs",
     "test:resources": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/resources-content.test.mjs",
     "test:analytics": "node --test tests/analytics.test.mjs",
+    "test:mcp": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/mcp-*.test.mjs",
     "report:ga4": "node scripts/ga4-report.mjs"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "date-fns": "^4.4.0",
@@ -26,7 +28,8 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.16.0",
-    "stripe": "^22.3.2"
+    "stripe": "^22.3.2",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
