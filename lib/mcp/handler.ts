@@ -1,13 +1,14 @@
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js'
 import { createBookingServer } from './server.ts'
 import type { BookingServices } from './server.ts'
+import { requestOrigin } from './oauth-core.ts'
 
 type Identity = { userId: string; scope: string; grantId?: string }
 const browserOrigins = new Set(['https://claude.ai', 'https://chatgpt.com', 'https://chat.openai.com'])
 
 /** Per-request transport, no process-local sessions: safe on Netlify serverless. */
 export async function mcpHandler(request: Request, authenticate: (request: Request) => Promise<Identity | null>, services: BookingServices) {
-  const url = new URL(request.url)
+  const url = new URL(requestOrigin(request))
   const origin = request.headers.get('origin')
   const headers: Record<string, string> = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', Vary: 'Origin' }
   if (origin && origin !== url.origin && !browserOrigins.has(origin)) {

@@ -22,6 +22,14 @@ A second browser-level obstacle appeared after retaining the Origin: Chromium's 
 - Exact registered redirect URI validation, Origin checks, secure nonce cookies, user/parameter binding, PKCE and audience validation remain unchanged.
 - Token/JSON endpoints retain their existing `no-referrer` policy. No schema, billing or production-branch changes.
 
+## Stable public OAuth origin
+
+The expanded live smoke also reproduced intermittent mismatches: a request to the preview alias returned a `WWW-Authenticate` metadata URL on the internal deploy permalink; a later consent request failed target validation. Request URL origin is not a reliable OAuth audience behind this adapter.
+
+`next.config.ts` embeds Netlify's documented `DEPLOY_PRIME_URL` into `TRUJAS_DEPLOY_ORIGIN` at build time. Only a public origin is embedded. OAuth discovery, consent/connection redirects and CSRF comparisons, token audience checks, bearer lookups, MCP challenge and service resource now share that canonical origin. No forwarded headers are trusted and no Netlify account settings change. Builds without that metadata retain request-based origins for local development. This is per-deploy, not a hardcoded preview or production URL.
+
+Reference: https://docs.netlify.com/build/configure-builds/environment-variables/#deploy-urls-and-metadata
+
 ## Browser regression
 
 `scripts/mcp-browser-smoke.mjs` signs in with a controlled account, registers a uniquely named temporary OAuth client, injects the real SSR session cookies into Chromium, clicks the actual consent button without manually supplying Origin, follows the cross-origin callback to a loopback-only HTTP server, and exchanges the code using PKCE. It deletes the temporary client and cascading codes/grants and closes the test session. It creates no appointments.

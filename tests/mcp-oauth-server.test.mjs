@@ -12,6 +12,21 @@ test('metadata advertises exact MCP audience and S256 public-client endpoints',(
  assert.equal(m.issuer,origin); assert.equal(m.token_endpoint,origin+'/oauth/token'); assert.deepEqual(m.code_challenge_methods_supported,['S256']); assert.deepEqual(m.token_endpoint_auth_methods_supported,['none'])
  assert.equal(api.resourceMetadata(new Request(origin+'/.well-known/oauth-protected-resource')).resource,origin+'/mcp')
 })
+test('metadata and consent use the pinned public origin instead of a proxy deployment URL',async()=>{
+ const previous=process.env.TRUJAS_DEPLOY_ORIGIN
+ process.env.TRUJAS_DEPLOY_ORIGIN=origin
+ try {
+  const internal='https://0123456789abcdef01234567--barber-assitant.netlify.app'
+  assert.equal(api.authorizationMetadata(new Request(internal+'/discovery')).issuer,origin)
+  assert.deepEqual(api.resourceMetadata(new Request(internal+'/discovery')).authorization_servers,[origin])
+  const p=new URLSearchParams({client_id:'client',redirect_uri:'https://client.example/cb',response_type:'code',resource:origin+'/mcp',code_challenge:'A'.repeat(43),code_challenge_method:'S256'})
+  const client={client_id:'client',redirect_uris:['https://client.example/cb']}
+  const d={...deps,db:()=>({from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:client,error:null})})})})})}
+  const r=await api.authorize(new Request(internal+'/oauth/authorize?'+p),d)
+  assert.equal(r.status,303)
+  assert.equal(new URL(r.headers.get('location')).origin,origin)
+ } finally { if(previous===undefined)delete process.env.TRUJAS_DEPLOY_ORIGIN;else process.env.TRUJAS_DEPLOY_ORIGIN=previous }
+})
 test('public token endpoint rejects other grants, missing resource and client authentication before DB',async()=>{
  assert.equal(typeof api.token,'function')
  for(const body of [{grant_type:'password'},{grant_type:'authorization_code',resource:origin+'/mcp',client_secret:'secret'},{grant_type:'refresh_token',client_id:'abc',refresh_token:opaqueToken(),resource:'https://wrong.example/mcp'}]) {

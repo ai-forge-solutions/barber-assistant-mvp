@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { OAuthError, SCOPES, checkConsent, consentBinding, createRegistrationLimiter, hashToken, opaqueToken, pkceChallenge, resourceFor, validateAuthorization, validateRegistration } from './oauth-core'
+import { OAuthError, SCOPES, checkConsent, consentBinding, createRegistrationLimiter, hashToken, opaqueToken, pkceChallenge, publicRequestUrl, requestOrigin, resourceFor, validateAuthorization, validateRegistration } from './oauth-core'
 
 export type OAuthDependencies = {
   db: () => SupabaseClient
@@ -10,10 +10,10 @@ export const json = (body: unknown, status = 200) => Response.json(body,{status,
 export const preflight = () => new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Access-Control-Max-Age':'600'}})
 export function failure(e: unknown) { return json({error:e instanceof OAuthError ? e.error : 'server_error'},e instanceof OAuthError ? e.status : 503) }
 export function authorizationMetadata(r: Request) {
-  const issuer=new URL(r.url).origin
+  const issuer=requestOrigin(r)
   return {issuer,authorization_endpoint:issuer+'/oauth/authorize',token_endpoint:issuer+'/oauth/token',registration_endpoint:issuer+'/oauth/register',revocation_endpoint:issuer+'/oauth/revoke',response_types_supported:['code'],grant_types_supported:['authorization_code','refresh_token'],token_endpoint_auth_methods_supported:['none'],revocation_endpoint_auth_methods_supported:['none'],code_challenge_methods_supported:['S256'],scopes_supported:SCOPES,resource_indicators_supported:true}
 }
-export function resourceMetadata(r: Request) { return {resource:resourceFor(r),authorization_servers:[new URL(r.url).origin],scopes_supported:SCOPES,bearer_methods_supported:['header'],resource_name:'trujas — reservas'} }
+export function resourceMetadata(r: Request) { return {resource:resourceFor(r),authorization_servers:[requestOrigin(r)],scopes_supported:SCOPES,bearer_methods_supported:['header'],resource_name:'trujas — reservas'} }
 async function boundedBody(r: Request, max = 16384) {
   if (Number(r.headers.get('content-length')) > max) throw new OAuthError('invalid_request',413)
   const reader=r.body?.getReader(); if (!reader) throw new OAuthError('invalid_request')
@@ -90,7 +90,7 @@ function html(body:string,extra:Record<string,string>={},formRedirect?:string) {
 }
 export async function authorize(r:Request,d:OAuthDependencies) {
   try {
-    const url=new URL(r.url)
+    const url=publicRequestUrl(r)
     if(url.search.length>8192) throw new OAuthError('invalid_request')
     const p=url.searchParams
     const {data:client,error}=await d.db().from('mcp_oauth_clients').select('client_id,client_name,redirect_uris').eq('client_id',p.get('client_id') || '').maybeSingle()
@@ -124,7 +124,7 @@ export async function authorize(r:Request,d:OAuthDependencies) {
 }
 export async function connections(r:Request,d:OAuthDependencies) {
   try {
-    const url=new URL(r.url),user=await d.user()
+    const url=publicRequestUrl(r),user=await d.user()
     if(!user) {const login=new URL('/auth/client',url.origin);login.searchParams.set('next','/oauth/connections');return new Response(null,{status:303,headers:{...secureHeaders,Location:login.toString()}})}
     const binding=new URLSearchParams({action:'revoke-connections'})
     if(r.method==='POST') {

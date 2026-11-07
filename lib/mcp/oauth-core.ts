@@ -50,7 +50,14 @@ export function createRegistrationLimiter(limit = 20, windowMs = 3600000, capaci
 export const SCOPES = ['bookings:read', 'bookings:write', 'preferences:write'] as const
 export const opaqueToken = () => randomBytes(32).toString('base64url')
 export const hashToken = (value: string) => createHash('sha256').update(value).digest('hex')
-export const resourceFor = (request: Request) => `${new URL(request.url).origin}/mcp`
+// Pin Netlify's public preview origin at build time; the adapter may expose an
+// internal deploy permalink in request.url. Never derive identity from spoofable headers.
+export const requestOrigin = (request: Request) => new URL(process.env.TRUJAS_DEPLOY_ORIGIN || request.url).origin
+export const publicRequestUrl = (request: Request) => {
+  const url = new URL(request.url)
+  return new URL(url.pathname + url.search, requestOrigin(request))
+}
+export const resourceFor = (request: Request) => `${requestOrigin(request)}/mcp`
 export function validRedirect(value: unknown): value is string {
   if (typeof value !== 'string' || value.length > 2048) return false
   try {
