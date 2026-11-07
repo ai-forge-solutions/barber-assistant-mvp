@@ -40,6 +40,33 @@ test('MCP confirmation requires explicit true and only accepts an immutable prop
   } finally { await ctx.close() }
 })
 
+test('MCP cancellation requires explicit confirmation and uses the authenticated identity', async () => {
+  const ctx = await connect('bookings:read bookings:cancel')
+  const appointmentId = '01234567-1234-4123-8123-012345678901'
+  try {
+    const tool = (await ctx.client.listTools()).tools.find(t => t.name === 'cancel_booking')
+    assert.ok(tool, 'Cancellation tool must be discoverable with its dedicated scope')
+    assert.equal(tool.annotations.destructiveHint, true)
+    assert.equal(tool.annotations.idempotentHint, true)
+    for (const args of [{appointmentId},{appointmentId,confirmed:false},{appointmentId,confirmed:true,userId:'victim'}]) {
+      const result = await ctx.client.callTool({name:'cancel_booking',arguments:args})
+      assert.equal(result.isError,true)
+    }
+    assert.equal(ctx.calls.length,0)
+    await ctx.client.callTool({name:'cancel_booking',arguments:{appointmentId,confirmed:true}})
+    assert.deepEqual(ctx.calls,[['cancel','authenticated-user',appointmentId,'https://pilot.example/mcp']])
+  } finally {await ctx.close()}
+})
+
+test('existing read/write grants do not silently acquire cancellation permission', async () => {
+  const ctx=await connect('bookings:read bookings:write')
+  try {
+    assert.ok(!(await ctx.client.listTools()).tools.some(t=>t.name==='cancel_booking'))
+    assert.equal((await ctx.client.callTool({name:'cancel_booking',arguments:{appointmentId:'01234567-1234-4123-8123-012345678901',confirmed:true}})).isError,true)
+    assert.equal(ctx.calls.length,0)
+  } finally {await ctx.close()}
+})
+
 test('MCP read-only scope cannot call a write tool even if its name is known', async () => {
   const ctx = await connect('bookings:read')
   try {

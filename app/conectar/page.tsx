@@ -30,7 +30,7 @@ export default function ConnectPage() {
           <li>Pide un hueco. El asistente preparará una propuesta con barbería, profesional, servicio, precio y hora local.</li>
           <li>Confirma esos detalles para crear la reserva. Preparar una propuesta no bloquea el hueco.</li>
         </ol>
-        <p className="mt-5 text-[#555555]">Cada persona conecta su propia cuenta, y cada asistente se autoriza por separado. No compartas contraseñas ni claves. Este piloto no permite pagos, cambios ni cancelaciones.</p>
+        <p className="mt-5 text-[#555555]">Cada persona conecta su propia cuenta, y cada asistente se autoriza por separado. No compartas contraseñas ni claves. Las nuevas reservas quedan confirmadas automáticamente, sin aceptación posterior del barbero. Puedes cancelar tus citas futuras desde el asistente si autorizas el permiso de cancelación y confirmas qué cita quieres cancelar. Este piloto no permite pagos ni cambios de fecha.</p>
         <Link href="/oauth/connections" className="inline-flex items-center mt-5 min-h-11 text-[#1A3A6B] underline">Gestionar y revocar mis conexiones</Link>
       </section>
     </main>

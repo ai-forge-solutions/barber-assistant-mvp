@@ -105,7 +105,7 @@ export async function authorize(r:Request,d:OAuthDependencies) {
     }
     if(r.method==='GET') {
       const nonce=opaqueToken()
-      const labels:Record<string,string>={'bookings:read':'Consultar tus citas y disponibilidad','bookings:write':'Solo crear citas (no permite cambiarlas ni cancelarlas)','preferences:write':'Cambiar tus preferencias de reserva'}
+      const labels:Record<string,string>={'bookings:read':'Consultar tus citas y disponibilidad','bookings:write':'Solo crear citas (no permite cambiarlas ni cancelarlas)','bookings:cancel':'Cancelar tus propias citas futuras después de tu confirmación expresa','preferences:write':'Cambiar tus preferencias de reserva'}
       return html(`<h1>Conecta tu asistente</h1><p><strong>${escapeHtml(client.client_name)}</strong> quiere acceder a tu cuenta de trujas.</p><small>Cuenta: ${escapeHtml(user.email || user.id)}<br>Destino: ${escapeHtml(auth.redirect_uri)}</small><section><h2>Permisos que autorizas</h2><ul>${auth.scope.split(' ').map(s=>`<li>${labels[s]}</li>`).join('')}</ul></section><p>Solo accederá a tus datos. No compartiremos tu contraseña ni tu sesión de trujas. La conexión seguirá activa hasta que la revoques o caduque.</p><form method="post" action="${escapeHtml(url.pathname+url.search)}"><input type="hidden" name="nonce" value="${nonce}"><button class="primary" name="decision" value="approve">Autorizar conexión</button><button name="decision" value="deny">Cancelar</button></form><p><a href="/oauth/connections">Gestionar conexiones</a></p>`,{'Set-Cookie':nonceCookie(r,consentBinding(nonce,p,user.id))},auth.redirect_uri)
     }
     const f=await form(r)

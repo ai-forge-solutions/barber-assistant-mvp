@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       client_id: clientId,
       starts_at: startsAt,
       ends_at: endsAt,
-      status: 'pending',
+      status: 'confirmed',
       reminder_sent: false,
     })
     .select()

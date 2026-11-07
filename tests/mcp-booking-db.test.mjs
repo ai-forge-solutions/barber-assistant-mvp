@@ -52,6 +52,23 @@ test('PostgreSQL real: propuesta persistente y confirmación atómica', { skip: 
       await db.query('delete from appointments')
     })
     await db.query(migration)
+    // The lifecycle migration follows the deployed original, never rewrites it.
+    const lifecycle = await readFile(new URL('../supabase/migrations/20261107130917_mcp_booking_lifecycle.sql', import.meta.url), 'utf8')
+    const legacyProposal = (await db.query('select mcp_prepare_booking($1,$2,$3,$4,$5,$6) value',
+      [user,resource,shop,barber,service,'2028-06-01T08:00:00Z'])).rows[0].value
+    const legacyAppointment = (await db.query('select mcp_confirm_booking($1,$2,$3) value',
+      [user,legacyProposal.proposalId,resource])).rows[0].value
+    assert.equal(legacyAppointment.status,'pending','La migración original sigue intacta')
+    const legacyBefore = (await db.query('select xmin::text version,to_jsonb(a) row from appointments a where id=$1',[legacyAppointment.id])).rows[0]
+    await db.query(lifecycle)
+    await t.test('migración aditiva y retry conservan citas MCP pending existentes sin backfill', async () => {
+      assert.deepEqual((await db.query('select mcp_confirm_booking($1,$2,$3) value',
+        [user,legacyProposal.proposalId,resource])).rows[0].value,legacyAppointment)
+      assert.deepEqual((await db.query('select xmin::text version,to_jsonb(a) row from appointments a where id=$1',[legacyAppointment.id])).rows[0],legacyBefore)
+    })
+    // Remove only this disposable fixture so the original no-booking test stays isolated.
+    await db.query('delete from mcp_booking_proposals where id=$1',[legacyProposal.proposalId])
+    await db.query('delete from appointments where id=$1',[legacyAppointment.id])
     const prepare = async (start = '2028-07-12T08:00:00Z') => (await db.query('select mcp_prepare_booking($1,$2,$3,$4,$5,$6) value', [user,resource,shop,barber,service,start])).rows[0].value
     const confirm = async (proposal, client = db, who = user, audience = resource) => (await client.query('select mcp_confirm_booking($1,$2,$3) value', [who,proposal.proposalId,audience])).rows[0].value
     await t.test('preparar no crea cita; confirmar y repetir devuelve la misma sin datos sensibles', async () => {
@@ -59,6 +76,7 @@ test('PostgreSQL real: propuesta persistente y confirmación atómica', { skip: 
       assert.equal(p.price,20)
       assert.equal((await db.query('select count(*) from appointments')).rows[0].count,'0')
       const a = await confirm(p), b = await confirm(p)
+      assert.equal(a.status,'confirmed','Nuevas reservas MCP se confirman automáticamente')
       assert.equal(a.id,b.id); assert.equal(a.shop_id,shop)
       assert.equal(a.client_id,undefined)
       await db.query('update mcp_booking_proposals set expires_at=now()-interval \'1 hour\' where id=$1',[p.proposalId])
@@ -219,11 +237,118 @@ test('PostgreSQL real: propuesta persistente y confirmación atómica', { skip: 
         await other.end()
       }
     })
+    const cancel = async (appointment, client = db, who = user, audience = resource) =>
+      (await client.query('select mcp_cancel_booking($1,$2,$3) value',[who,appointment,audience])).rows[0].value
+    const webAppointment = async (n, status = 'pending', start = `2028-08-${String(n).padStart(2,'0')}T08:00:00Z`) => {
+      const { rows } = await db.query(`insert into appointments(shop_id,barber_id,client_id,service_id,starts_at,ends_at,status)
+        values($1,$2,$3,$4,$5,$5::timestamptz+interval '30 minutes',$6) returning id`,[shop,barber,user,service,start,status])
+      return rows[0].id
+    }
+    await t.test('cancelación web propia es idempotente, sin borrado ni PII; libera slot compartido', async () => {
+      const appointment = await webAppointment(1)
+      await assert.rejects(prepare('2028-08-01T08:00:00Z'),/slot_unavailable/)
+      const result = await cancel(appointment)
+      assert.equal(result.id,appointment)
+      assert.equal(result.status,'cancelled')
+      assert.equal(result.shop_id,shop)
+      assert.equal(result.barber_id,barber)
+      assert.equal(result.service_id,service)
+      assert.equal(new Date(result.starts_at).toISOString(),'2028-08-01T08:00:00.000Z')
+      assert.equal(new Date(result.ends_at).toISOString(),'2028-08-01T08:30:00.000Z')
+      assert.deepEqual(Object.keys(result).sort(),['id','shop_id','barber_id','service_id','starts_at','ends_at','status'].sort())
+      const snapshot = (await db.query('select xmin::text version,to_jsonb(a) row from appointments a where id=$1',[appointment])).rows[0]
+      assert.deepEqual(await cancel(appointment),result)
+      assert.deepEqual((await db.query('select xmin::text version,to_jsonb(a) row from appointments a where id=$1',[appointment])).rows[0],snapshot)
+      const replacementProposal = await prepare('2028-08-01T08:00:00Z')
+      const replacement = await confirm(replacementProposal)
+      assert.equal(replacement.status,'confirmed')
+      assert.equal((await cancel(replacement.id)).status,'cancelled')
+      const retry = await confirm(replacementProposal)
+      assert.equal(retry.id,replacement.id)
+      assert.equal(retry.status,'cancelled','Reconfirmar no resucita la cita cancelada')
+    })
+    await t.test('otro dueño y cita inexistente son indistinguibles; entradas nulas fallan cerradas', async () => {
+      const appointment = await webAppointment(2,'confirmed')
+      const failure = async action => {
+        try { await action(); assert.fail('Debe rechazar') } catch (error) {
+          assert.equal(error.message,'booking_appointment_not_found')
+          return {code:error.code,message:error.message}
+        }
+      }
+      assert.deepEqual(await failure(()=>cancel(appointment,db,id(99))),await failure(()=>cancel(id(9999))))
+      await failure(()=>cancel(appointment,db,null))
+      await failure(()=>cancel(null))
+      for (const audience of [null,'',' ','not-a-resource','https://example.test/mcp\n','https://example.test/#fragment','x'.repeat(2049)]) {
+        await assert.rejects(cancel(appointment,db,user,audience),/booking_resource_invalid/)
+      }
+      assert.equal((await db.query('select status from appointments where id=$1',[appointment])).rows[0].status,'confirmed')
+    })
+    await t.test('cancelar no depende de perfil, suscripción ni catálogo activos, tampoco de propuesta MCP', async () => {
+      const appointment = await webAppointment(3,'confirmed')
+      await db.query("update customers set full_name='',phone=''; update shop_subscriptions set status='past_due'; update barbers set is_active=false; update services set is_active=false")
+      try {
+        await db.query('set role service_role')
+        assert.equal((await cancel(appointment)).status,'cancelled')
+      } finally {
+        await db.query("reset role; update customers set full_name='Cliente',phone='+340****0000'; update shop_subscriptions set status='active'; update barbers set is_active=true; update services set is_active=true")
+      }
+    })
+    await t.test('completed, no_show, pasadas y estado nulo rechazan sin mutación; cancelled pasada admite retry', async () => {
+      for (const [n,status,start] of [[4,'completed'],[5,'no_show'],[6,'pending','2020-08-06T08:00:00Z'],[7,'confirmed','2020-08-07T08:00:00Z'],[8,null]]) {
+        const appointment = await webAppointment(n,status,start)
+        const before = (await db.query('select xmin::text version,to_jsonb(a) row from appointments a where id=$1',[appointment])).rows[0]
+        await assert.rejects(cancel(appointment),/booking_cancellation_not_allowed/)
+        assert.deepEqual((await db.query('select xmin::text version,to_jsonb(a) row from appointments a where id=$1',[appointment])).rows[0],before)
+      }
+      const past = await webAppointment(9,'cancelled','2020-08-09T08:00:00Z')
+      assert.equal((await cancel(past)).id,past)
+      assert.equal((await cancel(past)).status,'cancelled')
+    })
+    await t.test('cancelación espera lock y revalida estado actualizado; reintentos concurrentes no reescriben', async () => {
+      const appointment = await webAppointment(10,'confirmed')
+      const other = pg.getPgClient(); await other.connect()
+      try {
+        const pid = (await other.query('select pg_backend_pid() pid')).rows[0].pid
+        await db.query('begin')
+        await db.query("update appointments set status='completed' where id=$1",[appointment])
+        const pending = cancel(appointment,other).then(value=>({value}),error=>({error}))
+        let blocked = false
+        const deadline = Date.now()+5000
+        while (Date.now()<deadline) {
+          blocked = (await db.query('select cardinality(pg_blocking_pids($1))>0 blocked',[pid])).rows[0].blocked
+          if (blocked) break
+          await new Promise(resolve=>setTimeout(resolve,5))
+        }
+        await db.query('commit')
+        const outcome = await pending
+        assert.equal(blocked,true,'Cancelación debe esperar FOR UPDATE')
+        assert.match(outcome.error?.message ?? '',/booking_cancellation_not_allowed/)
+        const retry = await webAppointment(11,'confirmed')
+        const results = await Promise.all([cancel(retry),cancel(retry,other)])
+        assert.deepEqual(results[0],results[1])
+        assert.equal(results[0].status,'cancelled')
+        const version = (await db.query('select xmin::text version from appointments where id=$1',[retry])).rows[0].version
+        await Promise.all([cancel(retry),cancel(retry,other)])
+        assert.equal((await db.query('select xmin::text version from appointments where id=$1',[retry])).rows[0].version,version)
+      } finally { await db.query('rollback'); await other.end() }
+    })
     await t.test('roles públicos sin acceso a propuestas ni RPC; service_role sí', async () => {
+      for (const signature of ['mcp_confirm_booking(uuid,uuid,text)','mcp_cancel_booking(uuid,uuid,text)']) {
+        const fn = (await db.query('select prosecdef,proconfig from pg_proc where oid=$1::regprocedure',[signature])).rows[0]
+        assert.equal(fn.prosecdef,true)
+        assert.deepEqual(fn.proconfig,['search_path=pg_catalog, public'])
+        assert.equal((await db.query(`select exists(select 1 from pg_proc p,
+          lateral aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) acl
+          where p.oid=$1::regprocedure and acl.grantee=0 and acl.privilege_type='EXECUTE') allowed`,[signature])).rows[0].allowed,false)
+        for (const role of ['anon','authenticated','service_role']) {
+          assert.equal((await db.query("select has_function_privilege($1,$2,'EXECUTE') allowed",[role,signature])).rows[0].allowed,role==='service_role')
+        }
+      }
       for (const role of ['anon','authenticated']) {
         await db.query('set role '+role)
         await assert.rejects(db.query('select * from mcp_booking_proposals'),e=>e.code==='42501')
         await assert.rejects(db.query('select mcp_confirm_booking($1,$2,$3)',[user,id(999),resource]),e=>e.code==='42501')
+        await assert.rejects(db.query('select mcp_cancel_booking($1,$2,$3)',[user,id(999),resource]),e=>e.code==='42501')
         await db.query('reset role')
       }
       await db.query('set role service_role')

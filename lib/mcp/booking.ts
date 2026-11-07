@@ -37,6 +37,9 @@ export function createBookingServices(db: RpcClient) {
     async confirmBooking(userId: string, proposalId: string, resource: string) {
       return rpc('mcp_confirm_booking', { p_user: uuid(userId), p_proposal: uuid(proposalId), p_resource: audience(resource) })
     },
+    async cancelBooking(userId: string, appointmentId: string, resource: string) {
+      return rpc('mcp_cancel_booking', { p_user: uuid(userId), p_appointment: uuid(appointmentId), p_resource: audience(resource) })
+    },
   }
 }
 
@@ -54,4 +57,7 @@ export async function proposeBooking(userId: string, input: Selection & { starts
 }
 export async function confirmBooking(userId: string, proposalId: string, resource: string) {
   return (await services()).confirmBooking(userId,proposalId,resource)
+}
+export async function cancelBooking(userId: string, appointmentId: string, resource: string) {
+  return (await services()).cancelBooking(userId,appointmentId,resource)
 }

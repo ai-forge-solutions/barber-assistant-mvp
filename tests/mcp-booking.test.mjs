@@ -21,6 +21,17 @@ test('adaptadores envían identidad y audiencia del servidor exclusivamente a RP
   assert.equal(typeof booking.confirmBooking,'function')
 })
 
+test('cancellation adapter sends only validated identity, appointment and audience', async () => {
+  const calls=[]
+  const services=booking.createBookingServices({rpc:async(name,args)=>{calls.push([name,args]);return {data:{status:'cancelled'},error:null}}})
+  assert.equal(typeof services.cancelBooking,'function')
+  await services.cancelBooking(user,user,'https://test/mcp')
+  assert.deepEqual(calls,[['mcp_cancel_booking',{p_user:user,p_appointment:user,p_resource:'https://test/mcp'}]])
+  for(const args of [['invalid',user,'https://test/mcp'],[user,'bad','https://test/mcp'],[user,user,'']]) await assert.rejects(services.cancelBooking(...args),/invalid/i)
+  assert.equal(calls.length,1)
+  assert.equal(typeof booking.cancelBooking,'function')
+})
+
 test('entrada inválida y fallos SQL cierran el paso sin filtrar detalles internos', async () => {
   assert.equal(typeof booking.createBookingServices,'function')
   let calls = 0

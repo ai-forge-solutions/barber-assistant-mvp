@@ -18,6 +18,18 @@ test('consent promises creation only and escapes untrusted client names',async()
  assert.equal(r.headers.get('referrer-policy'),'same-origin','Native form POST must retain its same-origin Origin; external callbacks must not receive the referrer')
  assert.match(r.headers.get('set-cookie'),/__Host-trujas-oauth-consent=.*HttpOnly; SameSite=Lax/)
 })
+test('cancellation consent is explicit and separate from creation permission',async()=>{
+ const p=params();p.set('scope','bookings:read bookings:cancel')
+ const r=await authorize(new Request(origin+'/oauth/authorize?'+p),{db:clientDb,user})
+ assert.equal(r.status,200)
+ const html=await r.text()
+ assert.match(html,/Cancelar tus propias citas futuras/)
+ assert.doesNotMatch(html,/No permite cancelar citas/)
+ assert.doesNotMatch(html,/Solo crear citas/)
+ const resource=resourceMetadata(new Request(origin+'/discovery'))
+ assert.ok(resource.scopes_supported.includes('bookings:cancel'))
+})
+
 test('connections renders an inferred array relation without quotes',async()=>{
  const rows=[{id:'00000000-0000-4000-8000-000000000001',client_id:'abc',scope:'bookings:read',mcp_oauth_clients:[{client_name:'Mi asistente'}]}]
  const query={select:()=>query,eq:()=>query,is:()=>query,gt:()=>query,limit:async()=>({data:rows,error:null})}

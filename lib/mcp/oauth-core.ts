@@ -47,7 +47,7 @@ export function createRegistrationLimiter(limit = 20, windowMs = 3600000, capaci
     entries.set(key,{count:1,expires:now+windowMs}); return true
   }
 }
-export const SCOPES = ['bookings:read', 'bookings:write', 'preferences:write'] as const
+export const SCOPES = ['bookings:read', 'bookings:write', 'bookings:cancel', 'preferences:write'] as const
 export const opaqueToken = () => randomBytes(32).toString('base64url')
 export const hashToken = (value: string) => createHash('sha256').update(value).digest('hex')
 // Pin Netlify's public preview origin at build time; the adapter may expose an
