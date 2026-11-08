@@ -25,11 +25,18 @@ export default function ResourcesPage() {
               <div>
                 <h2><Link href={`/recursos/${post.slug}`}>{post.title}</Link></h2>
                 <p>{post.description}</p>
+                {post.editorialStatus === 'pending_review' && <p className="resources-date">Vista previa · Pendiente de revisión editorial</p>}
                 <Link className="resources-read" href={`/recursos/${post.slug}`}>Leer guía<span className="resources-sr-only">: {post.title}</span> <span aria-hidden="true">→</span></Link>
               </div>
             </li>
           ))}
         </ol>
+      </section>
+      <section className="resources-related" aria-labelledby="booking-feature">
+        <h2 id="booking-feature">Del consejo a la reserva</h2>
+        <p>Consulta la vista previa de la página de reservas: cuenta de cliente, pasos reales y avisos por email.</p>
+        <Link className="resources-read" href="/funciones/pagina-reservas">Cómo funciona la página de reservas</Link>
+        <Link className="resources-read" href="/funciones">Ver las funciones de trujas</Link>
       </section>
     </>
   )
