@@ -4,11 +4,11 @@ import { listResources } from '../lib/resources.ts'
 
 const base = process.env.SEO_TEST_BASE_URL ?? 'http://127.0.0.1:3214'
 if (!['127.0.0.1', 'localhost'].includes(new URL(base).hostname)) throw new Error('Resource HTTP tests must target a local server')
-const routes = listResources().map(post => [`/recursos/${post.slug}`, post.title, post.editorialStatus])
+const routes = listResources().map(post => [`/recursos/${post.slug}`, post.title, post.editorialStatus, post.publishedAt])
 const get = path => fetch(new URL(path, base), { redirect: 'manual' })
 const visibleHtml = html => html.replace(/<script\b[\s\S]*?<\/script>/gi, '').replace(/<style\b[\s\S]*?<\/style>/gi, '')
 
-test('editorial index links finite resources and labels review drafts', async () => {
+test('editorial index links all publication-ready resources without review warnings', async () => {
   const response = await get('/recursos')
   assert.equal(response.status, 200)
   assert.equal(response.headers.get('location'), null)
@@ -16,10 +16,10 @@ test('editorial index links finite resources and labels review drafts', async ()
   assert.match(html, /rel="canonical" href="https:\/\/trujas\.app\/recursos"/)
   assert.doesNotMatch(html, /<meta name="robots" content="[^"]*noindex/)
   for (const [path] of routes) assert.ok(visibleHtml(html).includes(`href="${path}"`))
-  assert.match(visibleHtml(html), /Pendiente de revisión editorial/)
+  assert.doesNotMatch(visibleHtml(html), /Pendiente de revisión editorial|vista previa/i)
 })
 
-for (const [path, title, status] of routes) {
+for (const [path, title, status, publishedAt] of routes) {
   test(`article initial HTML and editorial state: ${path}`, async () => {
     const response = await get(path)
     assert.equal(response.status, 200)
@@ -39,9 +39,13 @@ for (const [path, title, status] of routes) {
       assert.doesNotMatch(visible, /Publicado el|<time/)
     } else {
       assert.doesNotMatch(response.headers.get('x-robots-tag') ?? '', /noindex/i)
-      assert.doesNotMatch(visible, /<meta name="robots" content="[^"]*noindex/)
-      assert.match(visible, /<table(?:\s|>)/)
-      assert.match(visible, /Publicado el/)
+      assert.doesNotMatch(visible, /<meta name="robots" content="[^"]*noindex|Pendiente de revisión editorial/)
+      if (publishedAt) {
+        assert.match(visible, /<table(?:\s|>)/)
+        assert.match(visible, /Publicado el/)
+      } else {
+        assert.doesNotMatch(visible, /Publicado el|<time/)
+      }
     }
     if (path === '/recursos/montar-barberia-espana') {
       assert.match(visible, /Fuentes y alcance de la revisión/)
@@ -56,8 +60,24 @@ for (const [path, title, status] of routes) {
   })
 }
 
-test('unknown resources are real 404s, not login or soft-200', async () => {
-  for (const path of ['/recursos/no-existe', '/recursos/montar-barberia-espana-extra', '/recursos/montar-barberia-espana/otro', '/recursos/otro/mas']) {
+for (const path of ['/funciones', '/funciones/pagina-reservas']) {
+  test(`feature is publication-ready and linked from the sitemap: ${path}`, async () => {
+    const response = await get(path)
+    assert.equal(response.status, 200)
+    assert.equal(response.headers.get('location'), null)
+    assert.doesNotMatch(response.headers.get('x-robots-tag') ?? '', /noindex/i)
+    const visible = visibleHtml(await response.text())
+    assert.equal((visible.match(/<h1(?:\s|>)/g) ?? []).length, 1)
+    assert.ok(visible.includes(`rel="canonical" href="https://trujas.app${path}"`))
+    assert.match(visible, /<meta name="robots" content="index, follow"/)
+    assert.doesNotMatch(visible, /Pendiente de revisión|vista previa|Publicado el/i)
+    assert.match(visible, /href="\/pricing"/)
+    assert.match(await (await get('/sitemap.xml')).text(), new RegExp(`<loc>https://trujas\\.app${path}</loc>`))
+  })
+}
+
+test('unknown resources and features are real 404s, not login or soft-200', async () => {
+  for (const path of ['/recursos/no-existe', '/recursos/montar-barberia-espana-extra', '/recursos/montar-barberia-espana/otro', '/recursos/otro/mas', '/funciones/no-existe', '/funciones/pagina-reservas/otro']) {
     const response = await get(path)
     assert.equal(response.status, 404, path)
     assert.equal(response.headers.get('location'), null)

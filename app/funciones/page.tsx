@@ -18,7 +18,6 @@ export default function FeaturesPage() {
         <p className="resources-eyebrow">Funciones de trujas</p>
         <h1>Tu agenda, desde el enlace hasta la cita</h1>
         <p>Consulta cómo funciona la reserva web antes de elegir un plan para tu barbería.</p>
-        <p className="resources-date">Pendiente de revisión editorial</p>
       </header>
       <ul className="resources-list">
         <li className="resources-card">

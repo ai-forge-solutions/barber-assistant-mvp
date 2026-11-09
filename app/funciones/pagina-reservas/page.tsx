@@ -21,7 +21,6 @@ export default function ReservationFeaturePage() {
         <header className="resource-article-header">
           <p className="resources-eyebrow">Funciones de trujas</p>
           <h1>{feature.title}</h1>
-          <p className="resources-date">Pendiente de revisión editorial</p>
           <p className="resources-date">{feature.author}. {feature.assistance}</p>
           <Link className="resources-cta" href="/pricing">Consulta los planes</Link>
         </header>

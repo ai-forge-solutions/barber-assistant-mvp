@@ -60,9 +60,8 @@ test('approved opening guide separates its single H1 and preserves official sour
 test('catalogue records editorial approval independently of implementation', async () => {
   const { listResources } = await resources()
   for (const post of listResources()) {
-    assert.ok(['approved', 'pending_review'].includes(post.editorialStatus))
-    if (post.editorialStatus === 'pending_review') assert.equal(post.publishedAt, null)
-    else assert.equal(post.publishedAt, '2026-11-02')
+    assert.equal(post.editorialStatus, 'approved', post.slug)
+    assert.equal(post.publishedAt, historicSlugs.includes(post.slug) ? '2026-11-02' : null)
   }
 })
 
@@ -182,7 +181,8 @@ test('real index and article components preserve complete Markdown, review state
       assert.match(html, /Pendiente de revisión editorial/)
       assert.doesNotMatch(html, /Publicado el/)
     } else {
-      assert.match(html, /Publicado el/)
+      if (post.publishedAt) assert.match(html, /Publicado el/)
+      else assert.doesNotMatch(html, /Publicado el|Pendiente de revisión editorial/)
       assert.notEqual(metadata.robots?.index, false)
     }
   }

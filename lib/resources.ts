@@ -25,25 +25,25 @@ const resourceEntries: ResourceEntry[] = [
   {
     slug: 'elegir-app-reservas-barberia',
     description: 'Compara coste total, condiciones de salida, recordatorios y exportación antes de elegir una app de reservas. Ficha para barberías de 1 a 3 sillas.',
-    editorialStatus: 'pending_review',
+    editorialStatus: 'approved',
     publishedAt: null,
   },
   {
     slug: 'reducir-no-shows-barberia',
     description: 'Mide las ausencias con una hoja de cuatro semanas y aplica nueve medidas. Incluye mensajes y una política de cancelación adaptable, sin prometer resultados.',
-    editorialStatus: 'pending_review',
+    editorialStatus: 'approved',
     publishedAt: null,
   },
   {
     slug: 'calcular-precios-barberia',
     description: 'Calcula costes, minutos atendidos, margen e IVA con un ejemplo completo y una tabla rellenable para revisar los precios de tu barbería.',
-    editorialStatus: 'pending_review',
+    editorialStatus: 'approved',
     publishedAt: null,
   },
   {
     slug: 'conseguir-clientes-barberia-barrio',
     description: 'Prioriza Google, reseñas sin incentivos, escaparate y alianzas locales con un plan de 90 días para tu barbería. Mide visitas y huecos reales.',
-    editorialStatus: 'pending_review',
+    editorialStatus: 'approved',
     publishedAt: null,
   },
 ] as const

@@ -38,13 +38,13 @@ test('dedicated reservation server route renders complete pending-review content
   const { default: Markdown } = await component('components/resources/ResourceMarkdown.tsx')
   const html = renderToStaticMarkup(createElement(Page))
   const raw = readFileSync(file('content/features/pagina-reservas.md'), 'utf8')
-  assert.equal(feature.editorialStatus, 'pending_review')
+  assert.equal(feature.editorialStatus, 'approved')
   assert.equal(feature.publishedAt, null)
   assert.equal((html.match(/<h1>/g) || []).length, 1)
   assert.ok(html.includes(renderToStaticMarkup(createElement(Markdown, { body: feature.body }))))
   assert.ok(raw.startsWith(`# ${feature.title}\n\n`))
   assert.equal(feature.body, raw.slice(raw.indexOf('\n\n') + 2))
-  assert.match(html, /Pendiente de revisión editorial/)
+  assert.doesNotMatch(html, /Pendiente de revisión editorial|pendiente de revisión humana/)
   assert.match(html, /Equipo editorial trujas/)
   assert.match(html, /asistencia de IA/)
   assert.doesNotMatch(html, /Publicado el|<time|<img|<script|application\/ld\+json/)
@@ -70,7 +70,7 @@ test('feature hub and branded shell render without inventing planned feature rou
   assert.equal((html.match(/<h1>/g) || []).length, 1)
   assert.match(html, /href="\/funciones\/pagina-reservas"/)
   assert.match(html, /Recordatorios por email/)
-  assert.match(html, /Pendiente de revisión editorial/)
+  assert.doesNotMatch(html, /Pendiente de revisión editorial|pendiente de revisión humana/)
   assert.doesNotMatch(html, /href="\/funciones\/recordatorios"|<img|Publicado el/)
   assert.equal(metadata.alternates.canonical, 'https://trujas.app/funciones')
   assert.equal(metadata.title, 'Funciones para la agenda de tu barbería | trujas')
@@ -78,7 +78,8 @@ test('feature hub and branded shell render without inventing planned feature rou
   assert.match(layoutSource, /ResourcesLayout/)
   assert.match(layoutSource, /ColorStripe/)
   assert.doesNotMatch(layoutSource, /use client/)
-  const { default: Layout } = await component('app/funciones/layout.tsx')
+  const { default: Layout, metadata: layoutMetadata } = await component('app/funciones/layout.tsx')
+  assert.deepEqual(layoutMetadata.robots, { index: true, follow: true })
   const shell = renderToStaticMarkup(createElement(Layout, null, createElement(Hub)))
   assert.equal((shell.match(/<main/g) || []).length, 1)
   assert.equal((shell.match(/<h1>/g) || []).length, 1)
@@ -88,6 +89,17 @@ test('feature hub and branded shell render without inventing planned feature rou
   for (const path of ['app/funciones/page.tsx', 'app/funciones/pagina-reservas/page.tsx']) {
     assert.doesNotMatch(readFileSync(file(path), 'utf8'), /use client|dangerouslySetInnerHTML/)
   }
+})
+
+test('sitemap includes the publication-ready guides and feature, never private routes', async () => {
+  const { default: sitemap } = await component('app/sitemap.ts')
+  assert.deepEqual(sitemap().map(({ url }) => url), [
+    '/', '/pricing', '/sobre-nosotros', '/recursos',
+    '/recursos/montar-barberia-espana', '/recursos/organizar-agenda-barberia',
+    '/recursos/elegir-app-reservas-barberia', '/recursos/reducir-no-shows-barberia',
+    '/recursos/calcular-precios-barberia', '/recursos/conseguir-clientes-barberia-barrio',
+    '/funciones', '/funciones/pagina-reservas',
+  ].map(path => `https://trujas.app${path}`))
 })
 
 test('shared server Markdown rejects executable HTML and unsafe protocols', async () => {

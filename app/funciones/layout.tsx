@@ -1,8 +1,8 @@
 import ResourcesLayout from '@/app/recursos/layout'
 import ColorStripe from '@/components/brand/ColorStripe'
 
-// Every new feature route is an editorial preview until explicitly approved.
-export const metadata = { robots: { index: false, follow: false } }
+// Publication-ready routes; deploy previews retain the provider's noindex header.
+export const metadata = { robots: { index: true, follow: true } }
 
 export default function FeaturesLayout({ children }: { children: React.ReactNode }) {
   return (

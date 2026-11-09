@@ -1,5 +1,43 @@
 # trujas · Revisión editorial 2026-W45
 
+## Estado actual · entrega definitiva mediante PR #34
+
+Por petición de Miguel, esta PR deja las cinco piezas listas para publicación/indexación mediante su aprobación y merge, sin una segunda aprobación editorial ni un parche posterior para quitar noindex. Se integró `develop` con la #35 preservando autoría colectiva, notas editoriales, JSON-LD y las dos guías históricas.
+
+- Cuatro recursos y la función de reservas pasan a `approved` en el catálogo de publicación; se eliminan avisos de borrador. `approved` expresa elegibilidad de esta entrega, no que ya esté desplegada.
+- `/funciones` y `/funciones/pagina-reservas` permiten `index, follow`. Las cuatro guías no emiten noindex y las seis URLs nuevas se añaden al sitemap y a `llms.txt`.
+- Se mantienen canonicals de producción, catálogo finito, 404 reales, enlaces internos y CTAs a precios. Los previews de Netlify deben seguir protegidos con su cabecera noindex; esa protección no debe trasladarse a producción.
+- No se inventan fechas de publicación: las novedades conservan `publishedAt=null` hasta que se confirme su publicación real. Se omite `datePublished` de su JSON-LD y no se muestra una fecha falsa. Esto no bloquea indexación.
+- Los cuerpos Markdown y sus hashes de procedencia no se reescriben. Los archivos `provenance-2026-W45.json` documentan la preparación histórica como `pending_review`; no son el estado de publicación vigente.
+- Revisión editorial/comercial independiente de las cinco piezas: sin bloqueantes comprobados; funciones, email, límites de cancelación, costes y cálculos contrastados con código y aritmética. No acredita revisión jurídica/fiscal profesional ni entrega real de emails.
+
+### Verificación actual
+
+- `npm ci --ignore-scripts`: instalación limpia desde lockfile, 605 paquetes.
+- `npm run lint`: 0 errores, 7 warnings preexistentes fuera del cambio.
+- `npm run build -- --webpack`: compilación, TypeScript y páginas estáticas correctos con configuración local fixture.
+- Suite completa contra `next start`: **114 pass / 0 fail / 5 skip** (tres pruebas PostgreSQL dedicadas y dos lecturas reales de barberías). No se certifica DB real ni checkout.
+- Chromium: siete rutas × 390/1440 px = **14 comprobaciones**, sin errores JS ni overflow horizontal de documento. Canonicals y ausencia de avisos/noindex del producto comprobados; CTA real de la función navega a precios. Capturas móviles inspeccionadas.
+- Pruebas RED→GREEN de estado editorial, schema sin fecha inventada, función/hub sin bloqueo y ampliación del sitemap/llms.
+
+### Comparación local de rendimiento con la #35 integrada
+
+Chromium observado, viewport 390×844, contextos nuevos, orden alternado base/candidato y tres corridas por combinación; sin throttling de CPU/red. **No es Lighthouse, CWV de campo ni INP.** La suma de exceso de tareas largas observada fue 0 en las medianas, no una medición de TBT de Lighthouse.
+
+| Ruta | LCP observado base → candidato (ms) | CLS base → candidato | Transferencia recursos base → candidato (bytes) | Requests |
+|---|---:|---:|---:|---:|
+| `/recursos` | 160 → 168 | 0,01237 → 0,01237 | 245617 → 246917 | 37 → 37 |
+| `/recursos/organizar-agenda-barberia` | 168 → 172 | 0,00892 → 0,00892 | 224846 → 225794 | 30 → 30 |
+| `/pricing` | 196 → 168 | 0,03984 → 0,03984 | 209106 → 209189 | 15 → 15 |
+
+Estas diferencias locales pequeñas no acreditan mejora o ausencia universal de regresiones. La ampliación de navegación/contenido tiene el coste observado indicado.
+
+### Frontera de aprobación y publicación
+
+PR contra `develop`, sin auto-merge ni despliegue de producción por el agente. Su aprobación y merge completan la decisión editorial y técnica de esta entrega. La promoción de `develop` a la rama/contexto de producción sigue el flujo existente de Miguel: si producción no despliega `develop`, el merge de esta PR no la publica por sí solo. Una vez desplegada, el producto no impone ningún bloqueo editorial adicional a esas URLs. Indexable no garantiza que Google las indexe ni cuándo.
+
+## Registro histórico de la preparación inicial (superado por el estado anterior)
+
 ## Alcance
 
 Implementación para revisión, no autorización de publicación. Cuatro guías nuevas en `/recursos` y una página de función en `/funciones/pagina-reservas`, con hub `/funciones`.

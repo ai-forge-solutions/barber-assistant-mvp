@@ -1,0 +1,24 @@
+# trujas
+
+> trujas es una agenda online para barberías independientes en España. Permite gestionar citas y que los clientes reserven online.
+
+## Producto
+
+- [Inicio](https://trujas.app/): presentación de trujas y de la reserva online para barberías.
+- [Precios](https://trujas.app/pricing): modalidades, precios y condiciones vigentes.
+- [Sobre nosotros](https://trujas.app/sobre-nosotros): qué es trujas y para quién está pensado.
+
+## Recursos públicos
+
+- [Recursos para barberías](https://trujas.app/recursos): guías públicas para organizar una barbería.
+- [Cómo montar una barbería en España](https://trujas.app/recursos/montar-barberia-espana): requisitos y primeros pasos.
+- [Cómo organizar la agenda de tu barbería](https://trujas.app/recursos/organizar-agenda-barberia): organización de citas sin depender de los mensajes.
+- [Elegir una app de reservas](https://trujas.app/recursos/elegir-app-reservas-barberia): criterios y ficha de comparación.
+- [Reducir los no-shows](https://trujas.app/recursos/reducir-no-shows-barberia): registro de ausencias y medidas aplicables.
+- [Calcular precios](https://trujas.app/recursos/calcular-precios-barberia): ejemplo de costes, minutos, margen e IVA.
+- [Conseguir clientes en el barrio](https://trujas.app/recursos/conseguir-clientes-barberia-barrio): plan local de captación y medición.
+
+## Funciones
+
+- [Funciones de trujas](https://trujas.app/funciones): recorrido de reserva y avisos por email.
+- [Página de reservas online](https://trujas.app/funciones/pagina-reservas): cuenta del cliente, selección de cita y confirmación.

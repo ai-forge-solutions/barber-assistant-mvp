@@ -10,9 +10,9 @@ export const reservationFeature = {
   slug: 'pagina-reservas',
   title,
   description: 'Un enlace propio para reservar en tu barbería desde la web, con cuenta de cliente, sin comisión por cita y con avisos por email. Consulta los planes.',
-  editorialStatus: 'pending_review' as const,
+  editorialStatus: 'approved' as const,
   publishedAt: null,
   author: 'Equipo editorial trujas',
-  assistance: 'Contenido preparado con asistencia de IA y pendiente de revisión humana.',
+  assistance: 'Contenido elaborado con asistencia de IA.',
   body: markdown.slice(heading.length),
 }
