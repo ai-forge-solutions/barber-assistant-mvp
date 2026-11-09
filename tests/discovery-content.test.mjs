@@ -14,6 +14,11 @@ test('llms.txt is public Markdown with only the approved factual discovery links
     'https://trujas.app/', 'https://trujas.app/pricing', 'https://trujas.app/sobre-nosotros',
     'https://trujas.app/recursos', 'https://trujas.app/recursos/montar-barberia-espana',
     'https://trujas.app/recursos/organizar-agenda-barberia',
+    'https://trujas.app/recursos/elegir-app-reservas-barberia',
+    'https://trujas.app/recursos/reducir-no-shows-barberia',
+    'https://trujas.app/recursos/calcular-precios-barberia',
+    'https://trujas.app/recursos/conseguir-clientes-barberia-barrio',
+    'https://trujas.app/funciones', 'https://trujas.app/funciones/pagina-reservas',
   ])
   assert.doesNotMatch(text, /supabase|stripe|analytics|GA4|api\/|dashboard|borrador|PR.?34|owner_id|service.role/i)
 })

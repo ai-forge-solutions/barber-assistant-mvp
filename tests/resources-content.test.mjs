@@ -8,6 +8,8 @@ import ts from 'typescript'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
+const weeklySlugs = ['elegir-app-reservas-barberia', 'reducir-no-shows-barberia', 'calcular-precios-barberia', 'conseguir-clientes-barberia-barrio']
+const historicSlugs = ['montar-barberia-espana', 'organizar-agenda-barberia']
 const root = new URL('../', import.meta.url)
 const file = (path) => fileURLToPath(new URL(path, root))
 
@@ -55,11 +57,19 @@ test('approved opening guide separates its single H1 and preserves official sour
   assert.match(post.body, /7\. \*\*Fuente comercial del apartado de agenda:/)
 })
 
-test('finite index exposes both approved guides, with clean agenda content and no arbitrary file access', async () => {
+test('catalogue records editorial approval independently of implementation', async () => {
+  const { listResources } = await resources()
+  for (const post of listResources()) {
+    assert.equal(post.editorialStatus, 'approved', post.slug)
+    assert.equal(post.publishedAt, historicSlugs.includes(post.slug) ? '2026-11-02' : null)
+  }
+})
+
+test('finite catalogue exposes historic guides and four W45 previews without arbitrary file access', async () => {
   const { listResources, getResource } = await resources()
   assert.equal(typeof listResources, 'function', 'A finite approved index must exist')
   const posts = listResources()
-  assert.deepEqual(posts.map(({ slug }) => slug), ['montar-barberia-espana', 'organizar-agenda-barberia'])
+  assert.deepEqual(posts.map(({ slug }) => slug), [...historicSlugs, ...weeklySlugs])
   const agenda = getResource('organizar-agenda-barberia')
   assert.equal(agenda.title, 'Cómo organizar la agenda de tu barbería sin vivir en WhatsApp')
   assert.ok(agenda.body.startsWith('**Para ordenar las citas de una barbería'))
@@ -69,7 +79,7 @@ test('finite index exposes both approved guides, with clean agenda content and n
     assert.equal(getResource(slug), undefined)
   }
   for (const post of posts) {
-    assert.equal(post.publishedAt, '2026-11-02')
+    assert.equal(post.publishedAt, historicSlugs.includes(post.slug) ? '2026-11-02' : null)
     assert.ok(post.description.length > 40)
     assert.equal(getResource(post.slug).title, post.title)
   }
@@ -84,7 +94,19 @@ test('versioned provenance pins every byte of both full approved derivatives', a
     'ae8473b6ae6446060fce5c3c1355bb74519f5bb37d904be9bb2ae1b89704a5a7',
   ]
   assert.deepEqual(provenance.articles.map((entry) => entry.sourceSha256), sourceHashes)
-  assert.deepEqual(provenance.articles.map((entry) => entry.slug), listResources().map((post) => post.slug))
+  assert.deepEqual(provenance.articles.map((entry) => entry.slug), historicSlugs)
+  const weekly = JSON.parse(readFileSync(file('content/resources/provenance-2026-W45.json'), 'utf8'))
+  assert.deepEqual(weekly.articles.map(({ slug }) => slug), weeklySlugs)
+  assert.deepEqual([...provenance.articles, ...weekly.articles].map(({ slug }) => slug), listResources().map(({ slug }) => slug))
+  for (const entry of weekly.articles) {
+    assert.equal(entry.editorialStatus, 'pending_review')
+    assert.equal(entry.publishedAt, null)
+    const raw = readFileSync(file(`content/resources/${entry.slug}.md`))
+    assert.equal(createHash('sha256').update(raw).digest('hex'), entry.derivedSha256)
+    assert.equal(entry.sourceSha256, entry.derivedSha256)
+    assert.equal((raw.toString().match(/^# /gm) || []).length, 1)
+    assert.doesNotMatch(JSON.stringify(entry), /\/home\/|\/workspace\//)
+  }
   for (const entry of provenance.articles) {
     const raw = readFileSync(file(`content/resources/${entry.slug}.md`))
     assert.equal(createHash('sha256').update(raw).digest('hex'), entry.derivedSha256)
@@ -132,7 +154,7 @@ test('route contracts provide a finite static allowlist, absolute metadata and l
   assert.match(layout, /href="\/pricing"/)
 })
 
-test('real index and article server components render one H1, related links and exact approved Markdown', async () => {
+test('real index and article components preserve complete Markdown, review states and metadata', async () => {
   const { listResources } = await resources()
   const { default: Index } = await component('app/recursos/page.tsx')
   const indexHtml = renderToStaticMarkup(createElement(Index))
@@ -154,6 +176,15 @@ test('real index and article server components render one H1, related links and 
     }
     const metadata = await generateMetadata(props)
     assert.equal(metadata.alternates.canonical, `https://trujas.app/recursos/${post.slug}`)
+    if (post.editorialStatus === 'pending_review') {
+      assert.deepEqual(metadata.robots, { index: false, follow: false })
+      assert.match(html, /Pendiente de revisión editorial/)
+      assert.doesNotMatch(html, /Publicado el/)
+    } else {
+      if (post.publishedAt) assert.match(html, /Publicado el/)
+      else assert.doesNotMatch(html, /Publicado el|Pendiente de revisión editorial/)
+      assert.notEqual(metadata.robots?.index, false)
+    }
   }
   for (const slug of ['no-existe', 'montar-barberia-espana/extra']) {
     const props = { params: Promise.resolve({ slug }) }

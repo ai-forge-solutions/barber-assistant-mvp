@@ -79,7 +79,7 @@ test('resource routes render collective authorship, scoped editorial notes and t
     assert.ok(article)
     assert.equal(article.author['@type'], 'Organization')
     assert.equal(article.author.name, 'Equipo de trujas')
-    assert.equal(article.datePublished, post.publishedAt)
+    assert.equal(article.datePublished, post.publishedAt ?? undefined)
     assert.equal(article.publisher['@id'], 'https://trujas.app/#organization')
     assert.equal(article.mainEntityOfPage, `https://trujas.app/recursos/${post.slug}`)
     assert.ok(schemas(html).some((node) => node['@type'] === 'BreadcrumbList'))

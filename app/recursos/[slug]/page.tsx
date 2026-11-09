@@ -19,7 +19,10 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = getResource(slug)
   if (!post) notFound()
-  return resourceMetadata(`/recursos/${post.slug}`, `${post.title} | trujas`, post.description)
+  return {
+    ...resourceMetadata(`/recursos/${post.slug}`, `${post.title} | trujas`, post.description),
+    ...(post.editorialStatus === 'pending_review' ? { robots: { index: false, follow: false } } : {}),
+  }
 }
 
 export default async function ResourcePage({ params }: Props) {
@@ -39,7 +42,11 @@ export default async function ResourcePage({ params }: Props) {
           <p className="resources-eyebrow">Guías de barbería</p>
           <h1>{post.title}</h1>
           <p className="resources-date">Por <Link href="/sobre-nosotros#proceso-editorial">Equipo de trujas</Link> · Elaborado con ayuda de IA</p>
-          <p className="resources-date">Publicado el <time dateTime={post.publishedAt}>2 de noviembre de 2026</time></p>
+          {post.publishedAt ? (
+            <p className="resources-date">Publicado el <time dateTime={post.publishedAt}>{new Date(`${post.publishedAt}T00:00:00Z`).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</time></p>
+          ) : post.editorialStatus === 'pending_review' ? (
+            <p className="resources-date">Vista previa · Pendiente de revisión editorial</p>
+          ) : null}
         </header>
         <ResourceMarkdown body={post.body} />
         <ResourceEditorialNote slug={post.slug} />

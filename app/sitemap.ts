@@ -8,5 +8,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/', '/pricing', '/sobre-nosotros', '/recursos',
     '/recursos/montar-barberia-espana',
     '/recursos/organizar-agenda-barberia',
+    '/recursos/elegir-app-reservas-barberia',
+    '/recursos/reducir-no-shows-barberia',
+    '/recursos/calcular-precios-barberia',
+    '/recursos/conseguir-clientes-barberia-barrio',
+    '/funciones', '/funciones/pagina-reservas',
   ].map((path) => ({ url: new URL(path, SITE_URL).toString() }))
 }

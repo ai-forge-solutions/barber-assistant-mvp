@@ -42,6 +42,9 @@ test('sitemap is XML with an explicit marketing-only URL allowlist', async () =>
     'https://trujas.app/recursos',
     'https://trujas.app/recursos/montar-barberia-espana',
     'https://trujas.app/recursos/organizar-agenda-barberia',
+    'https://trujas.app/recursos/elegir-app-reservas-barberia', 'https://trujas.app/recursos/reducir-no-shows-barberia',
+    'https://trujas.app/recursos/calcular-precios-barberia', 'https://trujas.app/recursos/conseguir-clientes-barberia-barrio',
+    'https://trujas.app/funciones', 'https://trujas.app/funciones/pagina-reservas',
   ])
   assert.doesNotMatch(body, /<lastmod>/, 'Do not fabricate modification dates on each build')
 })
