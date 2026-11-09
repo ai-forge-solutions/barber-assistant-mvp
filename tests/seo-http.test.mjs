@@ -38,6 +38,7 @@ test('sitemap is XML with an explicit marketing-only URL allowlist', async () =>
   assert.match(body, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/)
   assert.deepEqual([...body.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]), [
     'https://trujas.app/', 'https://trujas.app/pricing',
+    'https://trujas.app/sobre-nosotros',
     'https://trujas.app/recursos',
     'https://trujas.app/recursos/montar-barberia-espana',
     'https://trujas.app/recursos/organizar-agenda-barberia',
@@ -68,11 +69,24 @@ test('pricing has its own canonical and title without changing the trial offer',
   assert.match(html, /30 días gratis/)
 })
 
-test('shop auth and metadata near-matches keep the existing login boundary', async () => {
-  for (const path of ['/seo-smoke-shop', '/robots.txt-extra', '/sitemap.xml-extra']) {
+// Root paths resolve shop existence before auth. These two checks require
+// working read-only Supabase credentials; do not fabricate a shop fixture.
+const shopSlug = process.env.SEO_TEST_SHOP_SLUG
+
+test('a real shop retains the client login boundary', { skip: !shopSlug }, async () => {
+  const path = `/${shopSlug}`
+  const response = await get(path)
+  assert.equal(response.status, 307, path)
+  assert.equal(response.headers.get('location'), `/auth/client?next=${encodeURIComponent(path)}`)
+})
+
+test('unknown root slugs and metadata near-matches are real 404s', {
+  skip: process.env.SEO_TEST_DATABASE_READS !== '1',
+}, async () => {
+  for (const path of ['/seo-missing-shop-9e26f4b7', '/robots.txt-extra', '/sitemap.xml-extra']) {
     const response = await get(path)
-    assert.equal(response.status, 307, path)
-    assert.equal(response.headers.get('location'), `/auth/client?next=${encodeURIComponent(path)}`)
+    assert.equal(response.status, 404, path)
+    assert.equal(response.headers.get('location'), null, path)
   }
 })
 

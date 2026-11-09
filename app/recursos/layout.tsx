@@ -10,6 +10,7 @@ export default function ResourcesLayout({ children }: { children: React.ReactNod
           <Link className="resources-brand" href="/" aria-label="trujas: inicio">trujas</Link>
           <div className="resources-nav-links">
             <Link href="/recursos">Recursos</Link>
+            <Link href="/sobre-nosotros">Sobre nosotros</Link>
             <Link href="/pricing" data-ga-event="cta_click" data-ga-cta-id="see_plans" data-ga-cta-location="resources_nav">Ver planes</Link>
           </div>
         </nav>

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:seo": "node --test tests/seo-http.test.mjs",
+    "test:seo": "node --test tests/seo-*.test.mjs",
+    "test:marketing": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/discovery-*.test.mjs tests/editorial-trust.test.mjs tests/home-trust.test.mjs tests/pricing-navigation-faq.test.mjs tests/pricing-trust.test.mjs",
+    "test:marketing:http": "node --test tests/seo-http.test.mjs tests/resources-http.test.mjs tests/trust-http.test.mjs",
     "test:resources": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/resources-content.test.mjs",
     "test:analytics": "node --test tests/analytics.test.mjs",
     "test:mcp": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/mcp-*.test.mjs",
@@ -39,6 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "jsdom": "^31.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
