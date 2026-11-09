@@ -2,6 +2,8 @@ import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import { PricingCards } from '@/components/pricing/PricingBlocks'
+import PricingBackButton from '@/components/pricing/PricingBackButton'
+import PricingFaq from '@/components/pricing/PricingFaq'
 import { marketingMetadata } from '@/lib/seo'
 
 export const metadata = marketingMetadata(
@@ -15,8 +17,9 @@ export default function PricingPage() {
     <div className="min-h-screen bg-[#E5E5E5]">
       <div className="mx-auto max-w-[1040px] bg-white">
         <ColorStripe />
-        <header className="flex items-center justify-center border-b border-[#E5E5E5] px-5 py-5">
-          <Link href="/" aria-label="Volver a inicio">
+        <header className="grid grid-cols-[44px_1fr_44px] items-center border-b border-[#E5E5E5] px-5 py-5">
+          <PricingBackButton />
+          <Link href="/" aria-label="Volver a inicio" className="justify-self-center">
             <Logo size="md" />
           </Link>
         </header>
@@ -39,6 +42,7 @@ export default function PricingPage() {
           <section className="px-5 py-12 sm:px-8">
             <PricingCards />
           </section>
+          <PricingFaq />
         </main>
 
         <ColorStripe />

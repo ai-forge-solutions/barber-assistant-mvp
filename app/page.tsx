@@ -5,7 +5,10 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import PricingTeaser from '@/components/pricing/PricingTeaser'
 import CookieSettingsButton from '@/components/analytics/CookieSettingsButton'
-import MobileMockup from '@/components/ui/great-ui-mobile-mockup'
+import { ExampleMockup, WhatsappExample } from '@/components/landing/ExampleMockup'
+import TrustComparison from '@/components/landing/TrustComparison'
+import JsonLd from '@/components/seo/JsonLd'
+import { organizationSchema, websiteSchema } from '@/lib/structured-data'
 import { marketingMetadata } from '@/lib/seo'
 
 export const metadata = marketingMetadata(
@@ -116,9 +119,6 @@ function BarberLoginCta({ children }: { children: ReactNode }) {
   )
 }
 
-function WhatsappMockup() {
-  return <MobileMockup className="max-w-[245px] xs:max-w-[265px] sm:max-w-[305px]" />
-}
 
 function ReservationMockup() {
   return (
@@ -192,6 +192,8 @@ function ReminderMockup() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#E5E5E5]">
+      <JsonLd data={organizationSchema} />
+      <JsonLd data={websiteSchema} />
       <div className="mx-auto max-w-[1040px] bg-white">
         <ColorStripe />
         <main>
@@ -229,7 +231,7 @@ export default function Home() {
                 <p className="font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.12em] text-[#C8102E]">Lo que ve el barbero</p>
                 <h2 className="mt-2 font-['Oswald'] text-[28px] font-bold uppercase leading-tight text-[#111111]">Agenda del día, sin rebuscar en chats</h2>
                 <div className="mt-5">
-                  <AppointmentMockup />
+                  <ExampleMockup label="Agenda de ejemplo"><AppointmentMockup /></ExampleMockup>
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-2 font-['DM_Sans'] text-[13px] text-[#555555]">
                   <p className="border border-[#E5E5E5] px-3 py-3">Confirmadas y pendientes separadas.</p>
@@ -265,7 +267,7 @@ export default function Home() {
               Es la conversación interminable.
             </blockquote>
             <div className="mt-7">
-              <WhatsappMockup />
+              <WhatsappExample />
             </div>
           </section>
 
@@ -279,7 +281,7 @@ export default function Home() {
                 </div>
                 <p className="mt-3 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">Entra a tu enlace, elige barbero, servicio y hora. Sin llamarte, sin escribirte.</p>
                 <div className="mt-4">
-                  <ReservationMockup />
+                  <ExampleMockup label="Reserva de ejemplo"><ReservationMockup /></ExampleMockup>
                 </div>
               </article>
 
@@ -290,7 +292,7 @@ export default function Home() {
                 </div>
                 <p className="mt-3 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">Confirmas, cancelas o marcas completado con un toque. Nada de scrollear un chat buscando quién quedó a las 5.</p>
                 <div className="mt-4">
-                  <AppointmentMockup />
+                  <ExampleMockup label="Agenda de ejemplo"><AppointmentMockup /></ExampleMockup>
                 </div>
               </article>
 
@@ -301,7 +303,7 @@ export default function Home() {
                 </div>
                 <p className="mt-3 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">La gente no desaparece y tú te dejas de estar pendiente.</p>
                 <div className="mt-4">
-                  <ReminderMockup />
+                  <ExampleMockup label="Recordatorio de ejemplo por email"><ReminderMockup /></ExampleMockup>
                 </div>
               </article>
             </div>
@@ -325,30 +327,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="bg-[#E5E5E5] px-5 py-12 sm:px-8">
-            <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Hecho solo para barberos de barrio</h2>
-            <div className="mt-8 overflow-hidden border border-[#E5E5E5] bg-white">
-              <div className="grid grid-cols-3 border-b border-[#E5E5E5] text-center font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] text-[#111111]">
-                <div className="px-3 py-4" />
-                <div className="bg-[#111111] px-3 py-4 text-white">trujas</div>
-                <div className="px-3 py-4 text-[#555555]">Apps genéricas</div>
-              </div>
-              {[
-                ['Precio recomendado', '15€/mes', '400–500€/año'],
-                ['Comisiones por reserva', 'No', 'A veces'],
-                ['Marketplace que te compara', 'No', 'Sí'],
-                ['Pensado para', '1–3 sillas, barrio', 'Cadenas, salones'],
-              ].map((row) => (
-                <div key={row[0]} className="grid grid-cols-3 border-b border-[#E5E5E5] last:border-b-0">
-                  {row.map((cell, index) => (
-                    <div key={cell} className={`px-3 py-4 font-['DM_Sans'] text-[13px] ${index === 1 ? 'font-medium text-[#111111]' : 'text-[#555555]'}`}>
-                      {cell}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </section>
+          <TrustComparison />
 
           <section className="px-6 py-12 sm:px-8">
             <h2 className="text-center font-['Oswald'] text-[32px] font-bold uppercase text-[#111111]">Antes de que preguntes</h2>
@@ -370,7 +349,7 @@ export default function Home() {
             <div className="mt-7">
               <PrimaryCta location="final_cta">Empezar gratis</PrimaryCta>
             </div>
-            <p className="mt-4 font-['DM_Sans'] text-[12px] text-[#999999]">Sin compromiso. Tu primer mes es gratis.</p>
+            <p className="mt-4 font-['DM_Sans'] text-[12px] text-[#999999]">30 días gratis. Cancela durante la prueba antes del primer cobro.</p>
           </section>
         </main>
 
@@ -378,6 +357,7 @@ export default function Home() {
         <footer className="px-6 py-8 text-center">
           <Logo size="md" />
           <div className="mt-4 flex flex-col items-center gap-3 font-['DM_Sans'] text-[14px] sm:flex-row sm:justify-center">
+            <Link href="/sobre-nosotros" className="inline-flex min-h-[44px] items-center text-[#555555] underline-offset-4 hover:text-[#111111] hover:underline">Sobre nosotros</Link>
             <Link href="/recursos" className="inline-flex min-h-[44px] items-center text-[#555555] underline-offset-4 hover:text-[#111111] hover:underline">Guías para barberos</Link>
             <Link href="/privacidad" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Privacidad</Link>
             <Link href="/terminos" className="text-[#999999] underline-offset-4 hover:text-[#111111] hover:underline">Términos</Link>

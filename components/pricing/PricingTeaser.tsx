@@ -50,7 +50,7 @@ export default function PricingTeaser() {
             <span className="pb-1 font-['DM_Sans'] text-[14px] text-[#555555]">/ mes después</span>
           </div>
         </div>
-        <p className="mt-3 font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">Con el Basic anual, después del primer mes gratis pagas 15€/mes: más o menos lo que cuesta un corte de pelo.</p>
+        <p className="mt-3 font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">Después del primer mes gratis, Basic cuesta 15€/mes con permanencia de 12 meses. También puedes elegir 29€/mes mes a mes en la página de planes.</p>
         <div className="mt-5">
           <CheckoutButton planKey="basic" cadence="annual">Empezar con primer mes gratis</CheckoutButton>
         </div>

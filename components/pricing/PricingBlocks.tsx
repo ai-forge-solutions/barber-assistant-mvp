@@ -47,11 +47,12 @@ function CadenceToggle({ cadence, onChange }: { cadence: BillingCadence; onChang
             key={option}
             type="button"
             onClick={() => onChange(option)}
+            aria-pressed={active}
             className={`min-h-[44px] flex-1 rounded-sm px-4 py-2 font-['Oswald'] text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors duration-150 ${
               active ? 'bg-[#111111] text-white' : 'bg-white text-[#111111] hover:bg-[#E5E5E5]'
             }`}
           >
-            {option === 'annual' ? 'Anual' : 'Mensual'}
+            {option === 'annual' ? 'Con permanencia de 12 meses' : 'Mes a mes'}
           </button>
         )
       })}
@@ -67,7 +68,7 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
     <div className="mx-auto max-w-xl lg:max-w-5xl">
       <CadenceToggle cadence={cadence} onChange={setCadence} />
       <p className="mx-auto mt-3 max-w-md text-center font-['DM_Sans'] text-[13px] leading-relaxed text-[#555555]">
-        El primer mes cuesta 0€. Elige ahora anual recomendado o mes a mes; después se cobra el plan elegido.
+        El primer mes cuesta 0€. Basic: 15€/mes con permanencia de 12 meses o 29€/mes mes a mes. Después del primer mes gratis se cobra la modalidad elegida.
       </p>
 
       <div className="mt-6 grid gap-3 lg:grid-cols-2 lg:items-start">
@@ -76,7 +77,7 @@ export function PricingCards({ compact = false }: { compact?: boolean }) {
           const open = plan.key === openPlan
           const price = getPlanPrice(plan, cadence)
           const billingLabel = getPlanBillingLabel(plan, cadence)
-          const badge = cadence === 'annual' ? plan.annualBadge : recommended ? 'Flexible' : undefined
+          const badge = recommended ? (cadence === 'annual' ? 'Recomendado' : 'Flexible') : undefined
 
           return (
             <article
