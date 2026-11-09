@@ -34,6 +34,19 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function ShopPage({ params }: PageProps) {
   const { slug } = await params
+
+  // Root paths also match /[slug]. Resolve existence before auth so a missing
+  // page is a 404, not a login redirect. The public shops API already resolves
+  // slugs via admin; fetch only an ID here, never private shop/customer fields.
+  const { data: existingShop, error: lookupError } = await supabaseAdmin
+    .from('shops')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (lookupError) throw new Error('No se pudo comprobar la barbería')
+  if (!existingShop) notFound()
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()

@@ -1,4 +1,7 @@
 import Link from 'next/link'
+import JsonLd from '@/components/seo/JsonLd'
+import ResourceEditorialNote from '@/components/resources/ResourceEditorialNote'
+import { articleSchema, breadcrumbSchema } from '@/lib/structured-data'
 import { notFound } from 'next/navigation'
 import { getResource, listResources } from '@/lib/resources'
 import ResourceMarkdown from '@/components/resources/ResourceMarkdown'
@@ -26,6 +29,8 @@ export default async function ResourcePage({ params }: Props) {
   const related = listResources().filter((entry) => entry.slug !== post.slug)
   return (
     <>
+      <JsonLd data={articleSchema(post)} />
+      <JsonLd data={breadcrumbSchema([{ name: 'Inicio', path: '/' }, { name: 'Recursos', path: '/recursos' }, { name: post.title, path: `/recursos/${post.slug}` }])} />
       <nav className="resources-breadcrumb" aria-label="Ruta de navegación">
         <Link href="/">Inicio</Link><span aria-hidden="true">/</span><Link href="/recursos">Recursos</Link>
       </nav>
@@ -33,9 +38,11 @@ export default async function ResourcePage({ params }: Props) {
         <header className="resource-article-header">
           <p className="resources-eyebrow">Guías de barbería</p>
           <h1>{post.title}</h1>
+          <p className="resources-date">Por <Link href="/sobre-nosotros#proceso-editorial">Equipo de trujas</Link> · Elaborado con ayuda de IA</p>
           <p className="resources-date">Publicado el <time dateTime={post.publishedAt}>2 de noviembre de 2026</time></p>
         </header>
         <ResourceMarkdown body={post.body} />
+        <ResourceEditorialNote slug={post.slug} />
       </article>
       <aside className="resources-related" aria-labelledby="resources-related-title">
         <h2 id="resources-related-title">Sigue leyendo</h2>

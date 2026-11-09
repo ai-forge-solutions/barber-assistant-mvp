@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import JsonLd from '@/components/seo/JsonLd'
+import { breadcrumbSchema, resourceListSchema } from '@/lib/structured-data'
 import { listResources } from '@/lib/resources'
 import { resourceMetadata } from '@/components/resources/metadata'
 
@@ -12,10 +14,13 @@ export default function ResourcesPage() {
   const posts = listResources()
   return (
     <>
+      <JsonLd data={resourceListSchema(posts)} />
+      <JsonLd data={breadcrumbSchema([{ name: 'Inicio', path: '/' }, { name: 'Recursos', path: '/recursos' }])} />
       <header className="resources-intro">
         <p className="resources-eyebrow">El oficio, también fuera de la silla</p>
         <h1>Recursos para tu barbería</h1>
         <p>De preparar tu primer local a ordenar las citas del día a día.</p>
+        <Link className="resources-read" href="/sobre-nosotros#proceso-editorial">Quién prepara estas guías y cómo</Link>
       </header>
       <section aria-label="Guías de barbería">
         <ol className="resources-list">
