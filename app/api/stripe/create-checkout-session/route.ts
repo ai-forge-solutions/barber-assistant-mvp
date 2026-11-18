@@ -9,6 +9,7 @@ import {
   getShopSubscription,
   getStripe,
   isBillingSetupError,
+  isCompSubscription,
   resolveStripePriceId,
 } from '@/lib/billing/stripe'
 
@@ -48,6 +49,11 @@ export async function POST(request: NextRequest) {
 
   try {
     subscription = await getShopSubscription(shop.id)
+    if (isCompSubscription(subscription)) {
+      const billingUrl = new URL('/billing', appUrl)
+      billingUrl.searchParams.set('checkout', 'comp_active')
+      return NextResponse.redirect(billingUrl, 303)
+    }
     priceId = await resolveStripePriceId(stripe, plan, cadence)
     customerId = await ensureStripeCustomer({
       stripe,
