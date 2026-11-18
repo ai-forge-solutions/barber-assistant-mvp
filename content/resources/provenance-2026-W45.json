@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "week": "2026-W45",
+  "editorialStatus": "pending_review",
+  "published": false,
+  "publishedAt": null,
+  "articles": [
+    {
+      "slug": "elegir-app-reservas-barberia",
+      "source": "drafts/2026-W45/elegir-app-reservas-barberia.md",
+      "sourceSha256": "345b8c8b738da8836b198d7337daaccb962302d727cd200368fd6579ce81e6e2",
+      "derivedSha256": "345b8c8b738da8836b198d7337daaccb962302d727cd200368fd6579ce81e6e2",
+      "transformation": "Byte-for-byte copy; review disclosures retained",
+      "editorialStatus": "pending_review",
+      "published": false,
+      "publishedAt": null
+    },
+    {
+      "slug": "reducir-no-shows-barberia",
+      "source": "drafts/2026-W45/reducir-no-shows-barberia.md",
+      "sourceSha256": "6133f4ae03914b8e1fe90c00a13a64e736b225af9b42b1f6204db6d10db1cd71",
+      "derivedSha256": "6133f4ae03914b8e1fe90c00a13a64e736b225af9b42b1f6204db6d10db1cd71",
+      "transformation": "Byte-for-byte copy; review disclosures retained",
+      "editorialStatus": "pending_review",
+      "published": false,
+      "publishedAt": null
+    },
+    {
+      "slug": "calcular-precios-barberia",
+      "source": "drafts/2026-W45/calcular-precios-barberia.md",
+      "sourceSha256": "704036b89f037157089dc15f66572850317db2cd62885a4f3dc2d84b80438ef9",
+      "derivedSha256": "704036b89f037157089dc15f66572850317db2cd62885a4f3dc2d84b80438ef9",
+      "transformation": "Byte-for-byte copy; review disclosures retained",
+      "editorialStatus": "pending_review",
+      "published": false,
+      "publishedAt": null
+    },
+    {
+      "slug": "conseguir-clientes-barberia-barrio",
+      "source": "drafts/2026-W45/conseguir-clientes-barberia-barrio.md",
+      "sourceSha256": "df6aae1de67bb428ffa4a2ab2e8b93f7b7f591ce1b9aea53aa5c959b45f4fe94",
+      "derivedSha256": "df6aae1de67bb428ffa4a2ab2e8b93f7b7f591ce1b9aea53aa5c959b45f4fe94",
+      "transformation": "Byte-for-byte copy; review disclosures retained",
+      "editorialStatus": "pending_review",
+      "published": false,
+      "publishedAt": null
+    }
+  ]
+}

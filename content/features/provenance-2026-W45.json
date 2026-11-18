@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "week": "2026-W45",
+  "slug": "pagina-reservas",
+  "route": "/funciones/pagina-reservas",
+  "editorialStatus": "pending_review",
+  "published": false,
+  "publishedAt": null,
+  "source": "drafts/2026-W45/pagina-reservas.md",
+  "sourceSha256": "0c2d5b7caa49a43b01df1480902d020ad06c99aadcc7532c2d304df6ced67582",
+  "derivedSha256": "0c2d5b7caa49a43b01df1480902d020ad06c99aadcc7532c2d304df6ced67582",
+  "transformation": "Byte-for-byte copy; source honest IA attribution retained in page shell",
+  "beforePublication": [
+    "Human editorial and commercial review",
+    "Authorized real product captures or explicit acceptance of omission"
+  ]
+}

@@ -37,7 +37,7 @@ export function breadcrumbSchema(items: { name: string; path: string }[]) {
 }
 
 // Read-only projection of the approved resource record; no fabricated updates.
-export function articleSchema(post: { slug: string; title: string; description: string; publishedAt: string }) {
+export function articleSchema(post: { slug: string; title: string; description: string; publishedAt: string | null }) {
   const url = `${SITE_URL}/recursos/${post.slug}`
   return {
     '@context': 'https://schema.org',
@@ -45,7 +45,7 @@ export function articleSchema(post: { slug: string; title: string; description: 
     '@id': `${url}#article`,
     headline: post.title,
     description: post.description,
-    datePublished: post.publishedAt,
+    ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
     inLanguage: 'es',
     url,
     mainEntityOfPage: url,
