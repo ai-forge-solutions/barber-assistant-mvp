@@ -19,9 +19,13 @@ export type ShopSubscriptionStatus =
   | 'unpaid'
   | 'paused'
 
+export type ShopSubscriptionSource = 'stripe' | 'comp'
+
 export type ShopSubscription = {
   id: string
   shop_id: string
+  source: ShopSubscriptionSource
+  comp_reason: string | null
   plan_key: PricingPlanKey | 'recommended' | 'premium'
   status: ShopSubscriptionStatus
   stripe_customer_id: string | null
@@ -100,6 +104,10 @@ export function isActiveSubscription(subscription: Pick<ShopSubscription, 'statu
   if (!subscription || !['active', 'trialing'].includes(subscription.status)) return false
   if (!subscription.current_period_end) return true
   return new Date(subscription.current_period_end).getTime() > Date.now()
+}
+
+export function isCompSubscription(subscription: { source?: string | null } | null | undefined) {
+  return subscription?.source === 'comp'
 }
 
 export async function getShopSubscription(shopId: string) {
@@ -235,6 +243,7 @@ export async function upsertSubscriptionFromStripe(subscription: Stripe.Subscrip
     .from('shop_subscriptions')
     .update(payload)
     .eq('stripe_customer_id', customerId)
+    .eq('source', 'stripe')
     .select('id')
     .maybeSingle()
 
@@ -244,6 +253,24 @@ export async function upsertSubscriptionFromStripe(subscription: Stripe.Subscrip
 
   if (!shopId) {
     throw new Error(`No shop_id metadata for Stripe subscription ${subscription.id}`)
+  }
+
+  // Never let a Stripe event replace complimentary access: the comp row owns the shop's
+  // single current slot (shop_subscriptions_one_current_per_shop_idx).
+  const comp = await supabaseAdmin
+    .from('shop_subscriptions')
+    .select('id')
+    .eq('shop_id', shopId)
+    .eq('source', 'comp')
+    .in('status', ACTIVE_SUBSCRIPTION_STATUSES)
+    .limit(1)
+    .maybeSingle()
+
+  assertNoBillingSchemaError(comp.error)
+
+  if (comp.data?.id) {
+    console.warn(`[stripe] Ignorando suscripción ${subscription.id}: la barbería ${shopId} tiene acceso de cortesía activo.`)
+    return comp.data.id as string
   }
 
   const { data, error } = await supabaseAdmin

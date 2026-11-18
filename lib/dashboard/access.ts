@@ -1,10 +1,18 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+type SubscriptionSummary = {
+  status: string
+  current_period_end: string | null
+  stripe_customer_id: string | null
+  source: 'stripe' | 'comp'
+  plan_key: string
+}
+
 export type DashboardAccess = {
   shop: { id: string; name?: string; slug?: string; logo_url?: string | null; owner_id?: string } | null
   barber: { id: string; shop_id: string; user_id: string; is_active?: boolean } | null
   isOwner: boolean
-  subscription: { status: string; current_period_end: string | null; stripe_customer_id: string | null } | null
+  subscription: SubscriptionSummary | null
   hasActiveSubscription: boolean
 }
 
@@ -15,15 +23,24 @@ function hasActiveSubscription(subscription: { status: string; current_period_en
 }
 
 async function getSubscription(shopId: string) {
-  const { data } = await supabaseAdmin
+  const query = (columns: string) => supabaseAdmin
     .from('shop_subscriptions')
-    .select('status, current_period_end, stripe_customer_id')
+    .select(columns)
     .eq('shop_id', shopId)
     .order('updated_at', { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  return data as { status: string; current_period_end: string | null; stripe_customer_id: string | null } | null
+  const { data, error } = await query('status, current_period_end, stripe_customer_id, source, plan_key')
+  if (!error) return data as unknown as SubscriptionSummary | null
+
+  // Comp-access migration not applied yet: keep access working with the legacy columns.
+  if (error.code === '42703' || error.code === 'PGRST204') {
+    const legacy = await query('status, current_period_end, stripe_customer_id, plan_key')
+    return legacy.data ? ({ ...(legacy.data as object), source: 'stripe' } as SubscriptionSummary) : null
+  }
+
+  return null
 }
 
 export async function getDashboardAccess(userId: string): Promise<DashboardAccess> {

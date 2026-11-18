@@ -37,6 +37,12 @@ function formatDate(valueToFormat: string | null | undefined) {
   return new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(valueToFormat))
 }
 
+function normalizePlanKey(planKey: string) {
+  if (planKey === 'premium') return 'pro'
+  if (planKey === 'recommended') return 'basic'
+  return planKey
+}
+
 function CheckoutForm({ planKey, cadence, children }: { planKey: string; cadence: BillingCadence; children: string }) {
   return (
     <form action="/api/stripe/create-checkout-session" method="POST">
@@ -70,7 +76,11 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
   if (!access.shop) redirect('/onboarding')
 
   const subscription = access.subscription
-  const statusLabel = subscription ? statusLabels[subscription.status] ?? subscription.status : 'Sin suscripción activa'
+  const isComp = subscription?.source === 'comp'
+  const statusLabel = isComp && access.hasActiveSubscription
+    ? 'Plan cortesía'
+    : subscription ? statusLabels[subscription.status] ?? subscription.status : 'Sin suscripción activa'
+  const planName = subscription ? PRICING_PLANS.find((plan) => plan.key === normalizePlanKey(subscription.plan_key))?.name : null
   const statusColor = access.hasActiveSubscription ? 'text-[#1A3A6B] border-[#1A3A6B]' : 'text-[#C8102E] border-[#C8102E]'
 
   return (
@@ -87,7 +97,9 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
             Activa las reservas de {access.shop.name ?? 'tu barbería'}.
           </h1>
           <p className="mt-4 font-['DM_Sans'] text-[15px] leading-relaxed text-[#555555]">
-            El dashboard y el link de reservas se desbloquean con una suscripción activa o en prueba. Primer mes gratis con tarjeta.
+            {isComp && access.hasActiveSubscription
+              ? 'Tu barbería tiene acceso de cortesía. No hay nada que pagar ni ninguna tarjeta asociada.'
+              : 'El dashboard y el link de reservas se desbloquean con una suscripción activa o en prueba. Primer mes gratis con tarjeta.'}
           </p>
         </section>
 
@@ -129,6 +141,13 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
           </div>
         )}
 
+        {checkout === 'comp_active' && (
+          <div className="border-2 border-[#1A3A6B] bg-white px-4 py-3">
+            <p className="font-['Oswald'] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#1A3A6B]">Ya tienes acceso de cortesía</p>
+            <p className="mt-1 font-['DM_Sans'] text-[13px] text-[#555555]">No se ha abierto Stripe ni se ha cobrado nada. Tu acceso sigue activo.</p>
+          </div>
+        )}
+
         {portal === 'return' && (
           <div className="border border-[#E5E5E5] bg-white px-4 py-3">
             <p className="font-['DM_Sans'] text-[13px] text-[#555555]">Has vuelto del portal de Stripe. La suscripción se actualizará con el webhook.</p>
@@ -147,9 +166,16 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
           </div>
           <div className="mt-4 grid gap-2 border-t border-[#E5E5E5] pt-4 font-['DM_Sans'] text-[13px] text-[#555555]">
             <p>Barbería: <span className="text-[#111111]">{access.shop.name}</span></p>
-            <p>Próxima fecha: <span className="text-[#111111]">{formatDate(subscription?.current_period_end)}</span></p>
+            {isComp ? (
+              <>
+                {planName && <p>Plan: <span className="text-[#111111]">{planName}</span></p>}
+                <p>Válido hasta: <span className="text-[#111111]">{subscription?.current_period_end ? formatDate(subscription.current_period_end) : 'Sin caducidad'}</span></p>
+              </>
+            ) : (
+              <p>Próxima fecha: <span className="text-[#111111]">{formatDate(subscription?.current_period_end)}</span></p>
+            )}
           </div>
-          {subscription?.stripe_customer_id && (
+          {!isComp && subscription?.stripe_customer_id && (
             <form action="/api/stripe/create-portal-session" method="POST" className="mt-5">
               <button
                 type="submit"
@@ -161,6 +187,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
           )}
         </section>
 
+        {!(isComp && access.hasActiveSubscription) && (
         <section>
           <h2 className="font-['Oswald'] text-[26px] font-bold uppercase text-[#111111]">Elige plan</h2>
           <p className="mt-2 font-['DM_Sans'] text-[14px] leading-relaxed text-[#555555]">
@@ -199,6 +226,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
             ))}
           </div>
         </section>
+        )}
 
         {access.hasActiveSubscription && (
           <Link
