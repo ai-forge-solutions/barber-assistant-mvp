@@ -14,7 +14,7 @@ Cinco borradores completos de nueva creación, no cinco briefs ni cinco publicac
 | Vacaciones | Lista de citas afectadas y reapertura | `/recursos/vacaciones-barberia-reservas` |
 | Cierre de caja | Hoja de recuento, sin certificación fiscal | `/recursos/cierre-caja-barberia` |
 
-Los textos están en `content/reviews/2026-w47`. La revisión implementada es `/revision-seo/2026-w47` y sus cinco subrutas. Todas son `noindex,nofollow,noarchive`, fuera de sitemap, `llms.txt`, home, pricing y catálogo público. `noindex` no es un control de acceso: una preview puede ser visitada por quien conozca la URL. Los borradores no contienen analítica privada ni datos de clientes. Los destinos `/recursos/...` propuestos devuelven 404 hasta aprobación e integración autorizada.
+Los textos están en `content/reviews/2026-w47`. La revisión implementada es `/revision-seo/2026-w47` y sus cinco subrutas. Todas son `noindex,nofollow`, fuera de sitemap, `llms.txt`, home, pricing y catálogo público. `noindex` no es un control de acceso: una preview puede ser visitada por quien conozca la URL. Los borradores no contienen analítica privada ni datos de clientes. Los destinos `/recursos/...` propuestos devuelven 404 hasta aprobación e integración autorizada.
 
 No se han modificado textos, rutas, estilos ni enlaces de la home, pricing o guías existentes. Se reutiliza el renderizador seguro de Markdown y CSS de recursos. No se han cambiado autenticación, permisos, base de datos, cobros, correo transaccional ni infraestructura.
 
@@ -52,6 +52,7 @@ La evidencia privada de conciliación comprobó que main y develop tenían árbo
 - Contratos HTTP marketing/recursos locales: 19 pasan, 2 omitidos. El proyecto no define `npm test`; no se presenta como suite ejecutada.
 - Playwright Chromium: 16 comprobaciones, 390 y 1365 px, ocho rutas (home, pricing, hub y cinco piezas). HTTP 200, un H1, sin errores de consola/hidratación ni overflow de página; tablas desplazables. Navegación y CTA internas reales. Preview desconocida: 404; destinos editoriales propuestos: 404.
 - Canonical de preview autorreferencial, `noindex` comprobado, ausencia de previews en sitemap/llms, originales de discovery sin cambios. No confundir canonical de revisión con publicación final.
+- Preview remota PR #39: hub y cinco artículos devuelven HTTP 200, un H1 y `noindex,nofollow`; Netlify confirma deploy listo. La comprobación remota es independiente del QA de laboratorio local.
 - Auth: se comprobó el acceso sin sesión/redirección al login de dashboard. No se ha iniciado sesión como cliente/barbero ni probado altas, reservas reales o pagos. Los contratos de rol/MCP son tests, no una sesión real de DB. Es limitación explícita y no un bloqueo reproducido de los flujos existentes.
 - Inspección visual real del artículo de migración: legible, jerarquía y marca trujas preservadas. Capturas desktop/móvil y JSON de QA bajo el run privado W47.
 
