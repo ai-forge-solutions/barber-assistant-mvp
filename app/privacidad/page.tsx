@@ -3,6 +3,14 @@ import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 import CookieSettingsButton from '@/components/analytics/CookieSettingsButton'
 
+import { marketingMetadata } from '@/lib/seo'
+
+export const metadata = marketingMetadata(
+  '/privacidad',
+  'Política de privacidad — trujas',
+  'Consulta cómo trujas trata los datos de reservas y cuentas, para qué los utiliza y cómo ejercer tus derechos de protección de datos.',
+)
+
 const sections = [
   {
     title: 'Responsable del tratamiento',

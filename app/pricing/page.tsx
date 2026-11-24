@@ -5,6 +5,8 @@ import { PricingCards } from '@/components/pricing/PricingBlocks'
 import PricingBackButton from '@/components/pricing/PricingBackButton'
 import PricingFaq from '@/components/pricing/PricingFaq'
 import { marketingMetadata } from '@/lib/seo'
+import JsonLd from '@/components/seo/JsonLd'
+import { pricingSoftwareSchema } from '@/lib/pricing-structured-data'
 
 export const metadata = marketingMetadata(
   '/pricing',
@@ -15,6 +17,7 @@ export const metadata = marketingMetadata(
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-[#E5E5E5]">
+      <JsonLd data={pricingSoftwareSchema()} />
       <div className="mx-auto max-w-[1040px] bg-white">
         <ColorStripe />
         <header className="grid grid-cols-[44px_1fr_44px] items-center border-b border-[#E5E5E5] px-5 py-5">

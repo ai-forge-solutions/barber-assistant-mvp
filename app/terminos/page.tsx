@@ -2,6 +2,14 @@ import Link from 'next/link'
 import ColorStripe from '@/components/brand/ColorStripe'
 import Logo from '@/components/brand/Logo'
 
+import { marketingMetadata } from '@/lib/seo'
+
+export const metadata = marketingMetadata(
+  '/terminos',
+  'Términos de uso — trujas',
+  'Consulta las condiciones de uso de trujas para barberías y clientes: reservas, contratación, comunicaciones y responsabilidades del servicio.',
+)
+
 const sections = [
   {
     title: 'Qué es trujas',
