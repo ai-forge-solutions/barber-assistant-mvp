@@ -43,8 +43,18 @@ export const sitemapContentDates = {
   },
   '/recursos/montar-barberia-espana': resourceTrustUpdate,
   '/recursos/organizar-agenda-barberia': resourceTrustUpdate,
-  '/recursos/elegir-app-reservas-barberia': resourcePublicationUpdate,
-  '/recursos/reducir-no-shows-barberia': resourcePublicationUpdate,
+  '/recursos/elegir-app-reservas-barberia': {
+    lastModified: '2026-11-24T16:10:06Z',
+    commit: '8af762c6069164347aa8c246c9ab0c2429d607f4',
+    paths: ['content/resources/elegir-app-reservas-barberia.md'],
+    reason: 'Removed the stale draft-status sentence to reconcile visible editorial status with the approved catalogue; retained authorship and review disclosures.',
+  },
+  '/recursos/reducir-no-shows-barberia': {
+    lastModified: '2026-11-24T16:10:06Z',
+    commit: '8af762c6069164347aa8c246c9ab0c2429d607f4',
+    paths: ['content/resources/reducir-no-shows-barberia.md'],
+    reason: 'Removed the stale draft-status sentence to reconcile visible editorial status with the approved catalogue; retained authorship and review disclosures.',
+  },
   '/recursos/calcular-precios-barberia': resourcePublicationUpdate,
   '/recursos/conseguir-clientes-barberia-barrio': resourcePublicationUpdate,
   '/funciones': {

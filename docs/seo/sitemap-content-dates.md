@@ -24,7 +24,13 @@ robots/indexing metadata, unrelated previews and documentation do not.
   resources already had a publishedAt, so the conditional change does not change
   their visible text and does **not** advance their date.
 
-Underlying Markdown was inspected separately:
+- `8af762c6069164347aa8c246c9ab0c2429d607f4`, `2026-11-24T16:10:06Z`:
+  removes the obsolete draft-status sentence from the visible Markdown of
+  `/recursos/elegir-app-reservas-barberia` and `/recursos/reducir-no-shows-barberia`.
+  These two routes now use this evidenced timestamp; the other W45 routes retain
+  the earlier rendered-content date. This is not a fresh factual review.
+
+Underlying Markdown before that targeted W47 correction was inspected separately:
 
 | Content paths | Last Markdown change commit | Commit timestamp |
 | --- | --- | --- |
