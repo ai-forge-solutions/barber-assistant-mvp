@@ -1,0 +1,32 @@
+[
+  {
+    "slug": "migrar-agenda-barberia",
+    "title": "Cómo cambiar la agenda de tu barbería sin perder las citas pendientes",
+    "description": "Checklist de corte, reconciliación de citas pendientes y condiciones para detener el cambio de agenda.",
+    "canonicalPath": "/recursos/migrar-agenda-barberia"
+  },
+  {
+    "slug": "calcular-duracion-servicios-barberia",
+    "title": "Cómo calcular la duración de los servicios de tu barbería",
+    "description": "Hoja de observación y ejemplo calculado para reservar tiempo de servicio y transición sin copiar un estándar ajeno.",
+    "canonicalPath": "/recursos/calcular-duracion-servicios-barberia"
+  },
+  {
+    "slug": "gestionar-clientes-sin-cita-barberia",
+    "title": "Clientes sin cita en una barbería: cómo atenderlos sin romper las reservas",
+    "description": "Árbol de admisión y respuestas para combinar walk-ins y citas sin vender dos veces la misma capacidad.",
+    "canonicalPath": "/recursos/gestionar-clientes-sin-cita-barberia"
+  },
+  {
+    "slug": "vacaciones-barberia-reservas",
+    "title": "Vacaciones en la barbería: checklist para cerrar reservas y volver sin líos",
+    "description": "Checklist de cierre temporal, revisión de citas afectadas y comprobación de disponibilidad al volver.",
+    "canonicalPath": "/recursos/vacaciones-barberia-reservas"
+  },
+  {
+    "slug": "cierre-caja-barberia",
+    "title": "Cierre de caja en una barbería: una ficha para separar citas, cobros y efectivo",
+    "description": "Ficha manual para distinguir agenda, registro de cobros y efectivo contado; no sustituye contabilidad ni TPV.",
+    "canonicalPath": "/recursos/cierre-caja-barberia"
+  }
+]

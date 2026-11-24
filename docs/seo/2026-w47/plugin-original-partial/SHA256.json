@@ -1,0 +1,50 @@
+[
+  {
+    "path": "findings/geo.md",
+    "sha256": "29b6ad15afea88da26703b8ec626c1e650fca9a333f79f0449be75c80cdab7a0"
+  },
+  {
+    "path": "findings/agentic.md",
+    "sha256": "3e62399dfdd95ad246a9370e769033b396beba58e4980ba7a51d9d32292a3a34"
+  },
+  {
+    "path": "findings/drift.md",
+    "sha256": "33a596b0ed82a08cfe78c9680889a9e895578a7393132c07a598997a8d59826f"
+  },
+  {
+    "path": "findings/README.md",
+    "sha256": "84416eff1c7fe6935f265c334bc20fef987c73922d922832ab461f84ecce7fbd"
+  },
+  {
+    "path": "findings/technical.md",
+    "sha256": "11f9cd6a6f5f4d26f7281444c70af8e12b3ebb5ea32e68133c803c39f2d846d9"
+  },
+  {
+    "path": "findings/content.md",
+    "sha256": "04436b7d3972d5bc043834a8ebe6307cc7bba5764617816f6f0102884eeece8c"
+  },
+  {
+    "path": "findings/schema.md",
+    "sha256": "6d99aa59f1644020ce154235abcff9b9dfbe8b1b70c9decc243e2f1d30d194d0"
+  },
+  {
+    "path": "findings/visual.md",
+    "sha256": "05aa2eae7a8514efd56df3d429db4031341f07a0ea16ba4d1b11e9826f57010b"
+  },
+  {
+    "path": "findings/performance.md",
+    "sha256": "6c112af322dcfbc2f4e609be380c9a5983a85935d55d49cd038e028d90d0d183"
+  },
+  {
+    "path": "findings/sxo.md",
+    "sha256": "4b5b737fc47fc50a75b6f0976a611fee1f96da100c3454cd45507c94ae1d1735"
+  },
+  {
+    "path": "findings/backlinks.md",
+    "sha256": "4ca7c01218808806e00bceaa9c34416fd055359aa5aaf79bc72538715cf2155f"
+  },
+  {
+    "path": "findings/sitemap.md",
+    "sha256": "631846f2e3bd974557a20d03c270c22c82c48f1b226ebb0c4e1594fc2f325a16"
+  }
+]
