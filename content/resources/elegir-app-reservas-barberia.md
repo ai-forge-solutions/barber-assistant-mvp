@@ -2,7 +2,7 @@
 
 Para elegir software de reservas para una barbería, compara el coste total, las comisiones, las condiciones de salida y el recorrido real del cliente. Después prueba horarios, avisos y recuperación de datos. La mejor elección no es la que acumula más funciones: es la que resuelve tus citas sin añadir trabajo que no necesitas.
 
-**Autoría:** Equipo editorial trujas, con asistencia de IA. **Última revisión:** 8 de noviembre de 2026. Borrador pendiente de revisión editorial, no de publicación.
+**Autoría:** Equipo editorial trujas, con asistencia de IA. **Última revisión:** 8 de noviembre de 2026.
 
 **Interés comercial:** trujas es nuestro producto. Esta guía no es un ranking independiente ni una comparación de proveedores probados en barberías. Ofrece un método para evaluar cualquier opción, incluida la nuestra, sin inventar precios ajenos ni experiencias de clientes.
 

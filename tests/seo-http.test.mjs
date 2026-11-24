@@ -46,7 +46,13 @@ test('sitemap is XML with an explicit marketing-only URL allowlist', async () =>
     'https://trujas.app/recursos/calcular-precios-barberia', 'https://trujas.app/recursos/conseguir-clientes-barberia-barrio',
     'https://trujas.app/funciones', 'https://trujas.app/funciones/pagina-reservas',
   ])
-  assert.doesNotMatch(body, /<lastmod>/, 'Do not fabricate modification dates on each build')
+  const dates = [...body.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map((match) => match[1])
+  assert.equal(dates.length, 12, 'Every allowlisted URL needs a sourced content date')
+  for (const value of dates) {
+    assert.ok(Number.isFinite(Date.parse(value)), `Invalid lastmod: ${value}`)
+    assert.ok(Date.parse(value) <= Date.now(), `Future lastmod: ${value}`)
+  }
+  assert.equal(await (await get('/sitemap.xml')).text(), body, 'A request must not refresh content dates')
 })
 
 test('home canonical and social metadata are in the initial HTML', async () => {
@@ -70,6 +76,29 @@ test('pricing has its own canonical and title without changing the trial offer',
   assert.match(html, /property="og:url" content="https:\/\/trujas\.app\/pricing"/)
   assert.match(html, /primer mes gratis/i)
   assert.match(html, /30 días gratis/)
+})
+
+test('legal pages expose distinct production canonicals and remain indexable', async () => {
+  for (const [route, title] of [['privacidad', 'Política de privacidad'], ['terminos', 'Términos de uso']]) {
+    const response = await get(`/${route}`)
+    assert.equal(response.status, 200)
+    const html = await response.text()
+    assert.equal(canonical(html), `https://trujas.app/${route}`)
+    assert.ok(html.includes(`<title>${title} — trujas</title>`))
+    assert.match(html, /<meta name="description" content="[^"]+"/)
+    assert.doesNotMatch(html, /<meta[^>]+name="(?:robots|googlebot)"[^>]+content="[^"]*noindex/i)
+    assert.doesNotMatch(response.headers.get('x-robots-tag') ?? '', /noindex/i)
+  }
+})
+
+test('pricing JSON-LD exposes the same four paid monthly tariffs without fictitious ratings', async () => {
+  const html = await (await get('/pricing')).text()
+  const nodes = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]))
+  const software = nodes.find((node) => node['@type'] === 'SoftwareApplication')
+  assert.ok(software)
+  assert.deepEqual(software.offers.map(({ price }) => price), [29, 15, 39, 32])
+  assert.ok(software.offers.every((offer) => offer.priceCurrency === 'EUR' && offer.priceSpecification.billingDuration === 'P1M'))
+  assert.doesNotMatch(JSON.stringify(software), /aggregateRating|reviewCount|priceValidUntil/)
 })
 
 // Root paths resolve shop existence before auth. These two checks require

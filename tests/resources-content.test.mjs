@@ -65,6 +65,24 @@ test('catalogue records editorial approval independently of implementation', asy
   }
 })
 
+for (const slug of weeklySlugs.slice(0, 2)) {
+  test(`approved article ${slug} has no stale draft notice and retains disclosures`, async () => {
+    const { getResource } = await resources()
+    const post = getResource(slug)
+    assert.equal(post.editorialStatus, 'approved')
+    assert.equal(post.publishedAt, null)
+    assert.doesNotMatch(post.body, /Borrador pendiente de revisión editorial, no de publicación/)
+    assert.match(post.body, /\*\*Autoría:\*\* Equipo editorial trujas, con asistencia de IA\./)
+    assert.match(post.body, /\*\*Última revisión:\*\* 8 de noviembre de 2026\./)
+    assert.match(post.body, /\*\*Interés comercial:\*\*/)
+    const { default: Article } = await component('app/recursos/[slug]/page.tsx')
+    const html = renderToStaticMarkup(await Article({ params: Promise.resolve({ slug }) }))
+    assert.doesNotMatch(html, /Borrador pendiente|Pendiente de revisión editorial|Publicado el/)
+    assert.match(html, /con asistencia de IA/)
+    assert.match(html, /Interés comercial/)
+  })
+}
+
 test('finite catalogue exposes historic guides and four W45 previews without arbitrary file access', async () => {
   const { listResources, getResource } = await resources()
   assert.equal(typeof listResources, 'function', 'A finite approved index must exist')
@@ -98,12 +116,48 @@ test('versioned provenance pins every byte of both full approved derivatives', a
   const weekly = JSON.parse(readFileSync(file('content/resources/provenance-2026-W45.json'), 'utf8'))
   assert.deepEqual(weekly.articles.map(({ slug }) => slug), weeklySlugs)
   assert.deepEqual([...provenance.articles, ...weekly.articles].map(({ slug }) => slug), listResources().map(({ slug }) => slug))
+  const weeklySourceHashes = [
+    '345b8c8b738da8836b198d7337daaccb962302d727cd200368fd6579ce81e6e2',
+    '6133f4ae03914b8e1fe90c00a13a64e736b225af9b42b1f6204db6d10db1cd71',
+    '704036b89f037157089dc15f66572850317db2cd62885a4f3dc2d84b80438ef9',
+    'df6aae1de67bb428ffa4a2ab2e8b93f7b7f591ce1b9aea53aa5c959b45f4fe94',
+  ]
+  assert.deepEqual(weekly.articles.map(({ sourceSha256 }) => sourceSha256), weeklySourceHashes)
+  assert.equal(weekly.editorialStatus, 'mixed')
+  assert.equal(weekly.sourceEditorialStatus, 'pending_review')
   for (const entry of weekly.articles) {
-    assert.equal(entry.editorialStatus, 'pending_review')
     assert.equal(entry.publishedAt, null)
+    assert.equal(entry.published, false, 'Editorial approval is not evidence of production deployment')
+    assert.equal(entry.source, `drafts/2026-W45/${entry.slug}.md`)
     const raw = readFileSync(file(`content/resources/${entry.slug}.md`))
     assert.equal(createHash('sha256').update(raw).digest('hex'), entry.derivedSha256)
-    assert.equal(entry.sourceSha256, entry.derivedSha256)
+    if (weeklySlugs.slice(0, 2).includes(entry.slug)) {
+      assert.equal(entry.editorialStatus, 'approved')
+      assert.equal(entry.sourceEditorialStatus, 'pending_review')
+      assert.equal(entry.originalTransformation, 'Byte-for-byte copy; review disclosures retained')
+      assert.equal(entry.transformation, 'Remove only the stale draft notice sentence; all other bytes and review disclosures retained')
+      assert.equal(entry.removedText, ' Borrador pendiente de revisión editorial, no de publicación.')
+      const restored = raw.toString().replace(
+        '**Última revisión:** 8 de noviembre de 2026.',
+        `**Última revisión:** 8 de noviembre de 2026.${entry.removedText}`,
+      )
+      assert.equal(createHash('sha256').update(restored).digest('hex'), entry.sourceSha256,
+        'Restoring only the removed notice must recover every original source byte')
+      assert.notEqual(entry.sourceSha256, entry.derivedSha256)
+      assert.equal(entry.approvalEvidence.catalogueCommit, '78df903825d5edb743e605630cb8983ba6b920f7')
+      assert.equal(entry.approvalEvidence.cataloguePath, 'lib/resources.ts')
+      assert.equal(entry.approvalEvidence.pullRequest, 'https://github.com/ai-forge-solutions/barber-assistant-mvp/pull/34')
+      assert.equal(entry.approvalEvidence.state, 'MERGED')
+      assert.equal(entry.approvalEvidence.mergedAt, '2026-11-18T18:33:32Z')
+      assert.equal(entry.approvalEvidence.mergeCommit, '484bb5cbe8c71e1d2ccfc8c9aaa96bc6b0bdf787')
+      assert.equal(entry.approvalEvidence.formalReviewCount, 0)
+      assert.equal(entry.approvalEvidence.basis, 'Approved catalogue state and merged PR publication/indexing decision; not a claim of human professional review or production deployment')
+    } else {
+      // These entries remain historical import records, outside this correction's scope.
+      assert.equal(entry.editorialStatus, 'pending_review')
+      assert.equal(entry.sourceSha256, entry.derivedSha256)
+      assert.equal(entry.transformation, 'Byte-for-byte copy; review disclosures retained')
+    }
     assert.equal((raw.toString().match(/^# /gm) || []).length, 1)
     assert.doesNotMatch(JSON.stringify(entry), /\/home\/|\/workspace\//)
   }

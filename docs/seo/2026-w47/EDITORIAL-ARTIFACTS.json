@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "migrar-agenda-barberia",
+    "title": "Cómo cambiar la agenda de tu barbería sin perder las citas pendientes",
+    "description": "Checklist de corte, reconciliación de citas pendientes y condiciones para detener el cambio de agenda.",
+    "canonicalPath": "/recursos/migrar-agenda-barberia",
+    "artifact": "drafts/2026-W47/migrar-agenda-barberia.md",
+    "sha256": "3c636a4262592658bbd12dfdd47981c7015a501d00909db5ff57edb9716062f2",
+    "words_full_markdown": 1049,
+    "state": "pending_review",
+    "complete_draft": true,
+    "native_brief_available": false,
+    "authorship": "Equipo de trujas, con ayuda de IA (Hermes)",
+    "publication_date": null
+  },
+  {
+    "slug": "calcular-duracion-servicios-barberia",
+    "title": "Cómo calcular la duración de los servicios de tu barbería",
+    "description": "Hoja de observación y ejemplo calculado para reservar tiempo de servicio y transición sin copiar un estándar ajeno.",
+    "canonicalPath": "/recursos/calcular-duracion-servicios-barberia",
+    "artifact": "drafts/2026-W47/calcular-duracion-servicios-barberia.md",
+    "sha256": "4833a1a47278db45fde420ec562cd8ee64164adade3d80c473336c4660ce6b8d",
+    "words_full_markdown": 1047,
+    "state": "pending_review",
+    "complete_draft": true,
+    "native_brief_available": false,
+    "authorship": "Equipo de trujas, con ayuda de IA (Hermes)",
+    "publication_date": null
+  },
+  {
+    "slug": "gestionar-clientes-sin-cita-barberia",
+    "title": "Clientes sin cita en una barbería: cómo atenderlos sin romper las reservas",
+    "description": "Árbol de admisión y respuestas para combinar walk-ins y citas sin vender dos veces la misma capacidad.",
+    "canonicalPath": "/recursos/gestionar-clientes-sin-cita-barberia",
+    "artifact": "drafts/2026-W47/gestionar-clientes-sin-cita-barberia.md",
+    "sha256": "c40a42cc2aae97c8183fadb1e53ff21c84d0fe89cc57cfa6fef122436aea9ec6",
+    "words_full_markdown": 1112,
+    "state": "pending_review",
+    "complete_draft": true,
+    "native_brief_available": false,
+    "authorship": "Equipo de trujas, con ayuda de IA (Hermes)",
+    "publication_date": null
+  },
+  {
+    "slug": "vacaciones-barberia-reservas",
+    "title": "Vacaciones en la barbería: checklist para cerrar reservas y volver sin líos",
+    "description": "Checklist de cierre temporal, revisión de citas afectadas y comprobación de disponibilidad al volver.",
+    "canonicalPath": "/recursos/vacaciones-barberia-reservas",
+    "artifact": "drafts/2026-W47/vacaciones-barberia-reservas.md",
+    "sha256": "deef52b38b512c6867f4a09e35562ad143e4567353c3abacf06fb41ec0ef7302",
+    "words_full_markdown": 1071,
+    "state": "pending_review",
+    "complete_draft": true,
+    "native_brief_available": false,
+    "authorship": "Equipo de trujas, con ayuda de IA (Hermes)",
+    "publication_date": null
+  },
+  {
+    "slug": "cierre-caja-barberia",
+    "title": "Cierre de caja en una barbería: una ficha para separar citas, cobros y efectivo",
+    "description": "Ficha manual para distinguir agenda, registro de cobros y efectivo contado; no sustituye contabilidad ni TPV.",
+    "canonicalPath": "/recursos/cierre-caja-barberia",
+    "artifact": "drafts/2026-W47/cierre-caja-barberia.md",
+    "sha256": "6c71f2aa7dd93dddc7ce65d036dbbb4d8d68878e0c237d9338141bfdfefff696",
+    "words_full_markdown": 1088,
+    "state": "pending_review",
+    "complete_draft": true,
+    "native_brief_available": false,
+    "authorship": "Equipo de trujas, con ayuda de IA (Hermes)",
+    "publication_date": null
+  }
+]

@@ -2,7 +2,7 @@
 
 Para reducir los no-shows en una barbería, confirma los detalles, recuerda la cita y facilita que el cliente avise si no puede ir. Haz visible tu política de cancelación y mide qué ocurre antes de endurecerla. Un no-show es una cita a la que el cliente no se presenta ni avisa: no es lo mismo que cancelar.
 
-**Autoría:** Equipo editorial trujas, con asistencia de IA. **Última revisión:** 8 de noviembre de 2026. Borrador pendiente de revisión editorial, no de publicación.
+**Autoría:** Equipo editorial trujas, con asistencia de IA. **Última revisión:** 8 de noviembre de 2026.
 
 **Interés comercial:** publicamos esta guía desde trujas, un software de reservas para barberías. Lo mencionamos donde corresponde. No aportamos testimonios ni tasas de mejora de clientes: las plantillas y el plan de medición son propuestas, no resultados demostrados.
 
